@@ -43,6 +43,7 @@ in
       options = {
         devShell = mkOption {
           type = types.nullOr types.package;
+          default = null;
           description = ''
             A derivation that nix develop bases its environment on.
           '';
