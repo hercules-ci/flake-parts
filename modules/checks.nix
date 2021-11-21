@@ -8,10 +8,13 @@ let
     optionalAttrs
     types
     ;
+  inherit (flake-modules-core-lib)
+    mkSubmoduleOptions
+    ;
 in
 {
   options = {
-    flake = {
+    flake = mkSubmoduleOptions {
       checks = mkOption {
         type = types.lazyAttrsOf (types.lazyAttrsOf types.package);
         default = { };
