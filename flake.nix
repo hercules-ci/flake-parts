@@ -7,9 +7,6 @@
 
   outputs = { self, nixpkgs, ... }: {
     lib = import ./lib.nix { inherit (nixpkgs) lib; };
-    flakeModules = {
-      core = ./all-modules.nix;
-    };
   };
 
 }
