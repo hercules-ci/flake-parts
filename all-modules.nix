@@ -7,6 +7,7 @@
     ./modules/flake.nix
     ./modules/legacyPackages.nix
     ./modules/nixosModules.nix
+    ./modules/overlay.nix
     ./modules/packages.nix
     ./modules/perSystem.nix
   ];
