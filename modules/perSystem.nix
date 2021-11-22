@@ -1,6 +1,7 @@
 { config, lib, self, ... }:
 let
   inherit (lib)
+    genAttrs
     mapAttrs
     mkOption
     types
@@ -36,7 +37,19 @@ in
         shorthandOnlyDefinesConfig = false;
       });
     };
+
+    allSystems = mkOption {
+      type = types.lazyAttrsOf types.unspecified;
+      description = "The system-specific config for each of systems.";
+      internal = true;
+    };
   };
 
-  config.perSystem = system: { _module.args.system = system; };
+  config = {
+    perSystem = system: { _module.args.system = system; };
+    allSystems = genAttrs config.systems config.perSystem;
+    # TODO: Sub-optimal error message. Get Nix to support a memoization primop, or get Nix Flakes to support systems properly or get Nix Flakes to add a name to flakes.
+    _module.args.getSystem = system: config.allSystems.${system} or builtins.trace "using non-memoized system ${system}" config.perSystem system;
+  };
+
 }

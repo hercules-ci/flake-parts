@@ -2,7 +2,6 @@
 let
   inherit (lib)
     filterAttrs
-    genAttrs
     mapAttrs
     mkOption
     optionalAttrs
