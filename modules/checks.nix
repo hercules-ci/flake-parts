@@ -8,13 +8,19 @@ let
     optionalAttrs
     types
     ;
+  inherit (flake-modules-core-lib)
+    mkSubmoduleOptions
+    ;
 in
 {
   options = {
-    flake = {
+    flake = mkSubmoduleOptions {
       checks = mkOption {
         type = types.lazyAttrsOf (types.lazyAttrsOf types.package);
         default = { };
+        description = ''
+          Derivations to be built by nix flake check.
+        '';
       };
     };
   };
@@ -38,6 +44,9 @@ in
         checks = mkOption {
           type = types.lazyAttrsOf types.package;
           default = { };
+          description = ''
+            Derivations to be built by nix flake check.
+          '';
         };
       };
     };

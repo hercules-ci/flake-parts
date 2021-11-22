@@ -8,13 +8,19 @@ let
     optionalAttrs
     types
     ;
+  inherit (flake-modules-core-lib)
+    mkSubmoduleOptions
+    ;
 in
 {
   options = {
-    flake = {
+    flake = mkSubmoduleOptions {
       legacyPackages = mkOption {
         type = types.lazyAttrsOf (types.lazyAttrsOf types.anything);
         default = { };
+        description = ''
+          Per system, an attribute set of anything. This is also used by nix build .#<attrpath>.
+        '';
       };
     };
   };
@@ -38,6 +44,9 @@ in
         legacyPackages = mkOption {
           type = types.lazyAttrsOf types.anything;
           default = { };
+          description = ''
+            An attribute set of anything. This is also used by nix build .#<attrpath>.
+          '';
         };
       };
     };
