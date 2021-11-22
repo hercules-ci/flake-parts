@@ -2,7 +2,6 @@
 let
   inherit (lib)
     filterAttrs
-    genAttrs
     mapAttrs
     mkOption
     optionalAttrs
@@ -30,7 +29,7 @@ in
         (k: v: v.legacyPackages)
         (filterAttrs
           (k: v: v.legacyPackages != null)
-          (genAttrs config.systems config.perSystem)
+          config.allSystems
         );
 
     perInput = system: flake:

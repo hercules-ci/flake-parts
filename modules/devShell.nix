@@ -2,7 +2,6 @@
 let
   inherit (lib)
     filterAttrs
-    genAttrs
     mapAttrs
     mkOption
     optionalAttrs
@@ -25,13 +24,7 @@ in
     };
   };
   config = {
-    flake.devShell =
-      mapAttrs
-        (k: v: v.devShell)
-        (filterAttrs
-          (k: v: v.devShell != null)
-          (genAttrs config.systems config.perSystem)
-        );
+    flake.devShell = mapAttrs (k: v: v.devShell) config.allSystems;
 
     perInput = system: flake:
       optionalAttrs (flake?devShell.${system}) {
@@ -42,8 +35,8 @@ in
       _file = ./devShell.nix;
       options = {
         devShell = mkOption {
-          type = types.nullOr types.package;
-          default = null;
+          type = types.package;
+          default = throw "The default devShell was not configured for system ${system}. Please set it, or if you don't want to use the devShell attribute, set flake.devShell = lib.mkForce {};";
           description = ''
             A derivation that nix develop bases its environment on.
           '';
