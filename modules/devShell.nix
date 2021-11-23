@@ -36,6 +36,10 @@ in
       options = {
         devShell = mkOption {
           type = types.package;
+          # We don't have a way to unset devShell in the flake without computing
+          # the root of each allSystems module, so to improve laziness, the best
+          # choice seems to be to require a devShell and give the opportunity
+          # to unset it manually.
           default = throw "The default devShell was not configured for system ${system}. Please set it, or if you don't want to use the devShell attribute, set flake.devShell = lib.mkForce {};";
           description = ''
             A derivation that nix develop bases its environment on.
