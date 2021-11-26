@@ -1,9 +1,9 @@
 
-# Flake Module Core
+# Flake Modules Core
 
-_Foundational flake attributes represented using the module system._
+_Core of a distributed framework for writing Nix Flakes._
 
-`flake-modules-core` provides common options for an ecosystem of modules to extend.
+`flake-modules-core` provides the options that represent standard flake attributes and establishes a way of working with `system`. Opinionated features are provided by an ecosystem of modules that you can import.
 
 # Why Modules?
 
