@@ -4,6 +4,7 @@
     ./modules/checks.nix
     ./modules/darwinModules.nix
     ./modules/devShell.nix
+    ./modules/devShells.nix
     ./modules/flake.nix
     ./modules/legacyPackages.nix
     ./modules/nixosModules.nix
