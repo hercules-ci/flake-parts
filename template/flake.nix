@@ -1,5 +1,5 @@
 {
-  description = /* ... */;
+  description = "Description for the project";
 
   inputs = {
     flake-modules-core.url = "github:hercules-ci/flake-modules-core";
