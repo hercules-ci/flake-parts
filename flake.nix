@@ -7,11 +7,19 @@
 
   outputs = { self, nixpkgs, ... }: {
     lib = import ./lib.nix { inherit (nixpkgs) lib; };
-    defaultTemplate = {
-      path = ./template/default;
-      description = ''
-        A minimal flake using flake-modules-core.
-      '';
+    templates = {
+      default = {
+        path = ./template/default;
+        description = ''
+          A minimal flake using flake-modules-core.
+        '';
+      };
+      multi-module = {
+        path = ./template/multi-module;
+        description = ''
+          A minimal flake using flake-modules-core.
+        '';
+      };
     };
   };
 
