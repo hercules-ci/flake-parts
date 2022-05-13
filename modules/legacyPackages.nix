@@ -18,7 +18,7 @@ in
         type = types.lazyAttrsOf (types.lazyAttrsOf types.anything);
         default = { };
         description = ''
-          Per system, an attribute set of anything. This is also used by nix build .#<attrpath>.
+          Per system, an attribute set of anything. This is also used by <literal>nix build .#&lt;attrpath></literal>.
         '';
       };
     };
@@ -44,7 +44,7 @@ in
           type = types.lazyAttrsOf types.anything;
           default = { };
           description = ''
-            An attribute set of anything. This is also used by nix build .#<attrpath>.
+            An attribute set of anything. This is also used by <literal>nix build .#&lt;attrpath></literal>.
           '';
         };
       };

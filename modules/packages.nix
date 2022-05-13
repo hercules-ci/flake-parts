@@ -19,7 +19,7 @@ in
         default = { };
         description = ''
           Per system an attribute set of packages.
-          nix build .#<name> will build packages.<system>.<name>.
+          <literal>nix build .#&lt;name></literal> will build <literal>packages.&lt;system>.&lt;name></literal>.
         '';
       };
     };
@@ -45,8 +45,8 @@ in
           type = types.lazyAttrsOf types.package;
           default = { };
           description = ''
-            An attribute set of packages to be built by nix build .#<name>.
-            nix build .#<name> will build packages.<name>.
+            An attribute set of packages to be built by <literal>nix build .#&lt;name></literal>.
+            <literal>nix build .#&lt;name></literal> will build <literal>packages.&lt;name></literal>.
           '';
         };
       };

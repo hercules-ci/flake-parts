@@ -21,7 +21,7 @@ in
     };
 
     perInput = mkOption {
-      description = "Function from system to function from flake to system-specific attributes.";
+      description = "Function from system to function from flake to <literal>system</literal>-specific attributes.";
       type = types.functionTo (types.functionTo (types.lazyAttrsOf types.unspecified));
     };
 

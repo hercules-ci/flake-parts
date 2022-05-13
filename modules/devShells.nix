@@ -19,7 +19,7 @@ in
         default = { };
         description = ''
           Per system an attribute set of packages used as shells.
-          nix develop .#<name> will run devShells.<system>.<name>.
+          <literal>nix develop .#&lt;name></literal> will run <literal>devShells.&lt;system>.&lt;name></literal>.
         '';
       };
     };
@@ -45,8 +45,8 @@ in
           type = types.lazyAttrsOf types.package;
           default = { };
           description = ''
-            An attribute set of packages to be built by nix develop .#<name>.
-            nix build .#<name> will run devShells.<name>.
+            An attribute set of packages to be built by <literal>nix develop .#&lt;name></literal>.
+            <literal>nix build .#&lt;name></literal> will run <literal>devShells.&lt;name></literal>.
           '';
         };
       };

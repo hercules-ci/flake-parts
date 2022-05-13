@@ -48,7 +48,7 @@ in
         description = ''
           Programs runnable with nix run <literal>.#&lt;name></literal>.
         '';
-        example = lib.literalExample ''
+        example = lib.literalExpression or lib.literalExample ''
           {
             x86_64-linux.default.program = "''${config.packages.hello}/bin/hello";
           }
@@ -79,7 +79,7 @@ in
           description = ''
             Programs runnable with nix run <literal>.#&lt;name></literal>.
           '';
-          example = lib.literalExample ''
+          example = lib.literalExpression or lib.literalExample ''
             {
               default.program = "''${config.packages.hello}/bin/hello";
             }
