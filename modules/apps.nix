@@ -9,6 +9,7 @@ let
     ;
   inherit (flake-modules-core-lib)
     mkSubmoduleOptions
+    mkPerSystemOption
     ;
 
   programType = lib.types.coercedTo lib.types.package getExe lib.types.str;

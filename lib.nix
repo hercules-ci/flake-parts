@@ -35,7 +35,7 @@ let
         shorthandOnlyDefinesConfig = false;
       });
 
-    mkPerSystemModule =
+    mkPerSystemOption =
       module:
       mkOption {
         type = flake-modules-core-lib.mkPerSystemType module;
