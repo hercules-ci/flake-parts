@@ -1,10 +1,13 @@
-{ config, lib, self, ... }:
+{ config, lib, flake-modules-core-lib, self, ... }:
 let
   inherit (lib)
     genAttrs
     mapAttrs
     mkOption
     types
+    ;
+  inherit (flake-modules-core-lib)
+    mkPerSystemType
     ;
 
   rootConfig = config;
@@ -23,18 +26,13 @@ in
     };
 
     perSystem = mkOption {
-      description = "A function from system to flake-like attributes omitting the <system> attribute.";
-      type = types.functionTo (types.submoduleWith {
-        modules = [
-          ({ config, system, ... }: {
-            _file = ./perSystem.nix;
-            config = {
-              _module.args.inputs' = mapAttrs (k: rootConfig.perInput system) self.inputs;
-              _module.args.self' = rootConfig.perInput system self;
-            };
-          })
-        ];
-        shorthandOnlyDefinesConfig = false;
+      description = "A function from system to flake-like attributes omitting the <literal>&lt;system></literal> attribute.";
+      type = mkPerSystemType ({ config, system, ... }: {
+        _file = ./perSystem.nix;
+        config = {
+          _module.args.inputs' = mapAttrs (k: rootConfig.perInput system) self.inputs;
+          _module.args.self' = rootConfig.perInput system self;
+        };
       });
     };
 

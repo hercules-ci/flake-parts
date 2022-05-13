@@ -3,6 +3,7 @@ let
   inherit (lib)
     mkOption
     types
+    functionTo
     ;
 
   flake-modules-core-lib = {
@@ -26,6 +27,20 @@ let
           modules = [ { inherit options; } ];
         };
       };
+    
+    mkPerSystemType =
+      module:
+      types.functionTo (types.submoduleWith {
+        modules = [ module ];
+        shorthandOnlyDefinesConfig = false;
+      });
+
+    mkPerSystemModule =
+      module:
+      mkOption {
+        type = flake-modules-core-lib.mkPerSystemType module;
+      };
+
   };
 
 in
