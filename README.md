@@ -52,4 +52,4 @@ Now you can add the remaining module attributes like in the [the template](./tem
 
 # Example
 
-See [the template](./template/flake.nix).
+See [the template](./template/default/flake.nix).
