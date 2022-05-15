@@ -48,7 +48,7 @@ then slide `evalFlakeModule` between your outputs function head and body,
     ).config.flake;
 ```
 
-Now you can add the remaining module attributes like in the [the template](./template/flake.nix).
+Now you can add the remaining module attributes like in the [the template](./template/default/flake.nix).
 
 # Example
 
