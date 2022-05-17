@@ -9,6 +9,7 @@ let
     ;
   inherit (flake-modules-core-lib)
     mkSubmoduleOptions
+    mkPerSystemOption
     ;
 in
 {
@@ -23,6 +24,20 @@ in
         '';
       };
     };
+
+    perSystem = mkPerSystemOption
+      ({ config, system, ... }: {
+        options = {
+          devShells = mkOption {
+            type = types.lazyAttrsOf types.package;
+            default = { };
+            description = ''
+              An attribute set of packages to be built by <literal>nix develop .#&lt;name></literal>.
+              <literal>nix build .#&lt;name></literal> will run <literal>devShells.&lt;name></literal>.
+            '';
+          };
+        };
+      });
   };
   config = {
     flake.devShells =
@@ -37,19 +52,5 @@ in
       optionalAttrs (flake?devShells.${system}) {
         devShells = flake.devShells.${system};
       };
-
-    perSystem = system: { config, ... }: {
-      _file = ./devShells.nix;
-      options = {
-        devShells = mkOption {
-          type = types.lazyAttrsOf types.package;
-          default = { };
-          description = ''
-            An attribute set of packages to be built by <literal>nix develop .#&lt;name></literal>.
-            <literal>nix build .#&lt;name></literal> will run <literal>devShells.&lt;name></literal>.
-          '';
-        };
-      };
-    };
   };
 }
