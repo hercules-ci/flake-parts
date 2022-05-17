@@ -14,7 +14,7 @@ let
       module:
 
       lib.evalModules {
-        specialArgs = { inherit self flake-modules-core-lib; } // specialArgs;
+        specialArgs = { inherit self flake-modules-core-lib; inherit (self) inputs; } // specialArgs;
         modules = [ ./all-modules.nix module ];
       };
 
