@@ -9,6 +9,7 @@ let
     ;
   inherit (flake-modules-core-lib)
     mkSubmoduleOptions
+    mkPerSystemOption
     ;
 in
 {
@@ -22,6 +23,20 @@ in
         '';
       };
     };
+
+    perSystem = mkPerSystemOption ({ config, system, ... }: {
+      _file = ./checks.nix;
+      options = {
+        checks = mkOption {
+          type = types.lazyAttrsOf types.package;
+          default = { };
+          description = ''
+            Derivations to be built by nix flake check.
+          '';
+        };
+      };
+    });
+
   };
   config = {
     flake.checks =
@@ -37,17 +52,5 @@ in
         checks = flake.checks.${system};
       };
 
-    perSystem = system: { config, ... }: {
-      _file = ./checks.nix;
-      options = {
-        checks = mkOption {
-          type = types.lazyAttrsOf types.package;
-          default = { };
-          description = ''
-            Derivations to be built by nix flake check.
-          '';
-        };
-      };
-    };
   };
 }
