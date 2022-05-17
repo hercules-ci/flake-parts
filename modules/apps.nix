@@ -19,13 +19,13 @@ let
 
   getBin = x:
     if !x?outputSpecified || !x.outputSpecified
-      then x.bin or x.out or x
-      else x;
+    then x.bin or x.out or x
+    else x;
 
   appType = lib.types.submodule {
     options = {
       type = mkOption {
-        type = lib.types.enum ["app"];
+        type = lib.types.enum [ "app" ];
         default = "app";
         description = ''
           A type tag for <literal>apps</literal> consumers.
@@ -56,6 +56,25 @@ in
         '';
       };
     };
+
+    perSystem = mkPerSystemOption
+      ({ config, system, ... }: {
+        options = {
+          apps = mkOption {
+            type = types.lazyAttrsOf appType;
+            default = { };
+            description = ''
+              Programs runnable with nix run <literal>.#&lt;name></literal>.
+            '';
+            example = lib.literalExpression or lib.literalExample ''
+              {
+                default.program = "''${config.packages.hello}/bin/hello";
+              }
+            '';
+          };
+        };
+      });
+
   };
   config = {
     flake.apps =
@@ -71,22 +90,5 @@ in
         apps = flake.apps.${system};
       };
 
-    perSystem = system: { config, ... }: {
-      _file = ./apps.nix;
-      options = {
-        apps = mkOption {
-          type = types.lazyAttrsOf appType;
-          default = { };
-          description = ''
-            Programs runnable with nix run <literal>.#&lt;name></literal>.
-          '';
-          example = lib.literalExpression or lib.literalExample ''
-            {
-              default.program = "''${config.packages.hello}/bin/hello";
-            }
-          '';
-        };
-      };
-    };
   };
 }
