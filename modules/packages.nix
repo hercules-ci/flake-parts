@@ -9,6 +9,7 @@ let
     ;
   inherit (flake-modules-core-lib)
     mkSubmoduleOptions
+    mkPerSystemOption
     ;
 in
 {
@@ -23,6 +24,20 @@ in
         '';
       };
     };
+
+    perSystem = mkPerSystemOption ({ config, ... }: {
+      _file = ./packages.nix;
+      options = {
+        packages = mkOption {
+          type = types.lazyAttrsOf types.package;
+          default = { };
+          description = ''
+            An attribute set of packages to be built by <literal>nix build .#&lt;name></literal>.
+            <literal>nix build .#&lt;name></literal> will build <literal>packages.&lt;name></literal>.
+          '';
+        };
+      };
+    });
   };
   config = {
     flake.packages =
@@ -38,18 +53,5 @@ in
         packages = flake.packages.${system};
       };
 
-    perSystem = system: { config, ... }: {
-      _file = ./packages.nix;
-      options = {
-        packages = mkOption {
-          type = types.lazyAttrsOf types.package;
-          default = { };
-          description = ''
-            An attribute set of packages to be built by <literal>nix build .#&lt;name></literal>.
-            <literal>nix build .#&lt;name></literal> will build <literal>packages.&lt;name></literal>.
-          '';
-        };
-      };
-    };
   };
 }
