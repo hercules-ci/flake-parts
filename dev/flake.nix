@@ -8,6 +8,8 @@
   };
 
   outputs = { self, ... }:
-  {
-  };
+    {
+      # Without good or dev outputs, we only use flakes for inputs here.
+      # The dev tooling is in ./flake-module.nix
+    };
 }
