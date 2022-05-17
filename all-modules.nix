@@ -7,6 +7,7 @@
     ./modules/devShells.nix
     ./modules/flake.nix
     ./modules/legacyPackages.nix
+    ./modules/nixosConfigurations.nix
     ./modules/nixosModules.nix
     ./modules/overlay.nix
     ./modules/packages.nix
