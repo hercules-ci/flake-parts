@@ -15,18 +15,51 @@
         "type": "github"
       }
     },
-    "nixpkgs": {
+    "hercules-ci-effects": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
       "locked": {
-        "lastModified": 1652734403,
-        "narHash": "sha256-pIp7mRuYQd4JY2Ih4QaDjKVFgu7f1yHRRAvpb/rU9Mg=",
+        "lastModified": 1653415319,
+        "narHash": "sha256-h+YUX7ZYujf73KL1R07LsEnhV7uV8oxSKEhH4bDj0Jc=",
         "owner": "hercules-ci",
-        "repo": "nixpkgs",
-        "rev": "0b02135d3bdf49f9154f60e7a4c9d54d5e0ee70d",
+        "repo": "hercules-ci-effects",
+        "rev": "1f904af1824e7393702daaf40a8fed56ebead0d7",
         "type": "github"
       },
       "original": {
         "owner": "hercules-ci",
-        "ref": "functionTo-properly",
+        "repo": "hercules-ci-effects",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1647297614,
+        "narHash": "sha256-ulGq3W5XsrBMU/u5k9d4oPy65pQTkunR4HKKtTq0RwY=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "73ad5f9e147c0d2a2061f1d4bd91e05078dc0b58",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1653465299,
+        "narHash": "sha256-+1jyM4dsppYFgiJf+VkAAS/l5iF0y5J7D2l1fLzT8DA=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "5862243e1ab8c0a19cb448f523c27c167dcd826b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -55,7 +88,8 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
+        "hercules-ci-effects": "hercules-ci-effects",
+        "nixpkgs": "nixpkgs_2",
         "pre-commit-hooks-nix": "pre-commit-hooks-nix"
       }
     }
