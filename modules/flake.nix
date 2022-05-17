@@ -13,7 +13,7 @@ in
     flake = mkOption {
       type = types.submoduleWith {
         modules = [
-          { freeformType = types.lazyAttrsOf types.anything; }
+          { freeformType = types.lazyAttrsOf types.raw; }
         ];
       };
       description = ''
