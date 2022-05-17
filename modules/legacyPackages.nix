@@ -9,6 +9,7 @@ let
     ;
   inherit (flake-modules-core-lib)
     mkSubmoduleOptions
+    mkPerSystemOption
     ;
 in
 {
@@ -22,7 +23,20 @@ in
         '';
       };
     };
+
+    perSystem = mkPerSystemOption ({ config, ... }: {
+      options = {
+        legacyPackages = mkOption {
+          type = types.lazyAttrsOf types.anything;
+          default = { };
+          description = ''
+            An attribute set of anything. This is also used by <literal>nix build .#&lt;attrpath></literal>.
+          '';
+        };
+      };
+    });
   };
+
   config = {
     flake.legacyPackages =
       mapAttrs
@@ -37,17 +51,5 @@ in
         legacyPackages = flake.legacyPackages.${system};
       };
 
-    perSystem = system: { config, ... }: {
-      _file = ./legacyPackages.nix;
-      options = {
-        legacyPackages = mkOption {
-          type = types.lazyAttrsOf types.anything;
-          default = { };
-          description = ''
-            An attribute set of anything. This is also used by <literal>nix build .#&lt;attrpath></literal>.
-          '';
-        };
-      };
-    };
   };
 }
