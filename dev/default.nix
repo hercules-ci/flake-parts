@@ -9,4 +9,4 @@ let
     { inherit self; }
     ./flake-module.nix;
 in
-  self.config.flake // { inherit (flake) inputs; }
+self.config.flake // { inherit (flake) inputs; }

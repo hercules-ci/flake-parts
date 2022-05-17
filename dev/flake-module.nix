@@ -20,6 +20,7 @@ flakeModuleArgs@{ config, lib, inputs, ... }:
     pre-commit = {
       inherit pkgs; # should make this default to the one it can get via follows
       settings = {
+        hooks.nixpkgs-fmt.enable = true;
       };
     };
 
@@ -43,7 +44,7 @@ flakeModuleArgs@{ config, lib, inputs, ... }:
   flake = {
     options.herculesCI = lib.mkOption { type = lib.types.raw; };
     config.herculesCI = {
-      onPush.default.outputs = { 
+      onPush.default.outputs = {
         inherit (config.flake) packages checks;
       };
     };

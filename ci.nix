@@ -4,7 +4,8 @@
 let
   flake = import ./dev;
   inherit (flake.inputs.nixpkgs) lib;
-in {
+in
+{
   inherit (flake) herculesCI;
 } // {
   checks = lib.recurseIntoAttrs flake.checks.${builtins.currentSystem};

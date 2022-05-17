@@ -24,10 +24,10 @@ let
       options:
       mkOption {
         type = types.submoduleWith {
-          modules = [ { inherit options; } ];
+          modules = [{ inherit options; }];
         };
       };
-    
+
     mkPerSystemType =
       module:
       types.functionTo (types.submoduleWith {
