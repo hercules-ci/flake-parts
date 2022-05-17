@@ -1,14 +1,28 @@
-flakeModuleArgs@{ config, lib, ... }:
+flakeModuleArgs@{ config, lib, inputs, ... }:
 
 {
   imports = [
+    inputs.pre-commit-hooks-nix.flakeModule
   ];
   systems = [ "x86_64-linux" "aarch64-darwin" ];
   perSystem = system: { config, self', inputs', pkgs, ... }: {
     _module.args.pkgs = inputs'.nixpkgs.legacyPackages;
+
     devShells.default = pkgs.mkShell {
-      nativeBuildInputs = [ pkgs.nixpkgs-fmt ];
+      nativeBuildInputs = [
+        pkgs.nixpkgs-fmt
+        pkgs.pre-commit
+      ];
+      shellHook = ''
+        ${config.pre-commit.installationScript}
+      '';
     };
+    pre-commit = {
+      inherit pkgs; # should make this default to the one it can get via follows
+      settings = {
+      };
+    };
+
     packages = {
       inherit (pkgs.nixosOptionsDoc { inherit (flakeModuleArgs) options; })
         optionsDocBook;

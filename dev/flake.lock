@@ -1,12 +1,27 @@
 {
   "nodes": {
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1619345332,
+        "narHash": "sha256-qHnQkEp1uklKTpx3MvKtY6xzgcqXDsz5nLilbbuL+3A=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "2ebf2558e5bf978c7fb8ea927dfaed8fefab2e28",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1652425756,
-        "narHash": "sha256-3+5j3ZU43oC5PxRfGDQ6xs5sYnypS5GBhVP6uf7PVGM=",
+        "lastModified": 1652734403,
+        "narHash": "sha256-pIp7mRuYQd4JY2Ih4QaDjKVFgu7f1yHRRAvpb/rU9Mg=",
         "owner": "hercules-ci",
         "repo": "nixpkgs",
-        "rev": "81a0a8be297a88f338ee0fd90c330cd94b4a55bd",
+        "rev": "0b02135d3bdf49f9154f60e7a4c9d54d5e0ee70d",
         "type": "github"
       },
       "original": {
@@ -16,9 +31,32 @@
         "type": "github"
       }
     },
+    "pre-commit-hooks-nix": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1638351750,
+        "narHash": "sha256-90OHC+11DIHD1QyMIPUuM3n6zjH5Mhc8RBZa0h8969A=",
+        "owner": "hercules-ci",
+        "repo": "pre-commit-hooks.nix",
+        "rev": "3bb289628867ac40fc9e7c514f8266b1ce8c0910",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "ref": "flakeModule",
+        "repo": "pre-commit-hooks.nix",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "pre-commit-hooks-nix": "pre-commit-hooks-nix"
       }
     }
   },
