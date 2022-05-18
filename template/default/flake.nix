@@ -19,12 +19,13 @@
 
         ];
         systems = [ "x86_64-linux" "aarch64-darwin" ];
-        perSystem = system: { config, self', inputs', ... }: {
+        perSystem = system: { config, self', inputs', pkgs, ... }: {
           # Per-system attributes can be defined here. The self' and inputs'
           # module parameters provide easy access to attributes of the same
           # system.
 
-          packages.hello = inputs'.nixpkgs.legacyPackages.hello;
+          # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
+          packages.hello = pkgs.hello;
         };
         flake = {
           # The usual flake attributes can be defined here, including system-
