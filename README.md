@@ -34,18 +34,15 @@ Otherwise, add the input,
     flake-modules-core.inputs.nixpkgs.follows = "nixpkgs";
 ```
 
-then slide `evalFlakeModule` between your outputs function head and body,
+then slide `mkFlake` between your outputs function head and body,
 
 ```
   outputs = { self, flake-modules-core, ... }:
-    (flake-modules-core.lib.evalFlakeModule
-      { inherit self; }
-      {
-        flake = {
-          # Put your original flake attributes here.
-        }
+    flake-modules-core.lib.mkFlake { inherit self; } {
+      flake = {
+        # Put your original flake attributes here.
       }
-    ).config.flake;
+    };
 ```
 
 Now you can add the remaining module attributes like in the [the template](./template/default/flake.nix).
