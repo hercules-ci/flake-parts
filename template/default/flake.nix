@@ -8,7 +8,7 @@
   };
 
   outputs = { self, flake-modules-core, ... }:
-    flake-modules-core.mkFlake { inherit self; } {
+    flake-modules-core.lib.mkFlake { inherit self; } {
       imports = [
         # To import a flake module
         # 1. Add foo to inputs
