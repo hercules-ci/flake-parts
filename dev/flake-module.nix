@@ -6,7 +6,6 @@ flakeModuleArgs@{ config, lib, inputs, ... }:
   ];
   systems = [ "x86_64-linux" "aarch64-darwin" ];
   perSystem = system: { config, self', inputs', pkgs, ... }: {
-    _module.args.pkgs = inputs'.nixpkgs.legacyPackages;
 
     devShells.default = pkgs.mkShell {
       nativeBuildInputs = [
@@ -17,6 +16,7 @@ flakeModuleArgs@{ config, lib, inputs, ... }:
         ${config.pre-commit.installationScript}
       '';
     };
+
     pre-commit = {
       inherit pkgs; # should make this default to the one it can get via follows
       settings = {

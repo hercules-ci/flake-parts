@@ -9,6 +9,7 @@
     ./modules/legacyPackages.nix
     ./modules/nixosConfigurations.nix
     ./modules/nixosModules.nix
+    ./modules/nixpkgs.nix
     ./modules/overlay.nix
     ./modules/packages.nix
     ./modules/perSystem.nix

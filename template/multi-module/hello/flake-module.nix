@@ -1,10 +1,10 @@
 # Definitions can be imported from a separate file like this one
 
 { self, ... }: {
-  perSystem = system: { config, self', inputs', ... }: {
+  perSystem = system: { config, self', inputs', pkgs, ... }: {
     # Definitions like this are entirely equivalent to the ones
     # you may have directly in flake.nix.
-    packages.hello = inputs'.nixpkgs.legacyPackages.hello;
+    packages.hello = pkgs.hello;
   };
   flake = {
     nixosModules.hello = { pkgs, ... }: {
