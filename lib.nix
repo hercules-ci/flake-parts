@@ -38,6 +38,9 @@ let
         modules = [ ./all-modules.nix module ];
       };
 
+    mkFlake = args: module:
+      (flake-modules-core-lib.evalFlakeModule args module).config.flake;
+
     # For extending options in an already declared submodule.
     # Workaround for https://github.com/NixOS/nixpkgs/issues/146882
     mkSubmoduleOptions =
