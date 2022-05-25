@@ -13,7 +13,7 @@
 #
 {
   config = {
-    perSystem = _: { inputs', lib, ... }: {
+    perSystem = { inputs', lib, ... }: {
       config = {
         _module.args.pkgs = lib.mkOptionDefault (
           builtins.seq
