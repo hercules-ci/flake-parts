@@ -1,4 +1,4 @@
-{ config, lib, flake-modules-core-lib, self, ... }:
+{ config, lib, flake-parts-lib, self, ... }:
 let
   inherit (lib)
     genAttrs
@@ -6,7 +6,7 @@ let
     mkOption
     types
     ;
-  inherit (flake-modules-core-lib)
+  inherit (flake-parts-lib)
     mkPerSystemType
     ;
 

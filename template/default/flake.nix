@@ -2,13 +2,13 @@
   description = "Description for the project";
 
   inputs = {
-    flake-modules-core.url = "github:hercules-ci/flake-modules-core";
-    flake-modules-core.inputs.nixpkgs.follows = "nixpkgs";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs.follows = "nixpkgs";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, flake-modules-core, ... }:
-    flake-modules-core.lib.mkFlake { inherit self; } {
+  outputs = { self, flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit self; } {
       imports = [
         # To import a flake module
         # 1. Add foo to inputs

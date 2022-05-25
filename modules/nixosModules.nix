@@ -1,4 +1,4 @@
-{ config, self, lib, flake-modules-core-lib, ... }:
+{ config, self, lib, flake-parts-lib, ... }:
 let
   inherit (lib)
     filterAttrs
@@ -7,7 +7,7 @@ let
     optionalAttrs
     types
     ;
-  inherit (flake-modules-core-lib)
+  inherit (flake-parts-lib)
     mkSubmoduleOptions
     ;
 in
