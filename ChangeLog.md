@@ -27,3 +27,5 @@
     ```
 
  - `flake-modules-core` is now called `flake-parts`.
+
+ - `flake.overlay` has been removed in favor of `flake.overlays.default`.
