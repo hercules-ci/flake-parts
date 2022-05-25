@@ -1,5 +1,5 @@
 { ... }: {
-  perSystem = system: { config, self', inputs', pkgs, lib, ... }:
+  perSystem = { config, self', inputs', pkgs, lib, ... }:
     let
       inherit (lib) filter any hasPrefix concatMap removePrefix;
 

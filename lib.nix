@@ -2,7 +2,16 @@
 let
   inherit (lib)
     mkOption
+    mkOptionType
+    defaultFunctor
+    isAttrs
+    isFunction
+    showOption
     types
+    ;
+  inherit (lib.types)
+    path
+    submoduleWith
     ;
 
   # Polyfill functionTo to make sure it has type merging.
@@ -25,6 +34,32 @@ let
         functor = (lib.defaultFunctor "functionTo") // { type = functionTo; wrapped = elemType; };
         nestedTypes.elemType = elemType;
       };
+
+  # Polyfill https://github.com/NixOS/nixpkgs/pull/163617
+  deferredModuleWith = lib.deferredModuleWith or (
+    attrs@{ staticModules ? [ ] }: mkOptionType {
+      name = "deferredModule";
+      description = "module";
+      check = x: isAttrs x || isFunction x || path.check x;
+      merge = loc: defs: staticModules ++ map (def: lib.setDefaultModuleLocation "${def.file}, via option ${showOption loc}" def.value) defs;
+      inherit (submoduleWith { modules = staticModules; })
+        getSubOptions
+        getSubModules;
+      substSubModules = m: deferredModuleWith (attrs // {
+        staticModules = m;
+      });
+      functor = defaultFunctor "deferredModuleWith" // {
+        type = deferredModuleWith;
+        payload = {
+          inherit staticModules;
+        };
+        binOp = lhs: rhs: {
+          staticModules = lhs.staticModules ++ rhs.staticModules;
+        };
+      };
+    }
+  );
+
 
   flake-parts-lib = {
     evalFlakeModule =
@@ -53,10 +88,9 @@ let
 
     mkPerSystemType =
       module:
-      functionTo (types.submoduleWith {
-        modules = [ module ];
-        shorthandOnlyDefinesConfig = false;
-      });
+      deferredModuleWith {
+        staticModules = [ module ];
+      };
 
     mkPerSystemOption =
       module:

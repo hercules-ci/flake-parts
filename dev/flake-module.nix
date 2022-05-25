@@ -6,7 +6,7 @@
     ../site/flake-module.nix
   ];
   systems = [ "x86_64-linux" "aarch64-darwin" ];
-  perSystem = system: { config, self', inputs', pkgs, ... }: {
+  perSystem = { config, self', inputs', pkgs, ... }: {
 
     devShells.default = pkgs.mkShell {
       nativeBuildInputs = [
