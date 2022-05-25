@@ -1,8 +1,9 @@
-flakeModuleArgs@{ config, lib, inputs, ... }:
+{ config, lib, inputs, ... }:
 
 {
   imports = [
     inputs.pre-commit-hooks-nix.flakeModule
+    ../site/flake-module.nix
   ];
   systems = [ "x86_64-linux" "aarch64-darwin" ];
   perSystem = system: { config, self', inputs', pkgs, ... }: {
@@ -11,6 +12,9 @@ flakeModuleArgs@{ config, lib, inputs, ... }:
       nativeBuildInputs = [
         pkgs.nixpkgs-fmt
         pkgs.pre-commit
+        pkgs.hci
+        pkgs.netlify-cli
+        pkgs.pandoc
       ];
       shellHook = ''
         ${config.pre-commit.installationScript}
@@ -24,28 +28,25 @@ flakeModuleArgs@{ config, lib, inputs, ... }:
       };
     };
 
-    packages = {
-      inherit (pkgs.nixosOptionsDoc { inherit (flakeModuleArgs) options; })
-        optionsDocBook;
-      optionsMarkdown = pkgs.runCommand "options-markdown"
-        {
-          inherit (config.packages) optionsDocBook;
-          nativeBuildInputs = [ pkgs.pandoc ];
-        } ''
-        mkdir $out
-        pandoc \
-          --from docbook \
-          --to markdown \
-          --output $out/options.md \
-          $optionsDocBook
-      '';
-    };
   };
   flake = {
     options.herculesCI = lib.mkOption { type = lib.types.raw; };
-    config.herculesCI = {
+    config.herculesCI = { branch, ... }: {
       onPush.default.outputs = {
         inherit (config.flake) packages checks;
+        effects =
+          let
+            pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
+            effects = inputs.hercules-ci-effects.lib.withPkgs pkgs;
+          in
+          {
+            netlifyDeploy = effects.runIf (branch == "main") (effects.netlifyDeploy {
+              content = config.flake.packages.x86_64-linux.siteContent;
+              secretName = "default-netlify";
+              siteId = "29a153b1-3698-433c-bc73-62415efb8117";
+              productionDeployment = true;
+            });
+          };
       };
     };
 
