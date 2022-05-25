@@ -11,13 +11,13 @@
       default = {
         path = ./template/default;
         description = ''
-          A minimal flake using flake-modules-core.
+          A minimal flake using flake-parts.
         '';
       };
       multi-module = {
         path = ./template/multi-module;
         description = ''
-          A minimal flake using flake-modules-core.
+          A minimal flake using flake-parts.
         '';
       };
     };

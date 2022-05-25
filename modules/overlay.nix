@@ -1,10 +1,10 @@
-{ config, lib, flake-modules-core-lib, ... }:
+{ config, lib, flake-parts-lib, ... }:
 let
   inherit (lib)
     mkOption
     types
     ;
-  inherit (flake-modules-core-lib)
+  inherit (flake-parts-lib)
     mkSubmoduleOptions
     ;
 in

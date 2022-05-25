@@ -57,8 +57,8 @@
           };
           coreOptions = optionsDoc {
             title = "Core Options";
-            sourceName = "flake-modules-core";
-            baseUrl = "https://github.com/hercules-ci/flake-modules-core/blob/main";
+            sourceName = "flake-parts";
+            baseUrl = "https://github.com/hercules-ci/flake-parts/blob/main";
             sourcePath = ../.;
           };
           buildPhase = ''

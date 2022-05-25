@@ -26,7 +26,7 @@ let
         nestedTypes.elemType = elemType;
       };
 
-  flake-modules-core-lib = {
+  flake-parts-lib = {
     evalFlakeModule =
       { self
       , specialArgs ? { }
@@ -34,12 +34,12 @@ let
       module:
 
       lib.evalModules {
-        specialArgs = { inherit self flake-modules-core-lib; inherit (self) inputs; } // specialArgs;
+        specialArgs = { inherit self flake-parts-lib; inherit (self) inputs; } // specialArgs;
         modules = [ ./all-modules.nix module ];
       };
 
     mkFlake = args: module:
-      (flake-modules-core-lib.evalFlakeModule args module).config.flake;
+      (flake-parts-lib.evalFlakeModule args module).config.flake;
 
     # For extending options in an already declared submodule.
     # Workaround for https://github.com/NixOS/nixpkgs/issues/146882
@@ -61,10 +61,10 @@ let
     mkPerSystemOption =
       module:
       mkOption {
-        type = flake-modules-core-lib.mkPerSystemType module;
+        type = flake-parts-lib.mkPerSystemType module;
       };
 
   };
 
 in
-flake-modules-core-lib
+flake-parts-lib

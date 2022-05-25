@@ -1,9 +1,9 @@
 
-# Flake Modules Core
+# Flake Parts
 
 _Core of a distributed framework for writing Nix Flakes._
 
-`flake-modules-core` provides the options that represent standard flake attributes and establishes a way of working with `system`. Opinionated features are provided by an ecosystem of modules that you can import.
+`flake-parts` provides the options that represent standard flake attributes and establishes a way of working with `system`. Opinionated features are provided by an ecosystem of modules that you can import.
 
 # Why Modules?
 
@@ -13,7 +13,7 @@ into modules that can be shared.
 It reduces the proliferation of custom Nix glue code, similar to what the
 module system has done for NixOS configurations.
 
-Unlike NixOS, but following Flakes' spirit, `flake-modules-core` is not a
+Unlike NixOS, but following Flakes' spirit, `flake-parts` is not a
 monorepo with the implied goal of absorbing all of open source, but rather
 a single module that other repositories can build upon, while ensuring a
 baseline level of compatibility: which core attribute make up a flake and
@@ -24,21 +24,21 @@ how these are represented as module options.
 If your project does not have a flake yet:
 
 ```console
-nix flake init -t github:hercules-ci/flake-modules-core
+nix flake init -t github:hercules-ci/flake-parts
 ```
 
 Otherwise, add the input,
 
 ```
-    flake-modules-core.url = "github:hercules-ci/flake-modules-core";
-    flake-modules-core.inputs.nixpkgs.follows = "nixpkgs";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs.follows = "nixpkgs";
 ```
 
 then slide `mkFlake` between your outputs function head and body,
 
 ```
-  outputs = { self, flake-modules-core, ... }:
-    flake-modules-core.lib.mkFlake { inherit self; } {
+  outputs = { self, flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit self; } {
       flake = {
         # Put your original flake attributes here.
       }
@@ -50,3 +50,7 @@ Now you can add the remaining module attributes like in the [the template](./tem
 # Example
 
 See [the template](./template/default/flake.nix).
+
+# Options Reference
+
+See [flake.parts](https://flake.parts/options.html)

@@ -1,11 +1,11 @@
-{ config, lib, flake-modules-core-lib, ... }:
+{ config, lib, flake-parts-lib, ... }:
 let
   inherit (lib)
     mkOption
     types
     literalExpression
     ;
-  inherit (flake-modules-core-lib)
+  inherit (flake-parts-lib)
     mkSubmoduleOptions
     ;
 in
