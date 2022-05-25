@@ -10,7 +10,7 @@
     ./modules/nixosConfigurations.nix
     ./modules/nixosModules.nix
     ./modules/nixpkgs.nix
-    ./modules/overlay.nix
+    ./modules/overlays.nix
     ./modules/packages.nix
     ./modules/perSystem.nix
   ];
