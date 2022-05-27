@@ -54,3 +54,55 @@ See [the template](./template/default/flake.nix).
 # Options Reference
 
 See [flake.parts](https://flake.parts/options.html)
+
+# Top-level module parameters
+
+ -  `config`, `options`, `lib`, ...: standard module system parameters.
+
+ -  `getSystem`: function from system string to the `config` of the appropriate `perSystem`.
+
+ -  `withSystem`: enter the scope of a system. Worked example:
+
+    ```nix
+    { withSystem, ... }:
+    {
+      # perSystem = ...;
+
+      nixosConfigurations.foo = withSystem "x86_64-linux" (ctx@{ pkgs, ... }:
+        pkgs.nixos ({ config, lib, packages, pkgs, ... }: {
+          _module.args.packages = ctx.config.packages;
+          imports = [ ./nixos-configuration.nix ];
+          services.nginx.enable = true;
+          environment.systemPackages = [
+            packages.hello
+          ];
+        }));
+    }
+    ```
+
+# `perSystem` module parameters
+
+ -  `pkgs`: Defaults to `inputs.nixpkgs.legacyPackages.${system}`. Can be set via `config._module.args.pkgs`.
+
+ -  `inputs'`: The flake `inputs` parameter, but with `system` pre-selected. Note the last character of the name, `'`, pronounced "prime".
+
+    `system` selection is handled by the extensible function [`perInput`](https://flake.parts/options.html#opt-perInput).
+
+ -  `self'`: The flake `self` parameter, but with `system` pre-selected. This might trigger an infinite recursion (#22), so prefer `config`.
+
+ -  `system`: The system parameter, describing the architecture and platform of
+    the host system (where the thing will run).
+
+# Equivalences
+
+ - Getting the locally defined `hello` package on/for an `x86_64-linux` host:
+   - `nix build #hello` (assuming [`systems`](https://flake.parts/options.html#opt-systems) has `x86_64-linux`)
+   - `config.packages.hello` (if `config` is the `perSystem` module argument)
+   - `allSystems."x86_64-linux".packages.hello` (assuming [`systems`](https://flake.parts/options.html#opt-systems) has `x86_64-linux`)
+   - `(getSystem "x86_64-linux").packages.hello)`
+   - `withSystem "x86_64-linux" ({ config, ... }: config.packages.hello)`
+
+Why so many ways?
+
+1. Flakes counterintuitively handles `system` by enumerating all of them in attribute sets. `flake-parts` does not impose this restriction, but does need to support it.
+2. `flake-parts` provides an extensible structure that is richer than the flakes interface alone. 
