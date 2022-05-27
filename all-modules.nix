@@ -13,5 +13,6 @@
     ./modules/overlays.nix
     ./modules/packages.nix
     ./modules/perSystem.nix
+    ./modules/withSystem.nix
   ];
 }
