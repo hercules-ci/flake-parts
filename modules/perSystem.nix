@@ -18,6 +18,7 @@ in
     systems = mkOption {
       description = "All the system types to enumerate in the flake.";
       type = types.listOf types.str;
+      default = lib.systems.flakeExposed;
     };
 
     perInput = mkOption {

@@ -1,3 +1,6 @@
+# Now
+
+- `perSystem`: Set `systems` argument by default to `nixpkgs.lib.systems.flakeExposed`
 
 # 2022-05-25
 
