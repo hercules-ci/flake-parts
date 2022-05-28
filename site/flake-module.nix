@@ -61,8 +61,28 @@
             baseUrl = "https://github.com/hercules-ci/flake-parts/blob/main";
             sourcePath = ../.;
           };
+          # pandoc
+          htmlBefore = ''
+            <html>
+            <head>
+            <title>Options</title>
+            <style type="text/css">
+              a:target { background-color: rgba(239,255,0,0.5); }
+              body {
+                max-width: 40em;
+                margin-left: auto;
+                margin-right: auto;
+              }
+            </style>
+            </head>
+            <body>
+          '';
+          htmlAfter = ''
+            </body>
+            </html>
+          '';
           buildPhase = ''
-            pandoc --verbose --from docbook --to html5 $coreOptions >options.html
+            (echo "$htmlBefore"; pandoc --verbose --from docbook --to html5 $coreOptions; echo "$htmlAfter"; ) >options.html
           '';
           installPhase = ''
             mkdir -p $out

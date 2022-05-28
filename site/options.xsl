@@ -19,11 +19,8 @@
   </xsl:template>
   <xsl:template match="db:varlistentry">
     <section>
-      <xsl:attribute name="xml:id">
-        <xsl:value-of select="db:term/@xml:id"/>
-      </xsl:attribute>
       <title>
-        <xsl:copy-of select="db:term/db:option"/>
+        <link xlink:href="#{db:term/@xml:id}" xml:id="{db:term/@xml:id}"><xsl:copy-of select="db:term/db:option"/></link>
       </title>
       <xsl:apply-templates select="db:listitem/*"/>
     </section>

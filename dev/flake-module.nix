@@ -40,12 +40,12 @@
             effects = inputs.hercules-ci-effects.lib.withPkgs pkgs;
           in
           {
-            netlifyDeploy = effects.runIf (branch == "main") (effects.netlifyDeploy {
+            netlifyDeploy = effects.netlifyDeploy {
               content = config.flake.packages.x86_64-linux.siteContent;
               secretName = "default-netlify";
               siteId = "29a153b1-3698-433c-bc73-62415efb8117";
-              productionDeployment = true;
-            });
+              productionDeployment = branch == "main";
+            };
           };
       };
     };
