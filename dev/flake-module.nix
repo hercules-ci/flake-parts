@@ -1,8 +1,9 @@
-{ config, lib, inputs, ... }:
+{ config, lib, inputs, withSystem, ... }:
 
 {
   imports = [
     inputs.pre-commit-hooks-nix.flakeModule
+    inputs.hercules-ci-effects.flakeModule
     ../site/flake-module.nix
   ];
   systems = [ "x86_64-linux" "aarch64-darwin" ];
@@ -30,23 +31,21 @@
 
   };
   flake = {
+    # Because of ./README.md, we can't use the built-in flake support, including
+    # the `effects` flake attribute. We have to define `herculesCI` ourselves.
     options.herculesCI = lib.mkOption { type = lib.types.raw; };
     config.herculesCI = { branch, ... }: {
       onPush.default.outputs = {
         inherit (config.flake) packages checks;
         effects =
-          let
-            pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
-            effects = inputs.hercules-ci-effects.lib.withPkgs pkgs;
-          in
-          {
+          withSystem "x86_64-linux" ({ config, pkgs, effects, ... }: {
             netlifyDeploy = effects.netlifyDeploy {
-              content = config.flake.packages.x86_64-linux.siteContent;
+              content = config.packages.siteContent;
               secretName = "default-netlify";
               siteId = "29a153b1-3698-433c-bc73-62415efb8117";
               productionDeployment = branch == "main";
             };
-          };
+          });
       };
     };
 
