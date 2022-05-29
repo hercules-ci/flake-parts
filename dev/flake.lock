@@ -73,11 +73,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1653494825,
-        "narHash": "sha256-hMhnHZGRlJBX3yWIvxuYIBo4g+XQy/DJ4z7ti0IX7x0=",
+        "lastModified": 1653840245,
+        "narHash": "sha256-6bqmsp5r+Ct7Il09M40WeRDBhjmUe56RhIT0RZPY+NE=",
         "owner": "hercules-ci",
         "repo": "pre-commit-hooks.nix",
-        "rev": "89b64b7aca69fbd2957232d6a5a36bb93ad59d4b",
+        "rev": "596dac761042d9ba90a507d43ad506cb952c984d",
         "type": "github"
       },
       "original": {

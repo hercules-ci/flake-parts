@@ -1,10 +1,14 @@
-{ ... }: {
+{ inputs, ... }: {
   perSystem = { config, self', inputs', pkgs, lib, ... }:
     let
       inherit (lib) filter any hasPrefix concatMap removePrefix;
 
       libNix = import ../lib.nix { inherit lib; };
-      eval = libNix.evalFlakeModule { self = { }; } { };
+      eval = libNix.evalFlakeModule { self = { inputs = { inherit (inputs) nixpkgs; }; }; } {
+        imports = [
+          inputs.pre-commit-hooks-nix.flakeModule
+        ];
+      };
       opts = eval.options;
 
       filterTransformOptions = { sourceName, sourcePath, baseUrl }:
@@ -61,6 +65,13 @@
             baseUrl = "https://github.com/hercules-ci/flake-parts/blob/main";
             sourcePath = ../.;
           };
+          # TODO make this a dynamic input
+          pre_commit_hooks_nixOptions = optionsDoc {
+            title = "pre-commit-hooks.nix";
+            sourceName = "pre-commit-hooks.nix";
+            baseUrl = "https://github.com/hercules-ci/pre-commit-hooks.nix/blob/flakeModule";
+            sourcePath = inputs.pre-commit-hooks-nix;
+          };
           # pandoc
           htmlBefore = ''
             <html>
@@ -82,7 +93,10 @@
             </html>
           '';
           buildPhase = ''
-            (echo "$htmlBefore"; pandoc --verbose --from docbook --to html5 $coreOptions; echo "$htmlAfter"; ) >options.html
+            ( echo "$htmlBefore";
+              pandoc --verbose --from docbook --to html5 $coreOptions;
+              pandoc --verbose --from docbook --to html5 $pre_commit_hooks_nixOptions;
+              echo "$htmlAfter"; ) >options.html
           '';
           installPhase = ''
             mkdir -p $out
