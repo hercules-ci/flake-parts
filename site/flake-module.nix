@@ -7,6 +7,7 @@
       eval = libNix.evalFlakeModule { self = { inputs = { inherit (inputs) nixpkgs; }; }; } {
         imports = [
           inputs.pre-commit-hooks-nix.flakeModule
+          inputs.hercules-ci-effects.flakeModule
         ];
       };
       opts = eval.options;
@@ -72,6 +73,13 @@
             baseUrl = "https://github.com/hercules-ci/pre-commit-hooks.nix/blob/flakeModule";
             sourcePath = inputs.pre-commit-hooks-nix;
           };
+          # TODO make this a dynamic input
+          hercules_ci_effectsOptions = optionsDoc {
+            title = "hercules-ci-effects";
+            sourceName = "hercules-ci-effects";
+            baseUrl = "https://github.com/hercules-ci/hercules-ci-effects/blob/master";
+            sourcePath = inputs.hercules-ci-effects;
+          };
           # pandoc
           htmlBefore = ''
             <html>
@@ -95,6 +103,7 @@
           buildPhase = ''
             ( echo "$htmlBefore";
               pandoc --verbose --from docbook --to html5 $coreOptions;
+              pandoc --verbose --from docbook --to html5 $hercules_ci_effectsOptions;
               pandoc --verbose --from docbook --to html5 $pre_commit_hooks_nixOptions;
               echo "$htmlAfter"; ) >options.html
           '';
