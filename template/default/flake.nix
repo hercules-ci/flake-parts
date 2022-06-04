@@ -23,7 +23,7 @@
         # system.
 
         # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
-        packages.hello = pkgs.hello;
+        packages.default = pkgs.hello;
       };
       flake = {
         # The usual flake attributes can be defined here, including system-
