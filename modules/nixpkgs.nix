@@ -20,6 +20,9 @@
             (inputs'.nixpkgs or (throw "flake-parts: The flake does not have a `nixpkgs` input. Please add it, or set `perSystem._module.args.pkgs` yourself."))
             inputs'.nixpkgs.legacyPackages
         );
+        _module.args.pkgsets = lib.mkOptionDefault (
+          lib.mapAttrs (name: value: value.packages or value.legacyPackages or {}) inputs'
+        );
       };
     };
   };
