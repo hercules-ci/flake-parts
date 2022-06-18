@@ -41,7 +41,12 @@ then slide `mkFlake` between your outputs function head and body,
     flake-parts.lib.mkFlake { inherit self; } {
       flake = {
         # Put your original flake attributes here.
-      }
+      };
+      systems = [
+        # systems for which you want to build the `perSystem` attributes
+        "x86_64-linux"
+        # ...
+      ];
     };
 ```
 
