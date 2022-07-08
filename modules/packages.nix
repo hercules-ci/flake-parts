@@ -4,19 +4,30 @@ let
     filterAttrs
     mapAttrs
     mkOption
-    optionalAttrs
     types
     ;
   inherit (flake-parts-lib)
     mkSubmoduleOptions
     mkPerSystemOption
     ;
+
+  packageType =
+    with types;
+    let
+      self =
+        (oneOf
+          [ package
+            (lazyAttrsOf self)
+            (functionTo self)
+          ]) // { description = "Attrs of functions or packges, with arbitrary depth."; };
+    in
+      lazyAttrsOf self;
 in
 {
   options = {
     flake = mkSubmoduleOptions {
       packages = mkOption {
-        type = types.lazyAttrsOf (types.lazyAttrsOf types.package);
+        type = types.lazyAttrsOf packageType;
         default = { };
         description = ''
           Per system an attribute set of packages.
@@ -29,7 +40,7 @@ in
       _file = ./packages.nix;
       options = {
         packages = mkOption {
-          type = types.lazyAttrsOf types.package;
+          type = packageType;
           default = { };
           description = ''
             An attribute set of packages to be built by <literal>nix build .#&lt;name></literal>.
@@ -49,9 +60,9 @@ in
         );
 
     perInput = system: flake:
-      optionalAttrs (flake?packages.${system}) {
-        packages = flake.packages.${system};
+      filterAttrs (_: v: v != null) {
+        packages = flake.packages.${system} or null;
+        legacyPackages = flake.legacyPackages.${system} or null;
       };
-
   };
 }
