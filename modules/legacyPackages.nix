@@ -16,10 +16,10 @@ in
   options = {
     flake = mkSubmoduleOptions {
       legacyPackages = mkOption {
-        type = types.lazyAttrsOf (types.lazyAttrsOf types.anything);
+        type = types.lazyAttrsOf (types.lazyAttrsOf types.raw);
         default = { };
         description = ''
-          Per system, an attribute set of anything. This is also used by <literal>nix build .#&lt;attrpath></literal>.
+          Per system, an attribute set of unmergeable values. This is also used by <literal>nix build .#&lt;attrpath></literal>.
         '';
       };
     };
@@ -27,10 +27,10 @@ in
     perSystem = mkPerSystemOption ({ config, ... }: {
       options = {
         legacyPackages = mkOption {
-          type = types.lazyAttrsOf types.anything;
+          type = types.lazyAttrsOf types.raw;
           default = { };
           description = ''
-            An attribute set of anything. This is also used by <literal>nix build .#&lt;attrpath></literal>.
+            An attribute set of unmergeable values. This is also used by <literal>nix build .#&lt;attrpath></literal>.
           '';
         };
       };
