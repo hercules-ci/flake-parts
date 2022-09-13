@@ -66,6 +66,24 @@ See [flake.parts](https://flake.parts/options.html)
 
  -  `getSystem`: function from system string to the `config` of the appropriate `perSystem`.
 
+ -  `moduleWithSystem`: function that brings the `perSystem` module arguments.
+    This allows a module to reference the defining flake without introducing
+    global variables (which may conflict).
+
+    ```nix
+    { moduleWithSystem, ... }:
+    {
+      nixosModules.default = moduleWithSystem (
+        perSystem@{ config }:  # NOTE: only explicit params will be in perSystem
+        nixos@{ ... }:
+        {
+          services.foo.package = perSystem.config.packages.foo;
+          imports = [ ./nixos-foo.nix ];
+        }
+      );
+    }
+    ```
+
  -  `withSystem`: enter the scope of a system. Worked example:
 
     ```nix
