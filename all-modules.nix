@@ -6,6 +6,7 @@
     ./modules/darwinModules.nix
     ./modules/devShells.nix
     ./modules/flake.nix
+    ./modules/formatter.nix
     ./modules/legacyPackages.nix
     ./modules/moduleWithSystem.nix
     ./modules/nixosConfigurations.nix
