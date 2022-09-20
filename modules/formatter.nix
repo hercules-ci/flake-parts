@@ -28,7 +28,7 @@ in
       _file = ./formatter.nix;
       options = {
         packages = mkOption {
-          type = types.package;
+          type = types.nullOr types.package;
           default = null;
           description = ''
             A package used by <literal>nix fmt</literal>.
