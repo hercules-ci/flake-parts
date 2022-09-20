@@ -27,7 +27,7 @@ in
     perSystem = mkPerSystemOption ({ config, ... }: {
       _file = ./formatter.nix;
       options = {
-        packages = mkOption {
+        formatter = mkOption {
           type = types.nullOr types.package;
           default = null;
           description = ''
