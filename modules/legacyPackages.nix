@@ -41,10 +41,7 @@ in
     flake.legacyPackages =
       mapAttrs
         (k: v: v.legacyPackages)
-        (filterAttrs
-          (k: v: v.legacyPackages != null)
-          config.allSystems
-        );
+        config.allSystems;
 
     perInput = system: flake:
       optionalAttrs (flake?legacyPackages.${system}) {
