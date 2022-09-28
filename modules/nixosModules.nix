@@ -15,9 +15,11 @@ in
   options = {
     flake = mkSubmoduleOptions {
       nixosModules = mkOption {
-        type = types.lazyAttrsOf types.unspecified;
-        default = { };
-        apply = mapAttrs (k: v: { _file = "${toString self.outPath}/flake.nix#nixosModules.${k}"; imports = [ v ]; });
+        type = types.nullOr (types.lazyAttrsOf types.unspecified);
+        default = null;
+        apply = x: if x == null
+          then null
+          else mapAttrs (k: v: { _file = "${toString self.outPath}/flake.nix#nixosModules.${k}"; imports = [ v ]; }) x;
         description = ''
           NixOS modules.
         '';

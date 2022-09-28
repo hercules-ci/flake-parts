@@ -10,14 +10,15 @@ let
   inherit (flake-parts-lib)
     mkSubmoduleOptions
     mkPerSystemOption
+    mkIfNonEmptySet
     ;
 in
 {
   options = {
     flake = mkSubmoduleOptions {
       formatter = mkOption {
-        type = types.lazyAttrsOf types.package;
-        default = { };
+        type = types.nullOr (types.lazyAttrsOf types.package);
+        default = null;
         description = ''
           Per system package used by <literal>nix fmt</literal>.
         '';
@@ -28,8 +29,7 @@ in
       _file = ./formatter.nix;
       options = {
         formatter = mkOption {
-          type = types.nullOr types.package;
-          default = null;
+          type = types.package;
           description = ''
             A package used by <literal>nix fmt</literal>.
           '';
@@ -39,12 +39,13 @@ in
   };
   config = {
     flake.formatter =
-      mapAttrs
-        (k: v: v.formatter)
-        (filterAttrs
-          (k: v: v.formatter != null)
-          config.allSystems
-        );
+      mkIfNonEmptySet
+        (mapAttrs
+          (k: v: v.formatter)
+          (filterAttrs
+            (k: v: v ? formatter)
+            config.allSystems
+          ));
 
     perInput = system: flake:
       optionalAttrs (flake?formatter.${system}) {

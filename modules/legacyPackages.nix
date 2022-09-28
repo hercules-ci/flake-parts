@@ -10,14 +10,15 @@ let
   inherit (flake-parts-lib)
     mkSubmoduleOptions
     mkPerSystemOption
+    mkIfNonEmptySet
     ;
 in
 {
   options = {
     flake = mkSubmoduleOptions {
       legacyPackages = mkOption {
-        type = types.lazyAttrsOf (types.lazyAttrsOf types.raw);
-        default = { };
+        type = types.nullOr (types.lazyAttrsOf (types.lazyAttrsOf types.raw));
+        default = null;
         description = ''
           Per system, an attribute set of unmergeable values. This is also used by <literal>nix build .#&lt;attrpath></literal>.
         '';
@@ -28,7 +29,6 @@ in
       options = {
         legacyPackages = mkOption {
           type = types.lazyAttrsOf types.raw;
-          default = { };
           description = ''
             An attribute set of unmergeable values. This is also used by <literal>nix build .#&lt;attrpath></literal>.
           '';
@@ -39,12 +39,13 @@ in
 
   config = {
     flake.legacyPackages =
-      mapAttrs
-        (k: v: v.legacyPackages)
-        (filterAttrs
-          (k: v: v.legacyPackages != null)
-          config.allSystems
-        );
+      mkIfNonEmptySet
+        (mapAttrs
+          (k: v: v.legacyPackages)
+          (filterAttrs
+            (k: v: v ? legacyPackages)
+            config.allSystems
+          ));
 
     perInput = system: flake:
       optionalAttrs (flake?legacyPackages.${system}) {

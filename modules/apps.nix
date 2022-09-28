@@ -10,6 +10,7 @@ let
   inherit (flake-parts-lib)
     mkSubmoduleOptions
     mkPerSystemOption
+    mkIfNonEmptySet
     ;
 
   programType = lib.types.coercedTo derivationType getExe lib.types.str;
@@ -48,8 +49,8 @@ in
   options = {
     flake = mkSubmoduleOptions {
       apps = mkOption {
-        type = types.lazyAttrsOf (types.lazyAttrsOf appType);
-        default = { };
+        type = types.nullOr (types.lazyAttrsOf (types.lazyAttrsOf appType));
+        default = null;
         description = ''
           Programs runnable with nix run <literal>.#&lt;name></literal>.
         '';
@@ -66,7 +67,6 @@ in
         options = {
           apps = mkOption {
             type = types.lazyAttrsOf appType;
-            default = { };
             description = ''
               Programs runnable with nix run <literal>.#&lt;name></literal>.
             '';
@@ -82,12 +82,13 @@ in
   };
   config = {
     flake.apps =
-      mapAttrs
-        (k: v: v.apps)
-        (filterAttrs
-          (k: v: v.apps != null)
-          config.allSystems
-        );
+      mkIfNonEmptySet
+        (mapAttrs
+          (k: v: v.apps)
+          (filterAttrs
+            (k: v: v ? apps)
+            config.allSystems
+          ));
 
     perInput = system: flake:
       optionalAttrs (flake?apps.${system}) {

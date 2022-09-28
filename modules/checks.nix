@@ -10,14 +10,15 @@ let
   inherit (flake-parts-lib)
     mkSubmoduleOptions
     mkPerSystemOption
+    mkIfNonEmptySet
     ;
 in
 {
   options = {
     flake = mkSubmoduleOptions {
       checks = mkOption {
-        type = types.lazyAttrsOf (types.lazyAttrsOf types.package);
-        default = { };
+        type = types.nullOr (types.lazyAttrsOf (types.lazyAttrsOf types.package));
+        default = null;
         description = ''
           Derivations to be built by nix flake check.
         '';
@@ -29,7 +30,6 @@ in
       options = {
         checks = mkOption {
           type = types.lazyAttrsOf types.package;
-          default = { };
           description = ''
             Derivations to be built by nix flake check.
           '';
@@ -40,12 +40,13 @@ in
   };
   config = {
     flake.checks =
-      mapAttrs
-        (k: v: v.checks)
-        (filterAttrs
-          (k: v: v.checks != null)
-          config.allSystems
-        );
+      mkIfNonEmptySet
+        (mapAttrs
+          (k: v: v.checks)
+          (filterAttrs
+            (k: v: v ? checks)
+            config.allSystems
+          ));
 
     perInput = system: flake:
       optionalAttrs (flake?checks.${system}) {

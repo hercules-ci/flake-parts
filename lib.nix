@@ -1,11 +1,13 @@
 { lib }:
 let
   inherit (lib)
-    mkOption
-    mkOptionType
     defaultFunctor
+    filterAttrs
     isAttrs
     isFunction
+    mkIf
+    mkOption
+    mkOptionType
     showOption
     types
     ;
@@ -74,7 +76,8 @@ let
       };
 
     mkFlake = args: module:
-      (flake-parts-lib.evalFlakeModule args module).config.flake;
+      # filter away top-level nulls
+      filterAttrs (k: v: v != null) (flake-parts-lib.evalFlakeModule args module).config.flake;
 
     # For extending options in an already declared submodule.
     # Workaround for https://github.com/NixOS/nixpkgs/issues/146882
@@ -98,6 +101,7 @@ let
         type = flake-parts-lib.mkPerSystemType module;
       };
 
+    mkIfNonEmptySet = set: mkIf (set != {}) set;
   };
 
 in

@@ -13,8 +13,8 @@ in
   options = {
     flake = mkSubmoduleOptions {
       nixosConfigurations = mkOption {
-        type = types.lazyAttrsOf types.raw;
-        default = { };
+        type = types.nullOr (types.lazyAttrsOf types.raw);
+        default = null;
         description = ''
           Instantiated NixOS configurations.
         '';
