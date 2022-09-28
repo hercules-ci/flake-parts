@@ -83,11 +83,8 @@ in
   config = {
     flake.apps =
       mapAttrs
-        (k: v: v.apps)
-        (filterAttrs
-          (k: v: v.apps != null)
-          config.allSystems
-        );
+        (k: v: v.apps or { })
+        config.allSystems;
 
     perInput = system: flake:
       optionalAttrs (flake?apps.${system}) {

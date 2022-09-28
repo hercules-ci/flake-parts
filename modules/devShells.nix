@@ -43,10 +43,7 @@ in
     flake.devShells =
       mapAttrs
         (k: v: v.devShells)
-        (filterAttrs
-          (k: v: v.devShells != null)
-          config.allSystems
-        );
+        config.allSystems;
 
     perInput = system: flake:
       optionalAttrs (flake?devShells.${system}) {

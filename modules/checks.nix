@@ -42,10 +42,7 @@ in
     flake.checks =
       mapAttrs
         (k: v: v.checks)
-        (filterAttrs
-          (k: v: v.checks != null)
-          config.allSystems
-        );
+        config.allSystems;
 
     perInput = system: flake:
       optionalAttrs (flake?checks.${system}) {
