@@ -2,11 +2,11 @@
   description = "Flake basics described using the module system";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-lib.url = "github:NixOS/nixpkgs/nixos-unstable?dir=lib";
   };
 
-  outputs = { self, nixpkgs, ... }: {
-    lib = import ./lib.nix { inherit (nixpkgs) lib; };
+  outputs = { self, nixpkgs-lib, ... }: {
+    lib = import ./lib.nix { inherit (nixpkgs-lib) lib; };
     templates = {
       default = {
         path = ./template/default;
