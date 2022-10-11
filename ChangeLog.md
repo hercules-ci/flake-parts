@@ -1,4 +1,13 @@
 
+# 2022-10-11
+
+ - The `nixpkgs` input has been renamed to `nixpkgs-lib` to signify that the
+   only dependency is on the `lib` attribute, which can be provided by either
+   the `nixpkgs?dir=lib` subflake or by the `nixpkgs` flake itself.
+   
+ - The templates now use the default, _fixed_ `nixpkgs?dir=lib` dependency instead
+   of a _following_ `nixpkgs` dependency.
+
 # 2022-05-25
 
  - `perSystem` is not a `functionTo submodule` anymore, but a `deferredModule`,
