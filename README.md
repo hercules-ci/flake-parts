@@ -31,7 +31,6 @@ Otherwise, add the input,
 
 ```
     flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-parts.inputs.nixpkgs.follows = "nixpkgs";
 ```
 
 then slide `mkFlake` between your outputs function head and body,
