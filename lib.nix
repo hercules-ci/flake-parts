@@ -10,7 +10,13 @@ let
     throwIf
     types
     warnIf
+    getAttrFromPath
+    setAttrByPath
+    attrByPath
+    optionalAttrs
     ;
+  inherit (lib.modules)
+    mkAliasAndWrapDefsWithPriority;
   inherit (lib.types)
     path
     submoduleWith
@@ -165,6 +171,26 @@ let
         transposition.${name} = { };
       };
     };
+
+    # Needed pending https://github.com/NixOS/nixpkgs/pull/198450
+    mkAliasOptionModule = from: to: { config, options, ... }:
+      let
+        fromOpt = getAttrFromPath from options;
+        toOf = attrByPath to
+          (abort "Renaming error: option `${showOption to}' does not exist.");
+        toType = let opt = attrByPath to { } options; in opt.type or (types.submodule { });
+      in
+      {
+        options = setAttrByPath from (mkOption
+          {
+            visible = true;
+            description = lib.mdDoc "Alias of {option}`${showOption to}`.";
+            apply = x: (toOf config);
+          } // optionalAttrs (toType != null) {
+          type = toType;
+        });
+        config = (mkAliasAndWrapDefsWithPriority (setAttrByPath to) fromOpt);
+      };
   };
 
 in

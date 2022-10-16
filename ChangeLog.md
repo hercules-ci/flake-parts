@@ -1,3 +1,10 @@
+# 2022-12-25
+
+ - Added a new `flake.flakeModules` option so a flake can expose a module
+   to be used in a downstream flake's flake-parts usage. `.flakeModule` is
+   now an alias for `.flakeModules.default`.
+
+   Option only available if `flake-parts.flakeModules.flakeModules` is imported.
 
 # 2022-12-17
 
@@ -30,7 +37,7 @@
  - The `nixpkgs` input has been renamed to `nixpkgs-lib` to signify that the
    only dependency is on the `lib` attribute, which can be provided by either
    the `nixpkgs?dir=lib` subflake or by the `nixpkgs` flake itself.
-   
+
  - The templates now use the default, _fixed_ `nixpkgs?dir=lib` dependency instead
    of a _following_ `nixpkgs` dependency.
 
