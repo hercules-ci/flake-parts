@@ -22,6 +22,12 @@ let
     submoduleWith
     ;
 
+  # Polyfill isFlake until Nix with https://github.com/NixOS/nix/pull/7207 is common
+  isFlake = maybeFlake:
+    if maybeFlake ? _type
+    then maybeFlake._type == "flake"
+    else maybeFlake ? inputs && maybeFlake ? outputs && maybeFlake ? sourceInfo;
+
   # Polyfill functionTo to make sure it has type merging.
   # Remove 2022-12
   functionTo =
@@ -117,6 +123,17 @@ let
           modules = [ ./all-modules.nix module ];
         }
         );
+
+    # Function to extract the default flakeModule from
+    # what may be a flake, returning the argument unmodified
+    # if it's not a flake.
+    #
+    # Useful to map over an 'imports' list to make it less
+    # verbose in the common case.
+    defaultModule = maybeFlake:
+      if isFlake maybeFlake
+      then maybeFlake.flakeModules.default or maybeFlake
+      else maybeFlake;
 
     mkFlake = args: module:
       (flake-parts-lib.evalFlakeModule args module).config.flake;
