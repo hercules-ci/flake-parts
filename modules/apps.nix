@@ -83,7 +83,7 @@ in
   config = {
     flake.apps =
       mapAttrs
-        (k: v: v.apps or { })
+        (k: v: v.apps)
         config.allSystems;
 
     perInput = system: flake:

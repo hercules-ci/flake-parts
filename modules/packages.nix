@@ -42,7 +42,7 @@ in
   config = {
     flake.packages =
       mapAttrs
-        (k: v: v.packages or { })
+        (k: v: v.packages)
         config.allSystems;
 
     perInput = system: flake:
