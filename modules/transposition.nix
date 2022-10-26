@@ -11,6 +11,23 @@ let
     mkSubmoduleOptions
     mkPerSystemOption
     ;
+
+  transpositionModule = {
+    options = {
+      adHoc = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Whether to provide a stub option declaration for <option>perSystem.&lt;name></option>
+
+          The stub option declaration does not support merging and lacks
+          documentation, so you are recommended to declare the <option>perSystem.&lt;name></option>
+          option yourself and avoid <option>adHoc</option>.
+        '';
+      };
+    };
+  };
+
 in
 {
   options = {
@@ -30,7 +47,7 @@ in
       '';
       type =
         types.lazyAttrsOf
-          (types.submoduleWith { modules = [ ]; });
+          (types.submoduleWith { modules = [ transpositionModule ]; });
     };
   };
 
@@ -52,5 +69,15 @@ in
           (attrName: attrConfig: flake?${attrName}.${system})
           config.transposition
         );
+
+    perSystem = { ... }: {
+      options =
+        mapAttrs
+          (k: v: lib.mkOption { })
+          (filterAttrs
+            (k: v: v.adHoc)
+            config.transposition
+          );
+    };
   };
 }

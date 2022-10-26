@@ -128,3 +128,13 @@ Why so many ways?
 
 1. Flakes counterintuitively handles `system` by enumerating all of them in attribute sets. `flake-parts` does not impose this restriction, but does need to support it.
 2. `flake-parts` provides an extensible structure that is richer than the flakes interface alone. 
+
+# How do I define my own flake output attribute?
+
+Have a look at the [source](https://github.com/hercules-ci/flake-parts/tree/main/modules) for some examples.
+
+Whether directly or indirectly, you'll be defining an attribute inside [the `flake` option](https://flake.parts/options.html#opt-flake).
+
+If you want the attribute to be derived from [`perSystem`](https://flake.parts/options.html#opt-perSystem) you can start with [`packages.nix`](https://github.com/hercules-ci/flake-parts/blob/main/modules/packages.nix) as an example, or [`formatter.nix`](https://github.com/hercules-ci/flake-parts/blob/main/modules/formatter.nix) if you need to do some filtering.
+
+If you really don't care about your attribute, you may temporarily use [`transposition.<name>.adHoc = true`](https://flake.parts/options.html#opt-transposition._name_.adHoc) to create and expose a `perSystem` option without merging support, type checking or documentation.
