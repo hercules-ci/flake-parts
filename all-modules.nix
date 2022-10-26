@@ -15,6 +15,7 @@
     ./modules/overlays.nix
     ./modules/packages.nix
     ./modules/perSystem.nix
+    ./modules/transposition.nix
     ./modules/withSystem.nix
   ];
 }

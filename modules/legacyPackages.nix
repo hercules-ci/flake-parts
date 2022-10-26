@@ -38,15 +38,6 @@ in
   };
 
   config = {
-    flake.legacyPackages =
-      mapAttrs
-        (k: v: v.legacyPackages)
-        config.allSystems;
-
-    perInput = system: flake:
-      optionalAttrs (flake?legacyPackages.${system}) {
-        legacyPackages = flake.legacyPackages.${system};
-      };
-
+    transposition.legacyPackages = { };
   };
 }

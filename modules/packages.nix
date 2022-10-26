@@ -40,15 +40,6 @@ in
     });
   };
   config = {
-    flake.packages =
-      mapAttrs
-        (k: v: v.packages)
-        config.allSystems;
-
-    perInput = system: flake:
-      optionalAttrs (flake?packages.${system}) {
-        packages = flake.packages.${system};
-      };
-
+    transposition.packages = { };
   };
 }

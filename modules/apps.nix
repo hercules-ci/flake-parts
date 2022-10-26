@@ -81,15 +81,6 @@ in
 
   };
   config = {
-    flake.apps =
-      mapAttrs
-        (k: v: v.apps)
-        config.allSystems;
-
-    perInput = system: flake:
-      optionalAttrs (flake?apps.${system}) {
-        apps = flake.apps.${system};
-      };
-
+    transposition.apps = { };
   };
 }
