@@ -39,15 +39,6 @@ in
 
   };
   config = {
-    flake.checks =
-      mapAttrs
-        (k: v: v.checks)
-        config.allSystems;
-
-    perInput = system: flake:
-      optionalAttrs (flake?checks.${system}) {
-        checks = flake.checks.${system};
-      };
-
+    transposition.checks = { };
   };
 }

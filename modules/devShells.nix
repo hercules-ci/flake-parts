@@ -40,14 +40,6 @@ in
       });
   };
   config = {
-    flake.devShells =
-      mapAttrs
-        (k: v: v.devShells)
-        config.allSystems;
-
-    perInput = system: flake:
-      optionalAttrs (flake?devShells.${system}) {
-        devShells = flake.devShells.${system};
-      };
+    transposition.devShells = { };
   };
 }
