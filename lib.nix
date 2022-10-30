@@ -98,6 +98,34 @@ let
         type = flake-parts-lib.mkPerSystemType module;
       };
 
+    # Helper function for defining a per-system option that
+    # gets transposed by the usual flake system logic to a
+    # top-level flake attribute.
+    mkTransposedPerSystemModule = { name, option, file }: {
+      _file = file;
+
+      options = {
+        flake = flake-parts-lib.mkSubmoduleOptions {
+          ${name} = mkOption {
+            type = types.lazyAttrsOf option.type;
+            default = { };
+            description = lib.mdDoc ''
+              See {option}`perSystem.${name}` for description and examples.
+            '';
+          };
+        };
+
+        perSystem = flake-parts-lib.mkPerSystemOption {
+          _file = file;
+
+          options.${name} = option;
+        };
+      };
+
+      config = {
+        transposition.${name} = { };
+      };
+    };
   };
 
 in
