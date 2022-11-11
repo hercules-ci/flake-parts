@@ -1,6 +1,6 @@
 let
   flake = builtins.getFlake (toString ./.);
-  fmc-lib = import ../lib.nix { inherit (flake.inputs.nixpkgs) lib; };
+  fmc-lib = (builtins.getFlake (toString ../.)).lib;
   self = {
     inherit (flake) inputs;
     outPath = ../.; # used by pre-commit module, etc

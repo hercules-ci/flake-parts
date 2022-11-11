@@ -1,15 +1,11 @@
 { config, lib, flake-parts-lib, ... }:
 let
   inherit (lib)
-    filterAttrs
-    mapAttrs
     mkOption
-    optionalAttrs
     types
     ;
   inherit (flake-parts-lib)
-    mkSubmoduleOptions
-    mkPerSystemOption
+    mkTransposedPerSystemModule
     ;
 
   programType = lib.types.coercedTo derivationType getExe lib.types.str;
@@ -44,43 +40,19 @@ let
     };
   };
 in
-{
-  options = {
-    flake = mkSubmoduleOptions {
-      apps = mkOption {
-        type = types.lazyAttrsOf (types.lazyAttrsOf appType);
-        default = { };
-        description = ''
-          Programs runnable with nix run <literal>.#&lt;name></literal>.
-        '';
-        example = lib.literalExpression or lib.literalExample ''
-          {
-            x86_64-linux.default.program = "''${config.packages.hello}/bin/hello";
-          }
-        '';
-      };
-    };
-
-    perSystem = mkPerSystemOption
-      ({ config, system, ... }: {
-        options = {
-          apps = mkOption {
-            type = types.lazyAttrsOf appType;
-            default = { };
-            description = ''
-              Programs runnable with nix run <literal>.#&lt;name></literal>.
-            '';
-            example = lib.literalExpression or lib.literalExample ''
-              {
-                default.program = "''${config.packages.hello}/bin/hello";
-              }
-            '';
-          };
-        };
-      });
-
+mkTransposedPerSystemModule {
+  name = "apps";
+  option = mkOption {
+    type = types.lazyAttrsOf appType;
+    default = { };
+    description = ''
+      Programs runnable with nix run <literal>.#&lt;name></literal>.
+    '';
+    example = lib.literalExpression or lib.literalExample ''
+      {
+        default.program = "''${config.packages.hello}/bin/hello";
+      }
+    '';
   };
-  config = {
-    transposition.apps = { };
-  };
+  file = ./apps.nix;
 }
