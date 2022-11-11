@@ -14,6 +14,10 @@
       <title>
         <xsl:value-of select="$title"/>
       </title>
+      <para>Overview:</para>
+      <xsl:for-each select="db:varlistentry">
+        <para><link xlink:href="#{db:term/@xml:id}"><xsl:copy-of select="db:term/db:option"/></link></para>
+      </xsl:for-each>
       <xsl:apply-templates />
     </chapter>
   </xsl:template>

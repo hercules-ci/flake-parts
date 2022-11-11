@@ -3,7 +3,12 @@
 
 _Core of a distributed framework for writing Nix Flakes._
 
-`flake-parts` provides the options that represent standard flake attributes and establishes a way of working with `system`. Opinionated features are provided by an ecosystem of modules that you can import.
+`flake-parts` provides the options that represent standard flake attributes 
+and establishes a way of working with `system`.
+Opinionated features are provided by an ecosystem of modules that you can import.
+
+`flake-parts` _itself_ has the goal to be a minimal mirror of the Nix flake schema.
+Used by itself, it is very lightweight. 
 
 # Why Modules?
 
@@ -16,8 +21,20 @@ module system has done for NixOS configurations.
 Unlike NixOS, but following Flakes' spirit, `flake-parts` is not a
 monorepo with the implied goal of absorbing all of open source, but rather
 a single module that other repositories can build upon, while ensuring a
-baseline level of compatibility: which core attribute make up a flake and
-how these are represented as module options.
+baseline level of compatibility: the core attributes that constitute a flake.
+
+# Features
+
+ - Split your `flake.nix` into focused units, each in their own file.
+
+ - Take care of [system](./system.md).
+
+ - Allow users of your library flake to easily integrate your generated flake outputs
+   into their flake.
+
+ - Reuse project logic written by others
+
+<!-- end_of_intro -->
 
 # Getting Started
 

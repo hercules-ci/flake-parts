@@ -16,6 +16,7 @@
         pkgs.hci
         pkgs.netlify-cli
         pkgs.pandoc
+        pkgs.mdbook
       ];
       shellHook = ''
         ${config.pre-commit.installationScript}
