@@ -3,7 +3,8 @@
 
   inputs = {
     # Flakes don't give us a good way to depend on .., so we don't.
-    # This has drastic consequences of course.
+    # As a consequence, this flake is a little non-standard, and
+    # we can't use the `nix` CLI as expected.
 
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -15,7 +16,7 @@
 
   outputs = { self, ... }:
     {
-      # Without good or dev outputs, we only use flakes for inputs here.
       # The dev tooling is in ./flake-module.nix
+      # See comment at `inputs` above.
     };
 }
