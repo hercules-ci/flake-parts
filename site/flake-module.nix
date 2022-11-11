@@ -9,6 +9,7 @@
           inputs.pre-commit-hooks-nix.flakeModule
           inputs.hercules-ci-effects.flakeModule
           inputs.haskell-flake.flakeModule
+          inputs.dream2nix.flakeModuleBeta
         ];
       };
       opts = eval.options;
@@ -77,6 +78,12 @@
           sourceName = "haskell-flake";
           baseUrl = "https://github.com/srid/haskell-flake/blob/master";
           sourcePath = inputs.haskell-flake;
+        };
+        dream2nix = {
+          title = "dream2nix beta";
+          sourceName = "dream2nix";
+          baseUrl = "https://github.com/nix-community/dream2nix/blob/master";
+          sourcePath = inputs.dream2nix;
         };
       };
 

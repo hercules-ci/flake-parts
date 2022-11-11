@@ -7,6 +7,7 @@
   - [Module Arguments](./module-arguments.md)
   - [Options](./options/flake-parts.md)
     - [Core `flake-parts`](./options/flake-parts.md)
+    - [`dream2nix beta`](./options/dream2nix.md)
     - [`haskell-flake`](./options/haskell-flake.md)
     - [`hercules-ci-effects`](./options/hercules-ci-effects.md)
     - [`pre-commit-hooks.nix`](./options/pre-commit-hooks-nix.md)
