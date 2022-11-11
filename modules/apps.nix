@@ -27,13 +27,13 @@ let
       type = mkOption {
         type = lib.types.enum [ "app" ];
         default = "app";
-        description = lib.mdDoc ''
+        description = ''
           A type tag for `apps` consumers.
         '';
       };
       program = mkOption {
         type = programType;
-        description = lib.mdDoc ''
+        description = ''
           A path to an executable or a derivation with `meta.mainProgram`.
         '';
       };

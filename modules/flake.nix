@@ -16,7 +16,7 @@ in
           { freeformType = types.lazyAttrsOf types.raw; }
         ];
       };
-      description = lib.mdDoc ''
+      description = ''
         Raw flake output attributes. Any attribute can be set here, but some
         attributes are represented by options, to provide appropriate
         configuration merging.

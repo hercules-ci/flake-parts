@@ -23,7 +23,7 @@ in
             default = final: prev: {};
           }
         '';
-        description = lib.mdDoc ''
+        description = ''
           An attribute set of [overlays](https://nixos.org/manual/nixpkgs/stable/#chap-overlays).
 
           Note that the overlays themselves are not mergeable. While overlays

@@ -15,7 +15,7 @@ in
       nixosConfigurations = mkOption {
         type = types.lazyAttrsOf types.raw;
         default = { };
-        description = lib.mdDoc ''
+        description = ''
           Instantiated NixOS configurations. Used by `nixos-rebuild`.
         '';
         example = literalExpression ''

@@ -16,7 +16,7 @@ in
 {
   options = {
     systems = mkOption {
-      description = lib.mdDoc ''
+      description = ''
         All the system types to enumerate in the flake output subattributes.
 
         In other words, all valid values for `system` in e.g. `packages.<system>.foo`.
@@ -25,12 +25,12 @@ in
     };
 
     perInput = mkOption {
-      description = lib.mdDoc "Function from system to function from flake to `system`-specific attributes.";
+      description = "Function from system to function from flake to `system`-specific attributes.";
       type = types.functionTo (types.functionTo (types.lazyAttrsOf types.unspecified));
     };
 
     perSystem = mkOption {
-      description = lib.mdDoc "A function from system to flake-like attributes omitting the `<system>` attribute.";
+      description = "A function from system to flake-like attributes omitting the `<system>` attribute.";
       type = mkPerSystemType ({ config, system, ... }: {
         _file = ./perSystem.nix;
         config = {
@@ -50,7 +50,7 @@ in
 
     allSystems = mkOption {
       type = types.lazyAttrsOf types.unspecified;
-      description = lib.mdDoc "The system-specific config for each of systems.";
+      description = "The system-specific config for each of systems.";
       internal = true;
     };
   };

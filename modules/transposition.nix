@@ -17,7 +17,7 @@ let
       adHoc = mkOption {
         type = types.bool;
         default = false;
-        description = lib.mdDoc ''
+        description = ''
           Whether to provide a stub option declaration for {option}`perSystem.<name>`.
 
           The stub option declaration does not support merging and lacks
@@ -32,7 +32,7 @@ in
 {
   options = {
     transposition = lib.mkOption {
-      description = lib.mdDoc ''
+      description = ''
         A helper that defines transposed attributes in the flake outputs.
 
         Transposition is the operation that swaps the indices of a data structure.
