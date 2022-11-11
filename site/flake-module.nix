@@ -80,6 +80,9 @@
         };
       };
 
+      generatedDocs = lib.mapAttrs (k: optionsDoc) repos;
+      generatedDocs' = lib.mapAttrs' (name: value: { name = "generated-docs-${name}"; inherit value; }) generatedDocs;
+
     in
     {
       packages = {
@@ -107,10 +110,10 @@
             mkdir -p src/options
             ${lib.concatStringsSep "\n"
               (lib.mapAttrsToList
-                (name: repo: ''
-                  cp '${optionsDoc repo}/options.md' 'src/options/${name}.md'
+                (name: generated: ''
+                  cp '${generated}/options.md' 'src/options/${name}.md'
                 '')
-                repos)
+                generatedDocs)
             }
 
             mdbook build --dest-dir $out
@@ -122,6 +125,6 @@
           '';
           dontInstall = true;
         };
-      };
+      } // generatedDocs';
     };
 }
