@@ -15,8 +15,8 @@ in
       nixosConfigurations = mkOption {
         type = types.lazyAttrsOf types.raw;
         default = { };
-        description = ''
-          Instantiated NixOS configurations.
+        description = lib.mdDoc ''
+          Instantiated NixOS configurations. Used by `nixos-rebuild`.
         '';
         example = literalExpression ''
           {
@@ -24,6 +24,7 @@ in
               system = "x86_64-linux";
               modules = [
                 ./my-machine/nixos-configuration.nix
+                config.nixosModules.my-module
               ];
             };
           }

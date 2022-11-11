@@ -18,8 +18,8 @@ in
         type = types.lazyAttrsOf types.unspecified;
         default = { };
         apply = mapAttrs (k: v: { _file = "${toString self.outPath}/flake.nix#darwinModules.${k}"; imports = [ v ]; });
-        description = ''
-          Nix-darwin modules.
+        description = lib.mdDoc ''
+          [nix-darwin](https://daiderd.com/nix-darwin/) modules.
         '';
       };
     };
