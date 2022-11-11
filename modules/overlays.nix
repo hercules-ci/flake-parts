@@ -24,12 +24,12 @@ in
           }
         '';
         description = ''
-          An attribute set of overlays.
+          An attribute set of [overlays](https://nixos.org/manual/nixpkgs/stable/#chap-overlays).
 
           Note that the overlays themselves are not mergeable. While overlays
           can be composed, the order of composition is significant, but the
           module system does not guarantee sufficiently deterministic
-          definition ordering, across versions and when changing <literal>imports</literal>.
+          definition ordering, across versions and when changing `imports`.
         '';
       };
     };

@@ -17,7 +17,7 @@ in
         ];
       };
       description = ''
-        Raw flake attributes. Any attribute can be set here, but some
+        Raw flake output attributes. Any attribute can be set here, but some
         attributes are represented by options, to provide appropriate
         configuration merging.
       '';

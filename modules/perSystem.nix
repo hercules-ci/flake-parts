@@ -16,17 +16,21 @@ in
 {
   options = {
     systems = mkOption {
-      description = "All the system types to enumerate in the flake.";
+      description = ''
+        All the system types to enumerate in the flake output subattributes.
+
+        In other words, all valid values for `system` in e.g. `packages.<system>.foo`.
+      '';
       type = types.listOf types.str;
     };
 
     perInput = mkOption {
-      description = "Function from system to function from flake to <literal>system</literal>-specific attributes.";
+      description = "Function from system to function from flake to `system`-specific attributes.";
       type = types.functionTo (types.functionTo (types.lazyAttrsOf types.unspecified));
     };
 
     perSystem = mkOption {
-      description = "A function from system to flake-like attributes omitting the <literal>&lt;system></literal> attribute.";
+      description = "A function from system to flake-like attributes omitting the `<system>` attribute.";
       type = mkPerSystemType ({ config, system, ... }: {
         _file = ./perSystem.nix;
         config = {

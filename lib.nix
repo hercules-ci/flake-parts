@@ -109,7 +109,7 @@ let
           ${name} = mkOption {
             type = types.lazyAttrsOf option.type;
             default = { };
-            description = lib.mdDoc ''
+            description = ''
               See {option}`perSystem.${name}` for description and examples.
             '';
           };

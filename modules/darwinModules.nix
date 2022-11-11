@@ -19,7 +19,7 @@ in
         default = { };
         apply = mapAttrs (k: v: { _file = "${toString self.outPath}/flake.nix#darwinModules.${k}"; imports = [ v ]; });
         description = ''
-          Nix-darwin modules.
+          [nix-darwin](https://daiderd.com/nix-darwin/) modules.
         '';
       };
     };

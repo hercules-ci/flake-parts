@@ -18,11 +18,11 @@ let
         type = types.bool;
         default = false;
         description = ''
-          Whether to provide a stub option declaration for <option>perSystem.&lt;name></option>
+          Whether to provide a stub option declaration for {option}`perSystem.<name>`.
 
           The stub option declaration does not support merging and lacks
-          documentation, so you are recommended to declare the <option>perSystem.&lt;name></option>
-          option yourself and avoid <option>adHoc</option>.
+          documentation, so you are recommended to declare the {option}`perSystem.<name>`
+          option yourself and avoid {option}`adHoc`.
         '';
       };
     };
@@ -38,12 +38,12 @@ in
         Transposition is the operation that swaps the indices of a data structure.
         Here it refers specifically to the transposition between
 
-        <literal>
-          perSystem: .''${system}.''${attribute}
-          outputs:   .''${attribute}.''${system}
-        </literal>
+        ```plain
+        perSystem: .''${system}.''${attribute}
+        outputs:   .''${attribute}.''${system}
+        ```
 
-        It also defines the reverse operation in <option>perInput</option>.
+        It also defines the reverse operation in [{option}`perInput`](#opt-perInput).
       '';
       type =
         types.lazyAttrsOf

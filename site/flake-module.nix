@@ -16,15 +16,16 @@
         let sourcePathStr = toString sourcePath;
         in
         opt:
-        let declarations = concatMap
-          (decl:
-            if hasPrefix sourcePathStr (toString decl)
-            then
-              let subpath = removePrefix sourcePathStr (toString decl);
-              in [{ url = baseUrl + subpath; name = sourceName + subpath; }]
-            else [ ]
-          )
-          opt.declarations;
+        let
+          declarations = concatMap
+            (decl:
+              if hasPrefix sourcePathStr (toString decl)
+              then
+                let subpath = removePrefix sourcePathStr (toString decl);
+                in [{ url = baseUrl + subpath; name = sourceName + subpath; }]
+              else [ ]
+            )
+            opt.declarations;
         in
         if declarations == [ ]
         then opt // { visible = false; }
@@ -39,6 +40,8 @@
             transformOptions = filterTransformOptions {
               inherit sourceName baseUrl sourcePath;
             };
+            warningsAreErrors = true; # not sure if feasible long term
+            markdownByDefault = true;
           }).optionsDocBook;
           inherit title;
         } ''

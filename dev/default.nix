@@ -4,6 +4,7 @@ let
   self = {
     inherit (flake) inputs;
     outPath = ../.; # used by pre-commit module, etc
+    outputs = self.config.flake;
   } //
   fmc-lib.evalFlakeModule
     { inherit self; }

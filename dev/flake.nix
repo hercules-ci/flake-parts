@@ -3,13 +3,12 @@
 
   inputs = {
     # Flakes don't give us a good way to depend on .., so we don't.
-    # This has drastic consequences of course.
+    # As a consequence, this flake is a little non-standard, and
+    # we can't use the `nix` CLI as expected.
 
-    # https://github.com/NixOS/nixpkgs/pull/174460
-    # https://github.com/NixOS/nixpkgs/pull/174470
-    nixpkgs.url = "github:hercules-ci/nixpkgs/module-docs-update";
+    nixpkgs.url = "github:hercules-ci/nixpkgs/options-markdown-and-errors";
 
-    pre-commit-hooks-nix.url = "github:hercules-ci/pre-commit-hooks.nix/flakeModule";
+    pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
     pre-commit-hooks-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     hercules-ci-effects.url = "github:hercules-ci/hercules-ci-effects";
@@ -17,7 +16,7 @@
 
   outputs = { self, ... }:
     {
-      # Without good or dev outputs, we only use flakes for inputs here.
       # The dev tooling is in ./flake-module.nix
+      # See comment at `inputs` above.
     };
 }

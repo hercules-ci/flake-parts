@@ -28,13 +28,13 @@ let
         type = lib.types.enum [ "app" ];
         default = "app";
         description = ''
-          A type tag for <literal>apps</literal> consumers.
+          A type tag for `apps` consumers.
         '';
       };
       program = mkOption {
         type = programType;
         description = ''
-          A path to an executable or a derivation with <literal>meta.mainProgram</literal>.
+          A path to an executable or a derivation with `meta.mainProgram`.
         '';
       };
     };
@@ -46,7 +46,7 @@ mkTransposedPerSystemModule {
     type = types.lazyAttrsOf appType;
     default = { };
     description = ''
-      Programs runnable with nix run <literal>.#&lt;name></literal>.
+      Programs runnable with nix run `<name>`.
     '';
     example = lib.literalExpression or lib.literalExample ''
       {
