@@ -30,25 +30,20 @@
     };
 
   };
-  flake = {
-    # Because of ./README.md, we can't use the built-in flake support, including
-    # the `effects` flake attribute. We have to define `herculesCI` ourselves.
-    options.herculesCI = lib.mkOption { type = lib.types.raw; };
-    config.herculesCI = { branch, ... }: {
-      onPush.default.outputs = {
-        inherit (config.flake) packages checks;
-        effects =
-          withSystem "x86_64-linux" ({ config, pkgs, effects, ... }: {
-            netlifyDeploy = effects.netlifyDeploy {
-              content = config.packages.siteContent;
-              secretName = "default-netlify";
-              siteId = "29a153b1-3698-433c-bc73-62415efb8117";
-              productionDeployment = branch == "main";
-            };
-          });
-      };
+  herculesCI = herculesCI@{ config, ... }: {
+    onPush.default.outputs = {
+      effects =
+        withSystem "x86_64-linux" ({ config, pkgs, effects, ... }: {
+          netlifyDeploy = effects.netlifyDeploy {
+            content = config.packages.siteContent;
+            secretName = "default-netlify";
+            siteId = "29a153b1-3698-433c-bc73-62415efb8117";
+            productionDeployment = herculesCI.config.repo.branch == "main";
+          };
+        });
     };
-
+  };
+  flake = {
     # for repl exploration / debug
     config.config = config;
     options.mySystem = lib.mkOption { default = config.allSystems.${builtins.currentSystem}; };
