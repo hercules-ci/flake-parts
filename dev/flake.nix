@@ -5,11 +5,9 @@
     # Flakes don't give us a good way to depend on .., so we don't.
     # This has drastic consequences of course.
 
-    # https://github.com/NixOS/nixpkgs/pull/174460
-    # https://github.com/NixOS/nixpkgs/pull/174470
-    nixpkgs.url = "github:hercules-ci/nixpkgs/module-docs-update";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    pre-commit-hooks-nix.url = "github:hercules-ci/pre-commit-hooks.nix/flakeModule";
+    pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
     pre-commit-hooks-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     hercules-ci-effects.url = "github:hercules-ci/hercules-ci-effects";
