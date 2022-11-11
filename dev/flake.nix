@@ -12,6 +12,8 @@
     pre-commit-hooks-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     hercules-ci-effects.url = "github:hercules-ci/hercules-ci-effects";
+
+    haskell-flake.url = "github:srid/haskell-flake";
   };
 
   outputs = { self, ... }:

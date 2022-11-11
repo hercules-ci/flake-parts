@@ -8,6 +8,7 @@
         imports = [
           inputs.pre-commit-hooks-nix.flakeModule
           inputs.hercules-ci-effects.flakeModule
+          inputs.haskell-flake.flakeModule
         ];
       };
       opts = eval.options;
@@ -70,6 +71,12 @@
           sourceName = "hercules-ci-effects";
           baseUrl = "https://github.com/hercules-ci/hercules-ci-effects/blob/master";
           sourcePath = inputs.hercules-ci-effects;
+        };
+        haskell-flake = {
+          title = "haskell-flake";
+          sourceName = "haskell-flake";
+          baseUrl = "https://github.com/srid/haskell-flake/blob/master";
+          sourcePath = inputs.haskell-flake;
         };
       };
 

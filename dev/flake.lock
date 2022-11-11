@@ -69,6 +69,21 @@
         "type": "github"
       }
     },
+    "haskell-flake": {
+      "locked": {
+        "lastModified": 1668167720,
+        "narHash": "sha256-5wDTR6xt9BB3BjgKR+YOjOkZgMyDXKaX79g42sStzDU=",
+        "owner": "srid",
+        "repo": "haskell-flake",
+        "rev": "4fc511d93a55fedf815c1647ad146c26d7a2054e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "haskell-flake",
+        "type": "github"
+      }
+    },
     "hercules-ci-agent": {
       "inputs": {
         "flake-parts": "flake-parts_2",
@@ -244,6 +259,7 @@
     },
     "root": {
       "inputs": {
+        "haskell-flake": "haskell-flake",
         "hercules-ci-effects": "hercules-ci-effects",
         "nixpkgs": "nixpkgs_3",
         "pre-commit-hooks-nix": "pre-commit-hooks-nix_2"
