@@ -33,8 +33,8 @@
   herculesCI = herculesCI@{ config, ... }: {
     onPush.default.outputs = {
       effects =
-        withSystem "x86_64-linux" ({ config, pkgs, effects, ... }: {
-          netlifyDeploy = effects.netlifyDeploy {
+        withSystem "x86_64-linux" ({ config, pkgs, hci-effects, ... }: {
+          netlifyDeploy = hci-effects.netlifyDeploy {
             content = config.packages.siteContent;
             secretName = "default-netlify";
             siteId = "29a153b1-3698-433c-bc73-62415efb8117";
