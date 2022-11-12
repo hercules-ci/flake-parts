@@ -76,6 +76,10 @@ See [the template](./template/default/flake.nix).
 
 See [flake.parts](https://flake.parts/options.html)
 
+# Documentation
+
+See [flake.parts](https://flake.parts)
+
 # Top-level module parameters
 
  -  `config`, `options`, `lib`, ...: standard module system parameters.
