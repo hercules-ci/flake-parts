@@ -35,6 +35,7 @@ baseline level of compatibility: the core attributes that constitute a flake.
  - Reuse project logic written by others
 
 <!-- end_of_intro -->
+<!-- ^^^^^^^^^^^^ used by https://github.com/hercules-ci/flake.parts-website -->
 
 # Getting Started
 

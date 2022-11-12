@@ -3,8 +3,7 @@
 {
   imports = [
     inputs.pre-commit-hooks-nix.flakeModule
-    inputs.hercules-ci-effects.flakeModule
-    ../site/flake-module.nix
+    inputs.hercules-ci-effects.flakeModule # herculesCI attr
   ];
   systems = [ "x86_64-linux" "aarch64-darwin" ];
   perSystem = { config, self', inputs', pkgs, ... }: {
@@ -13,10 +12,6 @@
       nativeBuildInputs = [
         pkgs.nixpkgs-fmt
         pkgs.pre-commit
-        pkgs.hci
-        pkgs.netlify-cli
-        pkgs.pandoc
-        pkgs.mdbook
       ];
       shellHook = ''
         ${config.pre-commit.installationScript}
@@ -30,19 +25,6 @@
       };
     };
 
-  };
-  herculesCI = herculesCI@{ config, ... }: {
-    onPush.default.outputs = {
-      effects =
-        withSystem "x86_64-linux" ({ config, pkgs, hci-effects, ... }: {
-          netlifyDeploy = hci-effects.netlifyDeploy {
-            content = config.packages.siteContent;
-            secretName = "default-netlify";
-            siteId = "29a153b1-3698-433c-bc73-62415efb8117";
-            productionDeployment = herculesCI.config.repo.branch == "main";
-          };
-        });
-    };
   };
   flake = {
     # for repl exploration / debug
