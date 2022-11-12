@@ -4,6 +4,3 @@ result-*
 
 # pre-commit-hooks.nix
 .pre-commit-config.yaml
-
-# dev/README.md
-flake.lock
