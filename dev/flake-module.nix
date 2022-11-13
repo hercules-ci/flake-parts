@@ -12,6 +12,7 @@
       nativeBuildInputs = [
         pkgs.nixpkgs-fmt
         pkgs.pre-commit
+        pkgs.hci
       ];
       shellHook = ''
         ${config.pre-commit.installationScript}
@@ -30,5 +31,10 @@
     # for repl exploration / debug
     config.config = config;
     options.mySystem = lib.mkOption { default = config.allSystems.${builtins.currentSystem}; };
+    config.effects = withSystem "x86_64-linux" ({ config, pkgs, hci-effects, ... }: {
+      tests = {
+        template = pkgs.callPackage ./tests/template.nix { inherit hci-effects; };
+      };
+    });
   };
 }
