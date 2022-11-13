@@ -19,7 +19,7 @@ in
         type = types.lazyAttrsOf types.package;
         default = { };
         description = ''
-          Per system package used by <literal>nix fmt</literal>.
+          An attribute set of per system a package used by [`nix fmt`](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
         '';
       };
     };
@@ -31,7 +31,7 @@ in
           type = types.nullOr types.package;
           default = null;
           description = ''
-            A package used by <literal>nix fmt</literal>.
+            A package used by [`nix fmt`](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
           '';
         };
       };
