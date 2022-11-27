@@ -1,4 +1,12 @@
 
+# 2022-11-27
+
+ - The `darwinModules` option has been removed. This was added in the early days
+   without full consideration. The removal will have no effect on most flakes
+   considering that the [`flake` option](https://flake.parts/options/flake-parts.html#opt-flake)
+   allows any attribute to be set. This attribute and related attributes should
+   be added to the nix-darwin project instead.
+
 # 2022-10-11
 
  - The `nixpkgs` input has been renamed to `nixpkgs-lib` to signify that the

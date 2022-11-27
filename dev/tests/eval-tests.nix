@@ -31,7 +31,6 @@ rec {
     assert empty == {
       apps = { };
       checks = { };
-      darwinModules = { };
       devShells = { };
       formatter = { };
       legacyPackages = { };
@@ -44,7 +43,6 @@ rec {
     assert example1 == {
       apps = { a = { }; b = { }; };
       checks = { a = { }; b = { }; };
-      darwinModules = { };
       devShells = { a = { }; b = { }; };
       formatter = { };
       legacyPackages = { a = { }; b = { }; };
