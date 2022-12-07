@@ -26,6 +26,10 @@
       };
     };
 
+    checks.eval-tests =
+      let tests = import ./tests/eval-tests.nix;
+      in tests.runTests pkgs.emptyFile // { internals = tests; };
+
   };
   flake = {
     # for repl exploration / debug
