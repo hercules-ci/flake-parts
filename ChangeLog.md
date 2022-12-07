@@ -1,5 +1,5 @@
 
-# 2022-11-27
+# 2022-12-07
 
  - The `darwinModules` option has been removed. This was added in the early days
    without full consideration. The removal will have no effect on most flakes
