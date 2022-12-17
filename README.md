@@ -27,7 +27,7 @@ baseline level of compatibility: the core attributes that constitute a flake.
 
  - Split your `flake.nix` into focused units, each in their own file.
 
- - Take care of [system](./system.md).
+ - Take care of [system](https://flake.parts/system.html).
 
  - Allow users of your library flake to easily integrate your generated flake outputs
    into their flake.
