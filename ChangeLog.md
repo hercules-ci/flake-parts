@@ -1,4 +1,22 @@
 
+# 2022-12-17
+
+ - The old syntax `mkFlake { inherit self; }` is now strongly discouraged in
+ favor of:
+
+   ```nix
+   outputs = inputs@{ flake-parts, ... }:
+     flake-parts.lib.mkFlake { inherit inputs; } { /* module */ }
+   ```
+
+   This fixes an infinite recursion that occurs with the old syntax when
+   using the `inputs` module argument in `imports`.
+
+   If you're under the impression that this already worked, that's probably
+   because you were using `inputs` from the lexical scope (ie directly from
+   the flake outputs function arguments), rather than in a separate module file.
+
+
 # 2022-12-07
 
  - The `darwinModules` option has been removed. This was added in the early days
