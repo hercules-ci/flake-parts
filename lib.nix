@@ -7,7 +7,9 @@ let
     isAttrs
     isFunction
     showOption
+    throwIf
     types
+    warnIf
     ;
   inherit (lib.types)
     path
@@ -60,18 +62,55 @@ let
     }
   );
 
+  errorExample = ''
+    For example:
+
+        outputs = inputs@{ flake-parts, ... }:
+          flake-parts.lib.mkFlake { inherit inputs; } { /* module */ };
+
+    To avoid an infinite recursion, *DO NOT* pass `self.inputs` and
+    *DO NOT* pass `inherit (self) inputs`, but pass the output function
+    arguments as `inputs` like above.
+  '';
 
   flake-parts-lib = {
     evalFlakeModule =
-      { self
+      args@
+      { inputs ? self.inputs
       , specialArgs ? { }
-      }:
-      module:
 
-      lib.evalModules {
-        specialArgs = { inherit self flake-parts-lib; inherit (self) inputs; } // specialArgs;
-        modules = [ ./all-modules.nix module ];
-      };
+        # legacy
+      , self ? inputs.self or (throw ''
+          When invoking flake-parts, you must pass all the flake output arguments,
+          and not just `self.inputs`.
+
+          ${errorExample}
+        '')
+      }:
+      throwIf
+        (!args?self && !args?inputs) ''
+        When invoking flake-parts, you must pass in the flake output arguments.
+
+        ${errorExample}
+      ''
+        warnIf
+        (!args?inputs) ''
+        When invoking flake-parts, it is recommended to pass all the flake output
+        arguments in the `inputs` parameter. If you only pass `self`, it's not
+        possible to use the `inputs` module argument in the module `imports`.
+
+        Please pass the output function arguments. ${errorExample}
+      ''
+
+        (module:
+        lib.evalModules {
+          specialArgs = {
+            inherit self flake-parts-lib;
+            inputs = args.inputs or /* legacy, warned above */ self.inputs;
+          } // specialArgs;
+          modules = [ ./all-modules.nix module ];
+        }
+        );
 
     mkFlake = args: module:
       (flake-parts-lib.evalFlakeModule args module).config.flake;
