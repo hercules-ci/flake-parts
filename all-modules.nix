@@ -3,6 +3,7 @@
   imports = [
     ./modules/apps.nix
     ./modules/checks.nix
+    ./modules/debug.nix
     ./modules/devShells.nix
     ./modules/flake.nix
     ./modules/formatter.nix
