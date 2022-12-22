@@ -6,6 +6,13 @@
     inputs.hercules-ci-effects.flakeModule # herculesCI attr
   ];
   systems = [ "x86_64-linux" "aarch64-darwin" ];
+
+  hercules-ci.flake-update = {
+    enable = true;
+    autoMergeMethod = "merge";
+    when.dayOfMonth = 1;
+  };
+
   perSystem = { config, self', inputs', pkgs, ... }: {
 
     devShells.default = pkgs.mkShell {
