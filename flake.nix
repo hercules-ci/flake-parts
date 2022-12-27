@@ -22,6 +22,9 @@
         '';
       };
     };
+    flakeModules = {
+      easyOverlay = ./extras/easyOverlay.nix;
+    };
   };
 
 }
