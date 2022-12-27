@@ -113,7 +113,15 @@ let
         );
 
     mkFlake = args: module:
-      (flake-parts-lib.evalFlakeModule args module).config.flake;
+      let
+        loc =
+          if args?inputs.self.outPath
+          then args.inputs.self.outPath + "/flake.nix"
+          else "<mkFlake argument>";
+        mod = lib.setDefaultModuleLocation loc module;
+        eval = flake-parts-lib.evalFlakeModule args mod;
+      in
+      eval.config.flake;
 
     # For extending options in an already declared submodule.
     # Workaround for https://github.com/NixOS/nixpkgs/issues/146882
