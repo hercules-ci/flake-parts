@@ -7,6 +7,7 @@
 
   outputs = { self, nixpkgs-lib, ... }: {
     lib = import ./lib.nix { inherit (nixpkgs-lib) lib; };
+    flakeModules.flakeModules = ./modules/flakeModules.nix;
     templates = {
       default = {
         path = ./template/default;

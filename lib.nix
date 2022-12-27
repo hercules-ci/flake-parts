@@ -10,11 +10,23 @@ let
     throwIf
     types
     warnIf
+    getAttrFromPath
+    setAttrByPath
+    attrByPath
+    optionalAttrs
     ;
+  inherit (lib.modules)
+    mkAliasAndWrapDefsWithPriority;
   inherit (lib.types)
     path
     submoduleWith
     ;
+
+  # Polyfill isFlake until Nix with https://github.com/NixOS/nix/pull/7207 is common
+  isFlake = maybeFlake:
+    if maybeFlake ? _type
+    then maybeFlake._type == "flake"
+    else maybeFlake ? inputs && maybeFlake ? outputs && maybeFlake ? sourceInfo;
 
   # Polyfill functionTo to make sure it has type merging.
   # Remove 2022-12
@@ -112,6 +124,17 @@ let
         }
         );
 
+    # Function to extract the default flakeModule from
+    # what may be a flake, returning the argument unmodified
+    # if it's not a flake.
+    #
+    # Useful to map over an 'imports' list to make it less
+    # verbose in the common case.
+    defaultModule = maybeFlake:
+      if isFlake maybeFlake
+      then maybeFlake.flakeModules.default or maybeFlake
+      else maybeFlake;
+
     mkFlake = args: module:
       let
         loc =
@@ -173,6 +196,26 @@ let
         transposition.${name} = { };
       };
     };
+
+    # Needed pending https://github.com/NixOS/nixpkgs/pull/198450
+    mkAliasOptionModule = from: to: { config, options, ... }:
+      let
+        fromOpt = getAttrFromPath from options;
+        toOf = attrByPath to
+          (abort "Renaming error: option `${showOption to}' does not exist.");
+        toType = let opt = attrByPath to { } options; in opt.type or (types.submodule { });
+      in
+      {
+        options = setAttrByPath from (mkOption
+          {
+            visible = true;
+            description = lib.mdDoc "Alias of {option}`${showOption to}`.";
+            apply = x: (toOf config);
+          } // optionalAttrs (toType != null) {
+          type = toType;
+        });
+        config = (mkAliasAndWrapDefsWithPriority (setAttrByPath to) fromOpt);
+      };
   };
 
 in
