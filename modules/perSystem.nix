@@ -12,6 +12,50 @@ let
 
   rootConfig = config;
 
+  # Stubs for self and inputs. While it'd be possible to define aliases
+  # inside perSystem, that is not a general solution, and it would make
+  # top.config harder to discover, stretching the learning curve rather
+  # than flattening it.
+
+  throwAliasError' = param:
+    throw ''
+      `${param}` (without `'`) is not a `perSystem` module argument, but a
+      module argument of the top level config.
+
+      The following is an example usage of `${param}`. Note that its binding
+      is in the `top` parameter list, which is declared by the top level module
+      rather than the `perSystem` module.
+
+        top@{ config, lib, ${param}, ... }: {
+          perSystem = { config, ${param}', ... }: {
+            # in scope here:
+            #  - ${param}
+            #  - ${param}'
+            #  - config (of perSystem)
+            #  - top.config (note the `top@` pattern)
+          };
+        }
+    '';
+
+  throwAliasError = param:
+    throw ''
+      `${param}` is not a `perSystem` module argument, but a module argument of
+      the top level config.
+
+      The following is an example usage of `${param}`. Note that its binding
+      is in the `top` parameter list, which is declared by the top level module
+      rather than the `perSystem` module.
+
+        top@{ config, lib, ${param}, ... }: {
+          perSystem = { config, ... }: {
+            # in scope here:
+            #  - ${param}
+            #  - config (of perSystem)
+            #  - top.config (note the `top@` pattern)
+          };
+        }
+    '';
+
 in
 {
   options = {
@@ -36,6 +80,13 @@ in
         config = {
           _module.args.inputs' = mapAttrs (k: rootConfig.perInput system) self.inputs;
           _module.args.self' = rootConfig.perInput system self;
+
+          # Custom error messages
+          _module.args.self = throwAliasError' "self";
+          _module.args.inputs = throwAliasError' "inputs";
+          _module.args.getSystem = throwAliasError "getSystem";
+          _module.args.withSystem = throwAliasError "withSystem";
+          _module.args.moduleWithSystem = throwAliasError "moduleWithSystem";
         };
       });
       apply = modules: system:
