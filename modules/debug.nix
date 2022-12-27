@@ -48,6 +48,8 @@ in
          - `allSystems`: The `perSystem` submodule applied to the configured `systems`.
          - `currentSystem`: Shortcut into `allSystems`. Only available in impure mode.
            Works for arbitrary system values.
+
+        See [Expore and debug option values](../debug.html) for more examples.
       '';
     };
     perSystem = mkPerSystemOption
