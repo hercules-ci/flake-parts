@@ -17,13 +17,13 @@ rec {
   };
 
   empty = mkFlake
-    { self = { }; }
+    { inputs.self = { }; }
     {
       systems = [ ];
     };
 
   example1 = mkFlake
-    { self = { }; }
+    { inputs.self = { }; }
     {
       systems = [ "a" "b" ];
       perSystem = { system, ... }: {
@@ -32,7 +32,7 @@ rec {
     };
 
   easyOverlay = mkFlake
-    { self = { }; }
+    { inputs.self = { }; }
     {
       imports = [ flake-parts.flakeModules.easyOverlay ];
       systems = [ "a" ];

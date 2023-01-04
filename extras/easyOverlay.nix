@@ -44,7 +44,12 @@ in
   config = {
     flake.overlays.default = final: prev:
       let
-        system = prev.stdenv.hostPlatform.system;
+        system =
+          prev.stdenv.hostPlatform.system or (
+            prev.system or (
+              throw "Could not determine the `hostPlatform` of Nixpkgs. Was this overlay loaded as a Nixpkgs overlay, or was it loaded into something else?"
+            )
+          );
         perSys = (getSystem system).extendModules {
           modules = [
             {
