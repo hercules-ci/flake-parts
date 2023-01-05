@@ -110,6 +110,12 @@ in
     allSystems = genAttrs config.systems config.perSystem;
     # TODO: Sub-optimal error message. Get Nix to support a memoization primop, or get Nix Flakes to support systems properly or get Nix Flakes to add a name to flakes.
     _module.args.getSystem = system: config.allSystems.${system} or (builtins.trace "using non-memoized system ${system}" config.perSystem system);
+
+    # The warning is there for a reason. Only use this in situations where the
+    # performance cost has already been incurred, such as in `flakeModules.easyOverlay`,
+    # where we run in the context of an overlay, and the performance cost of the
+    # extra `pkgs` makes the cost of running `perSystem` probably negligible.
+    _module.args.getSystemIgnoreWarning = system: config.allSystems.${system} or config.perSystem system;
   };
 
 }

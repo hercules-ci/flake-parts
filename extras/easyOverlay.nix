@@ -1,4 +1,4 @@
-toplevel@{ config, lib, flake-parts-lib, getSystem, ... }:
+toplevel@{ config, lib, flake-parts-lib, getSystemIgnoreWarning, ... }:
 let
   inherit (flake-parts-lib)
     mkPerSystemOption;
@@ -50,7 +50,7 @@ in
               throw "Could not determine the `hostPlatform` of Nixpkgs. Was this overlay loaded as a Nixpkgs overlay, or was it loaded into something else?"
             )
           );
-        perSys = (getSystem system).extendModules {
+        perSys = (getSystemIgnoreWarning system).extendModules {
           modules = [
             {
               _file = "flake-parts#flakeModules.easyOverlay/overlay-overrides";
