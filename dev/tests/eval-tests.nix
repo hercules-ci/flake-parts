@@ -35,7 +35,7 @@ rec {
     { inputs.self = { }; }
     {
       imports = [ flake-parts.flakeModules.easyOverlay ];
-      systems = [ "a" ];
+      systems = [ "a" "aarch64-linux" ];
       perSystem = { system, config, final, pkgs, ... }: {
         packages.default = config.packages.hello;
         packages.hello = pkg system "hello";
@@ -55,7 +55,15 @@ rec {
   };
 
   nixpkgsWithEasyOverlay = import nixpkgs {
+    # non-memoized
     system = "x86_64-linux";
+    overlays = [ easyOverlay.overlays.default ];
+    config = { };
+  };
+
+  nixpkgsWithEasyOverlayMemoized = import nixpkgs {
+    # memoized
+    system = "aarch64-linux";
     overlays = [ easyOverlay.overlays.default ];
     config = { };
   };
@@ -90,8 +98,11 @@ rec {
     };
 
     # - exported package becomes part of overlay.
-    # - perSystem is invoked for the right system.
+    # - perSystem is invoked for the right system, when system is non-memoized
     assert nixpkgsWithEasyOverlay.hello == pkg "x86_64-linux" "hello";
+
+    # - perSystem is invoked for the right system, when system is memoized
+    assert nixpkgsWithEasyOverlayMemoized.hello == pkg "aarch64-linux" "hello";
 
     # - Non-exported package does not become part of overlay.
     assert nixpkgsWithEasyOverlay.default or null != pkg "x86_64-linux" "hello";

@@ -115,7 +115,7 @@ in
     # performance cost has already been incurred, such as in `flakeModules.easyOverlay`,
     # where we run in the context of an overlay, and the performance cost of the
     # extra `pkgs` makes the cost of running `perSystem` probably negligible.
-    _module.args.getSystemIgnoreWarning = system: config.allSystems.${system} or config.perSystem system;
+    _module.args.getSystemIgnoreWarning = system: config.allSystems.${system} or (config.perSystem system);
   };
 
 }
