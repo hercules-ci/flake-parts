@@ -69,12 +69,26 @@ in
     };
 
     perInput = mkOption {
-      description = "Function from system to function from flake to `system`-specific attributes.";
+      description = ''
+        A function that pre-processes flake inputs.
+
+        It is called for users of `perSystem` such that `inputs'.''${name} = config.perInput system inputs.''${name}`.
+
+        This is used for [`inputs'`](../module-arguments.html#inputs) and [`self'`](../module-arguments.html#self).
+
+        The attributes returned by the `perInput` function definitions are merged into a single namespace (per input), 
+        so each module should return an attribute set with usually only one or two predictable attribute names. Otherwise,
+        the `inputs'` namespace gets polluted.
+      '';
       type = types.functionTo (types.functionTo (types.lazyAttrsOf types.unspecified));
     };
 
     perSystem = mkOption {
-      description = "A function from system to flake-like attributes omitting the `<system>` attribute.";
+      description = ''
+        A function from system to flake-like attributes omitting the `<system>` attribute.
+
+        Modules defined here have access to the suboptions and [some convenient module arguments](../module-arguments.html).
+      '';
       type = mkPerSystemType ({ config, system, ... }: {
         _file = ./perSystem.nix;
         config = {
