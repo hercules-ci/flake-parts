@@ -19,7 +19,7 @@ in
           Instantiated NixOS configurations. Used by `nixos-rebuild`.
 
           `nixosConfigurations` is for specific machines. If you want to expose
-          reusable configurations, add them to [`nixosModules`](#opt-nixosModules)
+          reusable configurations, add them to [`nixosModules`](#opt-flake.nixosModules)
           in the form of modules (no `lib.nixosSystem`), so that you can reference
           them in this or another flake's `nixosConfigurations`.
         '';
