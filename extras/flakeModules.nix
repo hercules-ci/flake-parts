@@ -16,6 +16,7 @@ let
     default = { };
     apply = mapAttrs (k: v: {
       _file = "${toString self.outPath}/flake.nix#flakeModules.${k}";
+      key = "${toString self.outPath}/flake.nix#flakeModules.${k}";
       imports = [ v ];
     });
     description = ''
