@@ -85,7 +85,66 @@ let
     arguments as `inputs` like above.
   '';
 
+  # Use a list of lib overlays to extend a lib
+  mkExtendedLib = (
+    let libExtend = lib: lib.extend;
+    in overlays: lib: builtins.foldl' libExtend lib overlays
+  );
+
+  # The overlays we are passed could be any of:
+  #
+  # (1) A simple attribute attribute set
+  # (2) A function from `prev` to an attribute set
+  # (3) A function from `final` and `prev` to an attribute set
+  # (4) A function from `inputs`, `final`, `prev`, to an attribute set
+  # (5) A path or string pointing at a file containing any of (1) - (4)
+  #
+  # We seek to normalize these possibilities so that we always have a function
+  # from `final` and `prev` to an attribute set, which is suitable for use with
+  # mkExtendedLib. This may mean specializing on the `inputs` that we are passed.
+  #
+  toStandardOverlay = inputs: freeformOverlay: (
+    let
+      reifiedFreeformOverlay = (
+        if (builtins.isPath freeformOverlay) || (builtins.isString freeformOverlay)
+        then import freeformOverlay
+        else freeformOverlay
+      );
+    in (final: prev:
+      # apply the correct number of arguments to `reifiedFreeformOverlay`. Of note
+      # is the fact that the bindings that pass too many args should not blow up
+      # because laziness and short-circuiting should ensure that they are never
+      # actually invoked.
+      let
+        noArg = reifiedFreeformOverlay;
+        oneArg = reifiedFreeformOverlay prev;
+        twoArg = reifiedFreeformOverlay final prev;
+        threeArg = reifiedFreeformOverlay inputs final prev;
+      in
+        if ! builtins.isFunction noArg then noArg
+        else if ! builtins.isFunction oneArg then oneArg
+        else if ! builtins.isFunction twoArg then twoArg
+        else if ! builtins.isFunction threeArg then threeArg
+        else throw ''
+          Received a lib overlay that takes the wrong number of args. Please ensure
+          that your lib overlay function takes some suffix of this potential argument
+          list: `inputs`, `final`, `prev`
+        ''
+    )
+  );
+
+  # Convert a list or attribute set of freeform overlays to a list of standard
+  # overlays, suitable for use with `mkExtendedLib`
+  getOverlayList = inputOverlays: (
+    if builtins.isList inputOverlays
+    then inputs: builtins.map (toStandardOverlay inputs) inputOverlays
+    else getOverlayList (builtins.attrValues inputOverlays)
+  );
+
   flake-parts-lib = {
+
+    inherit mkExtendedLib;
+
     evalFlakeModule =
       args@
       { inputs ? self.inputs
@@ -98,6 +157,7 @@ let
 
           ${errorExample}
         '')
+      , libOverlays ? [ ]
       }:
       throwIf
         (!args?self && !args?inputs) ''
@@ -115,7 +175,8 @@ let
       ''
 
         (module:
-        lib.evalModules {
+          let fullLib = mkExtendedLib (getOverlayList libOverlays inputs) lib;
+          in fullLib.evalModules {
           specialArgs = {
             inherit self flake-parts-lib;
             inputs = args.inputs or /* legacy, warned above */ self.inputs;
