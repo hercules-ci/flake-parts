@@ -66,6 +66,7 @@ in
         In other words, all valid values for `system` in e.g. `packages.<system>.foo`.
       '';
       type = types.listOf types.str;
+      default = lib.systems.flakeExposed;
     };
 
     perInput = mkOption {
