@@ -7,10 +7,9 @@ let
     mkOption
     types
     ;
-  inherit (flake-parts-lib)
-    mkSubmoduleOptions
-    mkPerSystemOption
-    ;
+
+  removeEmptySystems = attrName:
+    lib.filterAttrs (system: v: v.${attrName} != {});
 
   transpositionModule = {
     options = {
@@ -57,7 +56,7 @@ in
         (attrName: attrConfig:
           mapAttrs
             (system: v: v.${attrName})
-            config.allSystems
+            (removeEmptySystems attrName config.allSystems)
         )
         config.transposition;
 
