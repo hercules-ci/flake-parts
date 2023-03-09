@@ -1,3 +1,7 @@
+# Run with
+#
+#     nix build -f dev checks.x86_64-linux.eval-tests
+
 rec {
   f-p = builtins.getFlake (toString ../..);
   flake-parts = f-p;
@@ -46,6 +50,33 @@ rec {
           hello_new = config.packages.hello_new;
         };
       };
+    };
+
+  flakeModulesDeclare = mkFlake
+    { inputs.self = { outPath = ./.; }; }
+    ({ config, ... }: {
+      imports = [ flake-parts.flakeModules.flakeModules ];
+      systems = [ ];
+      flake.flakeModules.default = { lib, ... }: {
+        options.flake.test123 = lib.mkOption { default = "option123"; };
+        imports = [ config.flake.flakeModules.extra ];
+      };
+      flake.flakeModules.extra = {
+        flake.test123 = "123test";
+      };
+    });
+
+  flakeModulesImport = mkFlake
+    { inputs.self = { }; }
+    {
+      imports = [ flakeModulesDeclare.flakeModules.default ];
+    };
+
+  flakeModulesDisable = mkFlake
+    { inputs.self = { }; }
+    {
+      imports = [ flakeModulesDeclare.flakeModules.default ];
+      disabledModules = [ flakeModulesDeclare.flakeModules.extra ];
     };
 
   nixpkgsWithoutEasyOverlay = import nixpkgs {
@@ -112,6 +143,10 @@ rec {
 
     # - `hello_new` shows that the `final` wiring works
     assert nixpkgsWithEasyOverlay.hello_new == nixpkgsWithEasyOverlay.hello;
+
+    assert flakeModulesImport.test123 == "123test";
+
+    assert flakeModulesDisable.test123 == "option123";
 
     ok;
 
