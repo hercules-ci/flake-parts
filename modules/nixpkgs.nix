@@ -11,15 +11,13 @@
 # will be accepted into flake-parts, because it's against the
 # spirit of Flakes.
 #
+{ config, inputs, lib, ... }:
 {
   config = {
-    perSystem = { inputs', lib, ... }: {
+    imports = [ inputs.nixpkgs.flakeModule ];
+    perSystem = { ... }: {
       config = {
-        _module.args.pkgs = lib.mkOptionDefault (
-          builtins.seq
-            (inputs'.nixpkgs or (throw "flake-parts: The flake does not have a `nixpkgs` input. Please add it, or set `perSystem._module.args.pkgs` yourself."))
-            inputs'.nixpkgs.legacyPackages
-        );
+        _module.args.pkgs = lib.mkOptionDefault config.nixpkgs.output;
       };
     };
   };
