@@ -11,20 +11,24 @@
 # will be accepted into flake-parts, because it's against the
 # spirit of Flakes.
 #
-topLevel@{ config, options, inputs, lib, ... }:
+topLevel@{ config, options, inputs, lib, flake-parts-lib, ... }:
+let
+  inherit (flake-parts-lib)
+    mkPerSystemOption
+    ;
+in
 {
+  imports = [ inputs.nixpkgs.flakeModules.default ];
+
   options = {
     perSystem = mkPerSystemOption ({ config, system, ... }: {
       _file = ./nixpkgs.nix;
+      imports = [{ inherit (topLevel.config) nixpkgs; }];
       options = { inherit (options) nixpkgs; };
       config = {
-        imports = [{ inherit (topLevel.config) nixpkgs; }];
-        _module.args.pkgs = lib.mkDefault (config.allPkgsPerSystem.${system});
+        _module.args.pkgs = lib.mkDefault (config.nixpkgs.allPkgsPerSystem.${system});
       };
     });
   };
 
-  config = {
-    imports = [ inputs.nixpkgs.flakeModule ];
-  };
 }
