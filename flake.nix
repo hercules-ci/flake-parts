@@ -20,6 +20,12 @@
           A minimal flake using flake-parts.
         '';
       };
+      unfree = {
+        path = ./template/unfree;
+        description = ''
+          A minimal flake using flake-parts importing nixpkgs with the unfree option.
+        '';
+      };
     };
     flakeModules = {
       easyOverlay = ./extras/easyOverlay.nix;
