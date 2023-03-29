@@ -1,13 +1,8 @@
-#
 # Nixpkgs module. The only exception to the rule.
-#
 # Provides a `pkgs` argument in `perSystem`.
-#
 topLevel@{ config, options, inputs, lib, flake-parts-lib, ... }:
 let
-  inherit (flake-parts-lib)
-    mkPerSystemOption
-    ;
+  inherit (flake-parts-lib) mkPerSystemOption;
 
 in
 {
