@@ -15,8 +15,10 @@ in
           # Last element has priority, so `perSystem` overlays rule
           (topLevel.config.nixpkgs.overlays ++ config.nixpkgs.overlays);
 
-        finalPkgs = config.nixpkgs.mkPkgsFromArgs
-          { inherit system; overlays = [ finalOverlay ]; };
+        finalPkgs = config.nixpkgs.mkPkgsFromArgs {
+          localSystem = { inherit system; };
+          overlays = [ finalOverlay ];
+        };
 
       in
       {
