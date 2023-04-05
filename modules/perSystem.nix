@@ -89,20 +89,29 @@ in
 
         Modules defined here have access to the suboptions and [some convenient module arguments](../module-arguments.html).
       '';
-      type = mkPerSystemType ({ config, system, ... }: {
-        _file = ./perSystem.nix;
-        config = {
-          _module.args.inputs' = mapAttrs (k: rootConfig.perInput system) self.inputs;
-          _module.args.self' = rootConfig.perInput system self // { inherit (self) outPath; };
+      type = mkPerSystemType ({ config, system, ... }:
+        let
+          mkInputsPrime = name: flake:
+            let
+              transposedAttributes = rootConfig.perInput system flake;
+              flakeModules = flake.flakeModules or { };
+            in
+            transposedAttributes // { inherit flakeModules; };
+        in
+        {
+          _file = ./perSystem.nix;
+          config = {
+            _module.args.inputs' = mapAttrs mkInputsPrime self.inputs;
+            _module.args.self' = rootConfig.perInput system self // { inherit (self) outPath; };
 
-          # Custom error messages
-          _module.args.self = throwAliasError' "self";
-          _module.args.inputs = throwAliasError' "inputs";
-          _module.args.getSystem = throwAliasError "getSystem";
-          _module.args.withSystem = throwAliasError "withSystem";
-          _module.args.moduleWithSystem = throwAliasError "moduleWithSystem";
-        };
-      });
+            # Custom error messages
+            _module.args.self = throwAliasError' "self";
+            _module.args.inputs = throwAliasError' "inputs";
+            _module.args.getSystem = throwAliasError "getSystem";
+            _module.args.withSystem = throwAliasError "withSystem";
+            _module.args.moduleWithSystem = throwAliasError "moduleWithSystem";
+          };
+        });
       apply = modules: system:
         (lib.evalModules {
           inherit modules;
