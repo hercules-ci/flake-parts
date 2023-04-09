@@ -59,14 +59,21 @@ let
 in
 {
   options = {
-    systems = mkOption {
+    systems = mkOption ({
       description = ''
         All the system types to enumerate in the flake output subattributes.
 
         In other words, all valid values for `system` in e.g. `packages.<system>.foo`.
+
+        If the `systems` flake input exists, it will be imported as the
+        default. See <https://github.com/nix-systems/nix-systems> for a
+        description of the pattern.
       '';
       type = types.listOf types.str;
-    };
+    } // (lib.optionalAttrs self.inputs?systems) {
+      # Load the systems input by default if it has been declared.
+      default = import self.inputs.systems;
+    });
 
     perInput = mkOption {
       description = ''
