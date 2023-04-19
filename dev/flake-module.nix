@@ -1,4 +1,4 @@
-{ config, lib, inputs, withSystem, ... }:
+{ config, inputs, lib, options, withSystem, ... }:
 
 {
   imports = [
@@ -41,6 +41,7 @@
   flake = {
     # for repl exploration / debug
     config.config = config;
+    config.options = options;
     options.mySystem = lib.mkOption { default = config.allSystems.${builtins.currentSystem}; };
     config.effects = withSystem "x86_64-linux" ({ pkgs, hci-effects, ... }: {
       tests = {
