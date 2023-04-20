@@ -2,17 +2,49 @@
 #
 #     nix build -f dev checks.x86_64-linux.eval-tests
 
-rec {
-  f-p = builtins.getFlake (toString ../..);
-  flake-parts = f-p;
+let
+  flake-parts = builtins.getFlake (toString ../..);
+  lib = flake-parts.inputs.nixpkgs-lib.lib;
+in
+(lib.makeExtensibleWithCustomName "extendEvalTests" (evalTests: {
+  inherit evalTests;
+  inherit flake-parts;
+  flake-parts-lib = evalTests.flake-parts.lib;
+  inherit lib;
 
   devFlake = builtins.getFlake (toString ../.);
-  nixpkgs = devFlake.inputs.nixpkgs;
+  nixpkgs = evalTests.devFlake.inputs.nixpkgs;
 
-  f-p-lib = f-p.lib;
+  inherit (evalTests.flake-parts-lib) mkFlake;
+  weakEvalTests.callFlake = { ... } @ flake:
+    let
+      sourceInfo = flake.sourceInfo or { };
+      inputs = flake.inputs or { };
+      outputs = flake.outputs inputs;
+      result = outputs;
+    in
+    result;
+  strongEvalTests.callFlake = { ... } @ flake:
+    let
+      sourceInfo = flake.sourceInfo or { };
+      inputs = flake.inputs or { };
+      outputs = flake.outputs (inputs // { self = result; });
+      result = outputs // sourceInfo // {
+        inherit inputs outputs sourceInfo;
+        _type = "flake";
+      };
+    in
+    assert builtins.isFunction flake.outputs;
+    result;
 
-  inherit (f-p-lib) mkFlake;
-  inherit (f-p.inputs.nixpkgs-lib) lib;
+  withWeakEvalTests = evalTests.extendEvalTests (finalEvalTests: prevEvalTests:
+    builtins.mapAttrs (name: value: finalEvalTests.weakEvalTests.${name})
+      prevEvalTests.weakEvalTests
+  );
+  withStrongEvalTests = evalTests.extendEvalTests (finalEvalTests: prevEvalTests:
+    builtins.mapAttrs (name: value: finalEvalTests.strongEvalTests.${name})
+      prevEvalTests.strongEvalTests
+  );
 
   pkg = system: name: derivation {
     name = name;
@@ -20,41 +52,48 @@ rec {
     system = system;
   };
 
-  empty = mkFlake
-    { inputs.self = { }; }
-    {
+  empty = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = { };
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ ];
     };
+  };
 
-  example1 = mkFlake
-    { inputs.self = { }; }
-    {
+  example1 = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = { };
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "a" "b" ];
       perSystem = { system, ... }: {
-        packages.hello = pkg system "hello";
+        packages.hello = evalTests.pkg system "hello";
       };
     };
+  };
 
-  packagesNonStrictInDevShells = mkFlake
-    { inputs.self = packagesNonStrictInDevShells; /* approximation */ }
-    {
+  packagesNonStrictInDevShells = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    # approximation
+    inputs.self = evalTests.packagesNonStrictInDevShells;
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "a" "b" ];
-      perSystem = { system, self', ... }: {
-        packages.hello = pkg system "hello";
+      perSystem = { self', system, ... }: {
+        packages.hello = evalTests.pkg system "hello";
         packages.default = self'.packages.hello;
         devShells = throw "can't be strict in perSystem.devShells!";
       };
       flake.devShells = throw "can't be strict in devShells!";
     };
 
-  easyOverlay = mkFlake
-    { inputs.self = { }; }
-    {
-      imports = [ flake-parts.flakeModules.easyOverlay ];
+  easyOverlay = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = { };
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [ inputs.flake-parts.flakeModules.easyOverlay ];
       systems = [ "a" "aarch64-linux" ];
       perSystem = { system, config, final, pkgs, ... }: {
         packages.default = config.packages.hello;
-        packages.hello = pkg system "hello";
+        packages.hello = evalTests.pkg system "hello";
         packages.hello_new = final.hello;
         overlayAttrs = {
           hello = config.packages.hello;
@@ -63,11 +102,13 @@ rec {
         };
       };
     };
+  };
 
-  flakeModulesDeclare = mkFlake
-    { inputs.self = { outPath = ./.; }; }
-    ({ config, ... }: {
-      imports = [ flake-parts.flakeModules.flakeModules ];
+  flakeModulesDeclare = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = { outPath = ./.; };
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } ({ config, inputs, lib, ... }: {
+      imports = [ inputs.flake-parts.flakeModules.flakeModules ];
       systems = [ ];
       flake.flakeModules.default = { lib, ... }: {
         options.flake.test123 = lib.mkOption { default = "option123"; };
@@ -77,43 +118,50 @@ rec {
         flake.test123 = "123test";
       };
     });
+  };
 
-  flakeModulesImport = mkFlake
-    { inputs.self = { }; }
-    {
-      imports = [ flakeModulesDeclare.flakeModules.default ];
+  flakeModulesImport = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.flakeModulesDeclare = evalTests.flakeModulesDeclare;
+    inputs.self = { };
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [ inputs.flakeModulesDeclare.flakeModules.default ];
     };
+  };
 
-  flakeModulesDisable = mkFlake
-    { inputs.self = { }; }
-    {
-      imports = [ flakeModulesDeclare.flakeModules.default ];
-      disabledModules = [ flakeModulesDeclare.flakeModules.extra ];
+  flakeModulesDisable = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.flakeModulesDeclare = evalTests.flakeModulesDeclare;
+    inputs.self = { };
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [ inputs.flakeModulesDeclare.flakeModules.default ];
+      disabledModules = [ inputs.flakeModulesDeclare.flakeModules.extra ];
     };
+  };
 
-  nixpkgsWithoutEasyOverlay = import nixpkgs {
+  nixpkgsWithoutEasyOverlay = import evalTests.nixpkgs {
     system = "x86_64-linux";
     overlays = [ ];
     config = { };
   };
 
-  nixpkgsWithEasyOverlay = import nixpkgs {
+  nixpkgsWithEasyOverlay = import evalTests.nixpkgs {
     # non-memoized
     system = "x86_64-linux";
-    overlays = [ easyOverlay.overlays.default ];
+    overlays = [ evalTests.easyOverlay.overlays.default ];
     config = { };
   };
 
-  nixpkgsWithEasyOverlayMemoized = import nixpkgs {
+  nixpkgsWithEasyOverlayMemoized = import evalTests.nixpkgs {
     # memoized
     system = "aarch64-linux";
-    overlays = [ easyOverlay.overlays.default ];
+    overlays = [ evalTests.easyOverlay.overlays.default ];
     config = { };
   };
 
   runTests = ok:
 
-    assert empty == {
+    assert evalTests.empty == {
       apps = { };
       checks = { };
       devShells = { };
@@ -125,7 +173,7 @@ rec {
       packages = { };
     };
 
-    assert example1 == {
+    assert evalTests.example1 == {
       apps = { a = { }; b = { }; };
       checks = { a = { }; b = { }; };
       devShells = { a = { }; b = { }; };
@@ -135,34 +183,34 @@ rec {
       nixosModules = { };
       overlays = { };
       packages = {
-        a = { hello = pkg "a" "hello"; };
-        b = { hello = pkg "b" "hello"; };
+        a = { hello = evalTests.pkg "a" "hello"; };
+        b = { hello = evalTests.pkg "b" "hello"; };
       };
     };
 
     # - exported package becomes part of overlay.
     # - perSystem is invoked for the right system, when system is non-memoized
-    assert nixpkgsWithEasyOverlay.hello == pkg "x86_64-linux" "hello";
+    assert evalTests.nixpkgsWithEasyOverlay.hello == evalTests.pkg "x86_64-linux" "hello";
 
     # - perSystem is invoked for the right system, when system is memoized
-    assert nixpkgsWithEasyOverlayMemoized.hello == pkg "aarch64-linux" "hello";
+    assert evalTests.nixpkgsWithEasyOverlayMemoized.hello == evalTests.pkg "aarch64-linux" "hello";
 
     # - Non-exported package does not become part of overlay.
-    assert nixpkgsWithEasyOverlay.default or null != pkg "x86_64-linux" "hello";
+    assert evalTests.nixpkgsWithEasyOverlay.default or null != evalTests.pkg "x86_64-linux" "hello";
 
     # - hello_old comes from super
-    assert nixpkgsWithEasyOverlay.hello_old == nixpkgsWithoutEasyOverlay.hello;
+    assert evalTests.nixpkgsWithEasyOverlay.hello_old == evalTests.nixpkgsWithoutEasyOverlay.hello;
 
     # - `hello_new` shows that the `final` wiring works
-    assert nixpkgsWithEasyOverlay.hello_new == nixpkgsWithEasyOverlay.hello;
+    assert evalTests.nixpkgsWithEasyOverlay.hello_new == evalTests.nixpkgsWithEasyOverlay.hello;
 
-    assert flakeModulesImport.test123 == "123test";
+    assert evalTests.flakeModulesImport.test123 == "123test";
 
-    assert flakeModulesDisable.test123 == "option123";
+    assert evalTests.flakeModulesDisable.test123 == "option123";
 
-    assert packagesNonStrictInDevShells.packages.a.default == pkg "a" "hello";
+    assert evalTests.packagesNonStrictInDevShells.packages.a.default == evalTests.pkg "a" "hello";
 
     ok;
 
-  result = runTests "ok";
-}
+  result = evalTests.runTests "ok";
+})).withWeakEvalTests
