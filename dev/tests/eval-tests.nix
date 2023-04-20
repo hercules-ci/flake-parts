@@ -47,6 +47,10 @@ in
       prevEvalTests.strongEvalTests
   );
 
+  exhibitingInfiniteRecursion = false;
+  exhibitInfiniteRecursion = evalTests.extendEvalTests
+    (finalEvalTest: prevEvalTests: { exhibitingInfiniteRecursion = true; });
+
   pkg = system: name: derivation {
     name = name;
     builder = "no-builder";
@@ -79,6 +83,61 @@ in
     sourceInfo.outPath = "/unknown_eval-tests_flake";
     result = outputs // sourceInfo // { inherit _type inputs outputs sourceInfo; };
   in result;
+  runEmptyTests = ok:
+    assert evalTests.empty == evalTests.emptyResult;
+    ok;
+  emptyTestsResult = evalTests.runEmptyTests "ok";
+
+  tooEmpty = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = { };
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+    };
+  };
+  # Shallow evaluation is successful…
+  weakEvalTests.tooEmptyResultTried0.success = true;
+  weakEvalTests.tooEmptyResultTried0.value = { };
+  weakEvalTests.tooEmptyResultTried0TestTried.success = true;
+  weakEvalTests.tooEmptyResultTried0TestTried.value = false;
+  # …including for flake outputs…
+  strongEvalTests.tooEmptyResultTried0 = evalTests.weakEvalTests.tooEmptyResultTried0;
+  strongEvalTests.tooEmptyResultTried0TestTried = evalTests.weakEvalTests.tooEmptyResultTried0TestTried;
+  # …but any evaluations of attribute values (flake output values) are not.
+  weakEvalTests.tooEmptyResultTried1.success = true;
+  weakEvalTests.tooEmptyResultTried1.value = {
+    apps = { };
+    checks = { };
+    devShells = { };
+    formatter = { };
+    legacyPackages = { };
+    nixosConfigurations = { };
+    nixosModules = { };
+    overlays = { };
+    packages = { };
+  };
+  weakEvalTests.tooEmptyResultTried1TestTried.success = false;
+  weakEvalTests.tooEmptyResultTried1TestTried.value = false;
+  strongEvalTests.tooEmptyResultTried1.success = true;
+  strongEvalTests.tooEmptyResultTried1.value = let
+    _type = "flake";
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = { };
+    outputs = evalTests.weakEvalTests.tooEmptyResultTried1.value;
+    sourceInfo.outPath = "/unknown_eval-tests_flake";
+    result = outputs // sourceInfo // { inherit _type inputs outputs sourceInfo; };
+  in result;
+  strongEvalTests.tooEmptyResultTried1TestTried.success = false;
+  strongEvalTests.tooEmptyResultTried1TestTried.value = false;
+  runTooEmptyTests = ok:
+    let
+      tooEmptyResultTried = builtins.tryEval evalTests.tooEmpty;
+      tooEmptyResultTried0TestTried = builtins.tryEval (tooEmptyResultTried == evalTests.tooEmptyResultTried0);
+      tooEmptyResultTried1TestTried = builtins.tryEval (tooEmptyResultTried == evalTests.tooEmptyResultTried1);
+    in
+    assert tooEmptyResultTried0TestTried == evalTests.tooEmptyResultTried0TestTried;
+    assert tooEmptyResultTried1TestTried == evalTests.tooEmptyResultTried1TestTried;
+    ok;
+  tooEmptyTestsResult = evalTests.runTooEmptyTests "ok";
 
   example1 = evalTests.callFlake {
     inputs.flake-parts = evalTests.flake-parts;
@@ -112,6 +171,64 @@ in
     sourceInfo.outPath = "/unknown_eval-tests_flake";
     result = outputs // sourceInfo // { inherit _type inputs outputs sourceInfo; };
   in result;
+  runExample1Tests = ok:
+    assert evalTests.example1 == evalTests.example1Result;
+    ok;
+  example1TestsResult = evalTests.runExample1Tests "ok";
+
+  # This test case is a fun one. In the REPL, try `exhibitInfiniteRecursion.*`.
+  # In the case that `mkFlake` *isn't* called from a flake, `inputs.self` is
+  # unlikely to refer to the result of the `mkFlake` evaluation. If
+  # `inputs.self` isn't actually self-referential, evaluating attribute values
+  # of `self` is not divergent. Evaluation of `self.outPath` is useful for
+  # paths in documentation & error messages. However, if that evaluation occurs
+  # in a `builtins.addErrorContext` message forced by an erroring `self`, both
+  # `self` will never evaluate *and* `builtins.toString self.outPath` must
+  # evaluate, causing Nix to instead throw an infinite recursion error. Even
+  # just `inputs.self ? outPath` throws an infinite recursion error.
+  # (`builtins.tryEval` can only catch errors created by `builtins.throw` or
+  # `builtins.assert`, so evaluation is guarded with
+  # `exhibitingInfiniteRecursion` here to keep `runTests` from diverging.)
+  # In this particular case, `mkFlake` evaluates `self ? outPath` to know if the
+  # default module location it provides should be generic or specific. As
+  # explained, this evaluation is unsafe under an uncatchably divergent `self`.
+  # Thus, `outPath` cannot be safely sourced from `self` at the top-level.
+  #
+  # When tests are exhibititing infinite recursion, the abnormally correct
+  # `self` is provided.
+  weakEvalTests.nonexistentOption = let result = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = if !evalTests.exhibitingInfiniteRecursion then { } else result;
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      config.systems = [ ];
+      config.nonexistentOption = null;
+    };
+  }; in result;
+  # When using actual flakes, this test always diverges. Unless tests are
+  # exhibiting infinite recursion, the flake is made equivalent to `empty`.
+  strongEvalTests.nonexistentOption = evalTests.callFlake {
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = { };
+    outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } ({
+      config.systems = [ ];
+    } // (if !evalTests.exhibitingInfiniteRecursion then { } else {
+      config.nonexistentOption = null;
+    }));
+  };
+  weakEvalTests.nonexistentOptionResultTried0.success = true;
+  weakEvalTests.nonexistentOptionResultTried0.value = { };
+  weakEvalTests.nonexistentOptionResultTried0TestTried.success = true;
+  weakEvalTests.nonexistentOptionResultTried0TestTried.value = false;
+  strongEvalTests.nonexistentOptionResultTried0 = evalTests.weakEvalTests.nonexistentOptionResultTried0;
+  strongEvalTests.nonexistentOptionResultTried0TestTried = evalTests.weakEvalTests.nonexistentOptionResultTried0TestTried;
+  runNonexistentOptionTests = ok:
+    let
+      nonexistentOptionResultTried = builtins.tryEval evalTests.nonexistentOption;
+      nonexistentOptionResultTried0TestTried = builtins.tryEval (nonexistentOptionResultTried == evalTests.nonexistentOptionResultTried0);
+    in
+    assert nonexistentOptionResultTried0TestTried == evalTests.nonexistentOptionResultTried0TestTried;
+    ok;
+  nonexistentOptionTestsResult = evalTests.runNonexistentOptionTests "ok";
 
   packagesNonStrictInDevShells = evalTests.callFlake {
     inputs.flake-parts = evalTests.flake-parts;
@@ -170,6 +287,10 @@ in
       imports = [ inputs.flakeModulesDeclare.flakeModules.default ];
     };
   };
+  runFlakeModulesImportTests = ok:
+    assert evalTests.flakeModulesImport.test123 == "123test";
+    ok;
+  flakeModulesImportTestsResult = evalTests.runFlakeModulesImportTests "ok";
 
   flakeModulesDisable = evalTests.callFlake {
     inputs.flake-parts = evalTests.flake-parts;
@@ -180,6 +301,10 @@ in
       disabledModules = [ inputs.flakeModulesDeclare.flakeModules.extra ];
     };
   };
+  runFlakeModulesDisableTests = ok:
+    assert evalTests.flakeModulesDisable.test123 == "option123";
+    ok;
+  flakeModulesDisableTestsResult = evalTests.runFlakeModulesDisableTests "ok";
 
   nixpkgsWithoutEasyOverlay = import evalTests.nixpkgs {
     system = "x86_64-linux";
@@ -201,11 +326,17 @@ in
     config = { };
   };
 
+  tryEvalOutputs = outputs: builtins.seq (builtins.attrNames outputs) outputs;
+
   runTests = ok:
 
-    assert evalTests.empty == evalTests.emptyResult;
+    assert evalTests.runEmptyTests true;
 
-    assert evalTests.example1 == evalTests.example1Result;
+    assert evalTests.runTooEmptyTests true;
+
+    assert evalTests.runExample1Tests true;
+
+    assert evalTests.runNonexistentOptionTests true;
 
     # - exported package becomes part of overlay.
     # - perSystem is invoked for the right system, when system is non-memoized
@@ -223,9 +354,9 @@ in
     # - `hello_new` shows that the `final` wiring works
     assert evalTests.nixpkgsWithEasyOverlay.hello_new == evalTests.nixpkgsWithEasyOverlay.hello;
 
-    assert evalTests.flakeModulesImport.test123 == "123test";
+    assert evalTests.runFlakeModulesImportTests true;
 
-    assert evalTests.flakeModulesDisable.test123 == "option123";
+    assert evalTests.runFlakeModulesDisableTests true;
 
     assert evalTests.packagesNonStrictInDevShells.packages.a.default == evalTests.pkg "a" "hello";
 
