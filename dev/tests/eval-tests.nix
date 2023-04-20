@@ -26,7 +26,8 @@ in
     result;
   strongEvalTests.callFlake = { ... } @ flake:
     let
-      sourceInfo = flake.sourceInfo or { };
+      sourceInfo = { outPath = "/unknown_eval-tests_flake"; } //
+        flake.sourceInfo or { };
       inputs = flake.inputs or { };
       outputs = flake.outputs (inputs // { self = result; });
       result = outputs // sourceInfo // {
@@ -59,6 +60,25 @@ in
       systems = [ ];
     };
   };
+  weakEvalTests.emptyResult = {
+    apps = { };
+    checks = { };
+    devShells = { };
+    formatter = { };
+    legacyPackages = { };
+    nixosConfigurations = { };
+    nixosModules = { };
+    overlays = { };
+    packages = { };
+  };
+  strongEvalTests.emptyResult = let
+    _type = "flake";
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = { };
+    outputs = evalTests.weakEvalTests.emptyResult;
+    sourceInfo.outPath = "/unknown_eval-tests_flake";
+    result = outputs // sourceInfo // { inherit _type inputs outputs sourceInfo; };
+  in result;
 
   example1 = evalTests.callFlake {
     inputs.flake-parts = evalTests.flake-parts;
@@ -70,6 +90,28 @@ in
       };
     };
   };
+  weakEvalTests.example1Result = {
+    apps = { a = { }; b = { }; };
+    checks = { a = { }; b = { }; };
+    devShells = { a = { }; b = { }; };
+    formatter = { };
+    legacyPackages = { a = { }; b = { }; };
+    nixosConfigurations = { };
+    nixosModules = { };
+    overlays = { };
+    packages = {
+      a = { hello = evalTests.pkg "a" "hello"; };
+      b = { hello = evalTests.pkg "b" "hello"; };
+    };
+  };
+  strongEvalTests.example1Result = let
+    _type = "flake";
+    inputs.flake-parts = evalTests.flake-parts;
+    inputs.self = { };
+    outputs = evalTests.weakEvalTests.example1Result;
+    sourceInfo.outPath = "/unknown_eval-tests_flake";
+    result = outputs // sourceInfo // { inherit _type inputs outputs sourceInfo; };
+  in result;
 
   packagesNonStrictInDevShells = evalTests.callFlake {
     inputs.flake-parts = evalTests.flake-parts;
@@ -161,32 +203,9 @@ in
 
   runTests = ok:
 
-    assert evalTests.empty == {
-      apps = { };
-      checks = { };
-      devShells = { };
-      formatter = { };
-      legacyPackages = { };
-      nixosConfigurations = { };
-      nixosModules = { };
-      overlays = { };
-      packages = { };
-    };
+    assert evalTests.empty == evalTests.emptyResult;
 
-    assert evalTests.example1 == {
-      apps = { a = { }; b = { }; };
-      checks = { a = { }; b = { }; };
-      devShells = { a = { }; b = { }; };
-      formatter = { };
-      legacyPackages = { a = { }; b = { }; };
-      nixosConfigurations = { };
-      nixosModules = { };
-      overlays = { };
-      packages = {
-        a = { hello = evalTests.pkg "a" "hello"; };
-        b = { hello = evalTests.pkg "b" "hello"; };
-      };
-    };
+    assert evalTests.example1 == evalTests.example1Result;
 
     # - exported package becomes part of overlay.
     # - perSystem is invoked for the right system, when system is non-memoized
