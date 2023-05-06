@@ -14,6 +14,8 @@ Step 3. If needed, create a PR. Make sure to run `nix-shell` before comitting. I
 
 # Style
 
+Rule #1. Go with the flow. Write code that fits in. Don't reformat existing code. Don't obsess over fitting in. Write good docs and tests instead.
+
 This repository is written in a style similar to that of Nixpkgs, with some exceptions
 
  - File names may be in camelCase. This reduces the number of unique names in the project.
