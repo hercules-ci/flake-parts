@@ -85,7 +85,7 @@ let
     arguments as `inputs` like above.
   '';
 
-  flake-parts-lib = ref {
+  flake-parts-lib = rec {
     evalFlakeModule =
       args@
       { inputs ? self.inputs
@@ -116,7 +116,7 @@ let
 
         (module:
         lib.evalModules {
-          specialArgs = ref {
+          specialArgs = rec {
             inherit self flake-parts-lib;
             inputs = args.inputs or /* legacy, warned above */ self.inputs;
           } // specialArgs;
