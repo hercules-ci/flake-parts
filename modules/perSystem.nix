@@ -93,6 +93,8 @@ in
         _file = ./perSystem.nix;
         config = {
           _module.args.inputs' = mapAttrs (k: rootConfig.perInput system) self.inputs;
+          _module.args.inputsByOutPath' = outPath: mapAttrs (k: rootConfig.perInput system) (findInputsByOutPath outPath self.inputs);
+
           _module.args.self' = rootConfig.perInput system self;
 
           # Custom error messages
