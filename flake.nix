@@ -30,6 +30,7 @@
     flakeModules = {
       easyOverlay = ./extras/easyOverlay.nix;
       flakeModules = ./extras/flakeModules.nix;
+      nixpkgs = ./extras/nixpkgs.nix;
     };
   };
 
