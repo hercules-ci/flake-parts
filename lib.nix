@@ -119,8 +119,8 @@ let
           specialArgs = rec {
             inherit self flake-parts-lib;
             inputs = args.inputs or /* legacy, warned above */ self.inputs;
+            inputsByOutPath = outPath: findInputsByOutPath outPath inputs;
           } // specialArgs;
-          inputsByOutPath = outPath: findInputsByOutPath outPath inputs;
           modules = [ ./all-modules.nix module ];
         }
         );
