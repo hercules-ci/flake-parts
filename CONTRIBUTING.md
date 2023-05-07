@@ -14,17 +14,17 @@ Step 3. If needed, create a PR. Make sure to run `nix-shell` before comitting. I
 
 # Style
 
-Rule #1. Go with the flow. Write code that fits in. Don't reformat existing code. Don't obsess over fitting in. Write good docs and tests instead.
+This repository is written in a style similar to that of Nixpkgs, with some exceptions.
+The following sections describe such additions, exceptions, and it probably confirms some rules.
 
-This repository is written in a style similar to that of Nixpkgs, with some exceptions
+## Rule #1. Go with the flow
+
+Write code that fits in. Don't reformat existing code. Don't obsess over fitting in. Write good docs and tests instead.
+
+## Camel case
+
 
  - File names may be in camelCase. This reduces the number of unique names in the project.
-
- - The "contains attribute" operator is spelled without spaces, just like the "select attribute" operator. I believe Nixpkgs is undecided on this.
-   ```nix
-   if x?a then "has a" else "does not have a"
-   #  ^^^
-   ```
 
 Except for file names, the Nixpkgs casing rule is maintained here as well:
 
@@ -34,3 +34,25 @@ Except for file names, the Nixpkgs casing rule is maintained here as well:
  - Functionality provided by flake-parts is in camelCase. Examples:
     - `getSystem`
     - `mkFlake`
+
+## Operators and such
+
+- The "contains attribute" operator is spelled without spaces, just like the "select attribute" operator. I believe Nixpkgs is undecided on this.
+
+  ```nix
+  if x?a then x.a else "does not have a"
+  #  ^^^
+  ```
+
+- `@` pattern goes before and uses no extra spaces.
+
+  ```nix
+  # immediately before parameter list when single line
+  pair@{ name, value }:
+
+  # newline after @ when multi-line
+  pair@
+  { name
+  , value
+  }
+  ```
