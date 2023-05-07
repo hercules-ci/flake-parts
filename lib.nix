@@ -175,7 +175,7 @@ let
           if lib.strings.hasPrefix input.outPath "${outPath}" then
             input
           else 
-            findCurrentInput outPath input.inputs or { }
+            findInputByOutPath outPath input.inputs or { }
         )
       );
 
