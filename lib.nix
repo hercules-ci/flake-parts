@@ -85,7 +85,7 @@ let
     arguments as `inputs` like above.
   '';
 
-  flake-parts-lib = {
+  flake-parts-lib = rec {
     evalFlakeModule =
       args@
       { inputs ? self.inputs
@@ -156,17 +156,19 @@ let
         };
       };
 
-    mkPerSystemType =
+    mkDeferredModuleType = 
       module:
       deferredModuleWith {
         staticModules = [ module ];
       };
+    mkPerSystemType = mkDeferredModuleType;
 
-    mkPerSystemOption =
+    mkDeferredModuleOption =
       module:
       mkOption {
         type = flake-parts-lib.mkPerSystemType module;
       };
+    mkPerSystemOption = mkDeferredModuleOption;
 
     # Helper function for defining a per-system option that
     # gets transposed by the usual flake system logic to a
