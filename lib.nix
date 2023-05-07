@@ -216,6 +216,14 @@ let
         });
         config = (mkAliasAndWrapDefsWithPriority (setAttrByPath to) fromOpt);
       };
+
+    # Helper function for importing while preserving module location. To be added
+    # in nixpkgs: https://github.com/NixOS/nixpkgs/pull/230588
+    # I expect these functions to remain identical. This one will stick around
+    # for a while to support older nixpkgs-lib.
+    importApply =
+      modulePath: staticArgs:
+      lib.setDefaultModuleLocation modulePath (import modulePath staticArgs);
   };
 
 in
