@@ -177,7 +177,7 @@ let
           lib.attrsets.concatMapAttrs
           (inputName: input:
             (
-              if lib.strings.hasPrefix input.outPath (toString outPath) then
+              if input.outPath == toString outPath then
                 input
               else 
                 findInputByOutPath outPath input.inputs or { }
