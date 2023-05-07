@@ -156,7 +156,7 @@ let
         };
       };
 
-    mkDeferredModuleType = 
+    mkDeferredModuleType =
       module:
       deferredModuleWith {
         staticModules = [ module ];
