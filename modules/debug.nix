@@ -14,7 +14,7 @@ let
     removeAttrs
     ;
 
-  mkDebugConfig = { config, options, extendModules }: config // {
+  mkDebugConfig = { config, options, extendModules }: config // config.extraDebug // {
     inherit config;
     inherit (config) _module;
     inherit options;
@@ -50,6 +50,13 @@ in
            Works for arbitrary system values.
 
         See [Expore and debug option values](../debug.html) for more examples.
+      '';
+    };
+    extraDebug = mkOption {
+      type = types.attrsOf types.raw;
+      default = { };
+      description = ''
+        Extra values to return the flake `debug` attribute (if that has been enabled).
       '';
     };
     perSystem = mkPerSystemOption

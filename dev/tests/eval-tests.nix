@@ -99,6 +99,17 @@ rec {
     config = { };
   };
 
+  lints = mkFlake
+    { inputs.self = { }; }
+    {
+      lint.messages = [ "a top level message" ];
+      systems = [ "x86_64-linux" "aarch64-darwin" ];
+      debug = true;
+      perSystem = {
+        lint.messages = [ "a per-system message" ];
+      };
+    };
+
   runTests = ok:
 
     assert empty == {
@@ -147,6 +158,12 @@ rec {
     assert flakeModulesImport.test123 == "123test";
 
     assert flakeModulesDisable.test123 == "option123";
+
+    assert lints.debug.lint.messages == [
+      "a top level message"
+      "in perSystem.aarch64-darwin: a per-system message"
+      "in perSystem.x86_64-linux: a per-system message"
+    ];
 
     ok;
 

@@ -8,6 +8,7 @@
     ./modules/flake.nix
     ./modules/formatter.nix
     ./modules/legacyPackages.nix
+    ./modules/lint.nix
     ./modules/moduleWithSystem.nix
     ./modules/nixosConfigurations.nix
     ./modules/nixosModules.nix
