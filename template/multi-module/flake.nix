@@ -10,7 +10,6 @@
       imports = [
         ./hello/flake-module.nix
       ];
-      systems = [ "x86_64-linux" "aarch64-darwin" ];
       perSystem = { config, self', inputs', ... }: {
         # Per-system attributes can be defined here. The self' and inputs'
         # module parameters provide easy access to attributes of the same

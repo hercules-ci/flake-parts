@@ -5,7 +5,6 @@
 
   outputs = inputs@{ flake-parts, nixpkgs, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" "aarch64-darwin" ];
       perSystem = { pkgs, system, ... }: {
         # This sets `pkgs` to a nixpkgs with allowUnfree option set.
         _module.args.pkgs = import nixpkgs {
