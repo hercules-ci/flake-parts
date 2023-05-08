@@ -120,6 +120,7 @@ let
             inputs = args.inputs or /* legacy, warned above */ self.inputs;
           } // specialArgs;
           modules = [ ./all-modules.nix (lib.setDefaultModuleLocation errorLocation module) ];
+          class = "flake";
         }
         );
 
