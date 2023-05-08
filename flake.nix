@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs-lib.url = "github:NixOS/nixpkgs/nixos-unstable?dir=lib";
+    systems.url = "github:nix-systems/default";
   };
 
   outputs = { self, nixpkgs-lib, ... }: {

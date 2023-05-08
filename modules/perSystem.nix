@@ -1,4 +1,4 @@
-{ config, lib, flake-parts-lib, self, ... }:
+{ config, lib, flake-parts-lib, self, inputsByOutPath, ... }:
 let
   inherit (lib)
     genAttrs
@@ -64,8 +64,16 @@ in
         All the system types to enumerate in the flake output subattributes.
 
         In other words, all valid values for `system` in e.g. `packages.<system>.foo`.
+
+        The default value can be changed by switching to different [nix-systems](https://github.com/nix-systems/nix-systems)
+        input. For example, suppose you create a `my-flake`, which includes a `perSystem.packages.my-package` for
+        default systems, the user of `my-flake` should be able to try out `riscv64-linux` by specifying:
+        ```
+        inputs.my-flake.inputs.flake-parts.inputs.systems.url = "github:nix-systems/riscv64-linux"
+        ```
       '';
       type = types.listOf types.str;
+      default = import (inputsByOutPath ../.).systems;
     };
 
     perInput = mkOption {
