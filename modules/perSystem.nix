@@ -65,7 +65,7 @@ in
 
         In other words, all valid values for `system` in e.g. `packages.<system>.foo`.
 
-        The default value can be changed by switching to different [nix-systems](https://github.com/nix-systems/nix-systems)
+        The default value can be changed by switching to different [systems](https://github.com/nix-systems/nix-systems)
         input. For example, suppose you create a `my-flake`, which includes a `perSystem.packages.my-package` for
         default systems, the user of `my-flake` should be able to try out `riscv64-linux` by specifying:
         ```
