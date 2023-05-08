@@ -29,6 +29,9 @@ let
       it both in `imports` and export it with this option.
 
       See [Dogfood a Reusable Module](../dogfood-a-reusable-module.md) for details and an example.
+      
+      Alternatively, you can call `mkFlake` twice, so that the second `mkFlake` can import
+      `flakeModules` created by the first `mkFlake`.
     '';
   };
 in
