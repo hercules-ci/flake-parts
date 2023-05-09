@@ -10,12 +10,7 @@
       flake-parts.lib.mkFlake
         {
           inherit inputs;
-          # Workaround for https://github.com/hercules-ci/flake-parts/issues/148
-          self = {
-            outPath = ./.;
-            inherit (self)
-              _type inputs lastModified lastModifiedDate narHash outputs sourceInfo submodules;
-          };
+          moduleLocation = ./.;
         }
         ./modules/dogfood.nix
     ).flakeModules.dogfood;
