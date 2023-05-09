@@ -10,7 +10,7 @@
       flake-parts.lib.mkFlake
         {
           inherit inputs;
-          moduleLocation = ./.;
+          moduleLocation = ./flake.nix;
         }
         ./modules/dogfood.nix
     ).flakeModules.dogfood;
