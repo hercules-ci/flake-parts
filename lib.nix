@@ -98,6 +98,7 @@ let
 
           ${errorExample}
         '')
+      , moduleLocation ? "${self.outPath}/flake.nix"
       }:
       throwIf
         (!args?self && !args?inputs) ''
@@ -117,7 +118,7 @@ let
         (module:
         lib.evalModules {
           specialArgs = {
-            inherit self flake-parts-lib;
+            inherit self flake-parts-lib moduleLocation;
             inputs = args.inputs or /* legacy, warned above */ self.inputs;
           } // specialArgs;
           modules = [ ./all-modules.nix module ];
@@ -138,9 +139,11 @@ let
     mkFlake = args: module:
       let
         loc =
-          if args?inputs.self.outPath
-          then args.inputs.self.outPath + "/flake.nix"
-          else "<mkFlake argument>";
+          args.moduleLocation or (
+            if args?inputs.self.outPath
+            then args.inputs.self.outPath + "/flake.nix"
+            else "<mkFlake argument>"
+          );
         mod = lib.setDefaultModuleLocation loc module;
         eval = flake-parts-lib.evalFlakeModule args mod;
       in

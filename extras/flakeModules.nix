@@ -1,4 +1,4 @@
-{ config, self, lib, flake-parts-lib, ... }:
+{ config, self, lib, flake-parts-lib, moduleLocation, ... }:
 let
   inherit (lib)
     filterAttrs
@@ -15,8 +15,8 @@ let
     type = types.lazyAttrsOf types.deferredModule;
     default = { };
     apply = mapAttrs (k: v: {
-      _file = "${toString self.outPath}/flake.nix#flakeModules.${k}";
-      key = "${toString self.outPath}/flake.nix#flakeModules.${k}";
+      _file = "${toString moduleLocation}#flakeModules.${k}";
+      key = "${toString moduleLocation}#flakeModules.${k}";
       imports = [ v ];
     });
     description = ''

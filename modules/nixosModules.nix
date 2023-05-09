@@ -1,4 +1,4 @@
-{ config, self, lib, flake-parts-lib, ... }:
+{ config, self, lib, flake-parts-lib, moduleLocation, ... }:
 let
   inherit (lib)
     filterAttrs
@@ -17,7 +17,7 @@ in
       nixosModules = mkOption {
         type = types.lazyAttrsOf types.unspecified;
         default = { };
-        apply = mapAttrs (k: v: { _file = "${toString self.outPath}/flake.nix#nixosModules.${k}"; imports = [ v ]; });
+        apply = mapAttrs (k: v: { _file = "${toString moduleLocation}#nixosModules.${k}"; imports = [ v ]; });
         description = ''
           NixOS modules.
 
