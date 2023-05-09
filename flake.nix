@@ -26,6 +26,12 @@
           A minimal flake using flake-parts importing nixpkgs with the unfree option.
         '';
       };
+      dogfood = {
+        path = ./template/dogfood;
+        description = ''
+          A minimal flake using flake-parts creating flake modules to build its own outputs.
+        '';
+      };
     };
     flakeModules = {
       easyOverlay = ./extras/easyOverlay.nix;
