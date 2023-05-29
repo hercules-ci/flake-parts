@@ -12,7 +12,7 @@
     hercules-ci-effects.url = "github:hercules-ci/hercules-ci-effects";
   };
 
-  outputs = { self, ... }:
+  outputs = { ... }:
     {
       # The dev tooling is in ./flake-module.nix
       # See comment at `inputs` above.

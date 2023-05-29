@@ -10,9 +10,6 @@ let
   inherit (flake-parts-lib)
     mkPerSystemOption
     ;
-  inherit (builtins)
-    removeAttrs
-    ;
 
   mkDebugConfig = { config, options, extendModules }: config // {
     inherit config;

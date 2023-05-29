@@ -28,27 +28,6 @@ let
     then maybeFlake._type == "flake"
     else maybeFlake ? inputs && maybeFlake ? outputs && maybeFlake ? sourceInfo;
 
-  # Polyfill functionTo to make sure it has type merging.
-  # Remove 2022-12
-  functionTo =
-    let sample = types.functionTo lib.types.str;
-    in
-    if sample.functor.wrapped._type or null == "option-type"
-    then types.functionTo
-    else
-      elemType: lib.mkOptionType {
-        name = "functionTo";
-        description = "function that evaluates to a(n) ${elemType.description}";
-        check = lib.isFunction;
-        merge = loc: defs:
-          fnArgs: (lib.mergeDefinitions (loc ++ [ "[function body]" ]) elemType (map (fn: { inherit (fn) file; value = fn.value fnArgs; }) defs)).mergedValue;
-        getSubOptions = prefix: elemType.getSubOptions (prefix ++ [ "[function body]" ]);
-        getSubModules = elemType.getSubModules;
-        substSubModules = m: functionTo (elemType.substSubModules m);
-        functor = (lib.defaultFunctor "functionTo") // { type = functionTo; wrapped = elemType; };
-        nestedTypes.elemType = elemType;
-      };
-
   # Polyfill https://github.com/NixOS/nixpkgs/pull/163617
   deferredModuleWith = lib.deferredModuleWith or (
     attrs@{ staticModules ? [ ] }: mkOptionType {
@@ -216,7 +195,7 @@ let
           } // optionalAttrs (toType != null) {
           type = toType;
         });
-        config = (mkAliasAndWrapDefsWithPriority (setAttrByPath to) fromOpt);
+        config = mkAliasAndWrapDefsWithPriority (setAttrByPath to) fromOpt;
       };
 
     # Helper function for importing while preserving module location. To be added

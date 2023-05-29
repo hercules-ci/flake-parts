@@ -1,4 +1,4 @@
-{ config, lib, withSystem, ... }:
+{ withSystem, ... }:
 {
   config = {
     _module.args = {

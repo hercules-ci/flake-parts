@@ -24,7 +24,7 @@ in
       };
     };
 
-    perSystem = mkPerSystemOption ({ config, ... }: {
+    perSystem = mkPerSystemOption {
       _file = ./formatter.nix;
       options = {
         formatter = mkOption {
@@ -35,7 +35,7 @@ in
           '';
         };
       };
-    });
+    };
   };
   config = {
     flake.formatter =
