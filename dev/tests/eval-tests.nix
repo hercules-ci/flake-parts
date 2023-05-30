@@ -35,6 +35,18 @@ rec {
       };
     };
 
+  packagesNonStrictInDevShells = mkFlake
+    { inputs.self = packagesNonStrictInDevShells; /* approximation */ }
+    {
+      systems = [ "a" "b" ];
+      perSystem = { system, self', ... }: {
+        packages.hello = pkg system "hello";
+        packages.default = self'.packages.hello;
+        devShells = throw "can't be strict in perSystem.devShells!";
+      };
+      flake.devShells = throw "can't be strict in devShells!";
+    };
+
   easyOverlay = mkFlake
     { inputs.self = { }; }
     {
@@ -147,6 +159,8 @@ rec {
     assert flakeModulesImport.test123 == "123test";
 
     assert flakeModulesDisable.test123 == "option123";
+
+    assert packagesNonStrictInDevShells.packages.a.default == pkg "a" "hello";
 
     ok;
 

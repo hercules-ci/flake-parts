@@ -61,10 +61,7 @@ in
       system: flake:
       mapAttrs
         (attrName: attrConfig: flake.${attrName}.${system})
-        (filterAttrs
-          (attrName: attrConfig: flake?${attrName}.${system})
-          config.transposition
-        );
+        config.transposition;
 
     perSystem = {
       options =
