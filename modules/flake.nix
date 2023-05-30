@@ -1,10 +1,7 @@
-{ config, lib, ... }:
+{ lib, ... }:
 let
   inherit (lib)
-    filterAttrs
-    mapAttrs
     mkOption
-    optionalAttrs
     types
     ;
 in

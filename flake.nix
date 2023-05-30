@@ -5,7 +5,7 @@
     nixpkgs-lib.url = "github:NixOS/nixpkgs/nixos-unstable?dir=lib";
   };
 
-  outputs = { self, nixpkgs-lib, ... }: {
+  outputs = { nixpkgs-lib, ... }: {
     lib = import ./lib.nix { inherit (nixpkgs-lib) lib; };
     templates = {
       default = {

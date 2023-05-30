@@ -13,7 +13,7 @@
     when.dayOfMonth = 1;
   };
 
-  perSystem = { config, self', inputs', pkgs, ... }: {
+  perSystem = { config, pkgs, ... }: {
 
     devShells.default = pkgs.mkShell {
       nativeBuildInputs = [
@@ -42,7 +42,7 @@
     # for repl exploration / debug
     config.config = config;
     options.mySystem = lib.mkOption { default = config.allSystems.${builtins.currentSystem}; };
-    config.effects = withSystem "x86_64-linux" ({ config, pkgs, hci-effects, ... }: {
+    config.effects = withSystem "x86_64-linux" ({ pkgs, hci-effects, ... }: {
       tests = {
         template = pkgs.callPackage ./tests/template.nix { inherit hci-effects; };
       };
