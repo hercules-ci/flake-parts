@@ -1,4 +1,8 @@
-{ lib }:
+{ lib
+  # Optionally a string with extra version info to be included in the error message
+  # in case is lib is out of date. Empty or starts with space.
+, revInfo ? ""
+}:
 let
   inherit (lib)
     mkOption
@@ -207,5 +211,19 @@ let
       lib.setDefaultModuleLocation modulePath (import modulePath staticArgs);
   };
 
+  # A best effort, lenient estimate. Please use a recent nixpkgs lib if you
+  # override it at all.
+  minVersion = "22.05";
+
 in
-flake-parts-lib
+
+if builtins.compareVersions lib.version minVersion <= 0
+then
+  abort ''
+    The nixpkgs-lib dependency of flake-parts was overridden but is too old.
+    The minimum supported version of nixpkgs-lib is ${minVersion},
+    but the actual version is ${lib.version}${revInfo}.
+  ''
+else
+
+  flake-parts-lib
