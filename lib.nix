@@ -217,7 +217,7 @@ let
 
 in
 
-if builtins.compareVersions lib.version minVersion <= 0
+if builtins.compareVersions lib.version minVersion < 0
 then
   abort ''
     The nixpkgs-lib dependency of flake-parts was overridden but is too old.
