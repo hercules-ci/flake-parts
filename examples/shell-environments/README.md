@@ -1,5 +1,8 @@
 # shell-environment
 
+> **Warning**
+> If you copy the flake.nix remember to `git add [-N|--intent-to-add] flake.nix`, otherwise it won't work
+
 This example shows how to create a shell environment which
 includes a diverse set of tools:
 
@@ -13,9 +16,6 @@ git
 You can search for more package in [nix packages](https://search.nixos.org/packages)
 
 ## Usage
-
-> **Warning**
-> If you copy the flake.nix remember to add it to git, otherwise it won't work
 
 The [`devShells` option](https://flake.parts/options/flake-parts.html#opt-perSystem.devShells) is used by the following command:
 
