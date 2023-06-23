@@ -14,6 +14,9 @@ You can search for more package in [nix packages](https://search.nixos.org/packa
 
 ## Usage
 
+> **Warning**
+> If you copy the flake.nix remember to add it to git, otherwise it won't work
+
 The [`devShells` option](https://flake.parts/options/flake-parts.html#opt-perSystem.devShells) is used by the following command:
 
 ```sh
