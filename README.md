@@ -10,6 +10,12 @@ Opinionated features are provided by an ecosystem of modules that you can import
 `flake-parts` _itself_ has the goal to be a minimal mirror of the Nix flake schema.
 Used by itself, it is very lightweight.
 
+---
+
+**Documentation**: [flake.parts](https://flake.parts)
+
+---
+
 # Why Modules?
 
 Flakes are configuration. The module system lets you refactor configuration
@@ -90,7 +96,3 @@ See the folder [examples/](./examples).
 # Options Reference
 
 See [flake.parts options](https://flake.parts/options/flake-parts.html)
-
-# Documentation
-
-See [flake.parts](https://flake.parts)
