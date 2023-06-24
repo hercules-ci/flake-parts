@@ -6,7 +6,7 @@
 This example shows how to create a shell environment which
 includes a diverse set of tools:
 
-```
+```sh
 terraform
 wget
 bat
@@ -29,3 +29,24 @@ You can have as many shells as you want, in this [flake.nix](./flake.nix), you a
 ```sh
 nix develop .#another_env
 ```
+
+## Troubleshooting
+
+### My shell has changed
+
+There 2 possible solutions:
+
+First, using [direnv](https://direnv.net/) to manage your dev environments. See [direnv-guide](https://haskell.flake.page/direnv). This is the recommended approach.
+
+Second is a simple-unreliable hack, which is adding a `shellHook` to `devShells`
+
+```nix
+devShells.default = pkgs.mkShell {
+    shellHook = ''
+    exec $SHELL
+    '';
+};
+```
+
+You might get a lot different issues, use it at your own risk.
+
