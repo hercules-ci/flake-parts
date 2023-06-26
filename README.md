@@ -83,7 +83,7 @@ See [the template](./template/default/flake.nix).
 
 # Examples
 
-See the folder [examples/](./examples).
+See the [examples/](./examples) directory.
 
 # Projects using flake-parts
 

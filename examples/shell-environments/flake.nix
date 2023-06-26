@@ -10,7 +10,7 @@
       systems = [ "x86_64-linux" "aarch64-darwin" "x86_64-darwin" ];
       perSystem = { config, self', inputs', pkgs, system, ... }: {
         devShells.default = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [ terraform wget bat git ];
+          nativeBuildInputs = with pkgs; [ terraform wget bat nixpkgs-fmt ];
         };
 
         devShells.another_env = pkgs.mkShell {

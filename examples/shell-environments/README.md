@@ -10,10 +10,10 @@ includes a diverse set of tools:
 terraform
 wget
 bat
-git
+nixpkgs-fmt
 ```
 
-You can search for more package in [nix packages](https://search.nixos.org/packages)
+You can search for more packages in [nix packages](https://search.nixos.org/packages)
 
 ## Usage
 
@@ -32,7 +32,9 @@ nix develop .#another_env
 
 ## Troubleshooting
 
-### My shell has changed
+### I get bash instead of my shell
+
+`nix develop` was designed for Nixpkgs stdenv, which uses bash, so that you can troubleshoot a Nix build with it. If you use a different shell, you'll want to get just the variables instead.
 
 There 2 possible solutions:
 
@@ -42,11 +44,12 @@ Second is a simple-unreliable hack, which is adding a `shellHook` to `devShells`
 
 ```nix
 devShells.default = pkgs.mkShell {
-    shellHook = ''
+  shellHook = ''
     exec $SHELL
-    '';
+  '';
 };
 ```
 
 You might get a lot different issues, use it at your own risk.
 
+Lastly, there's `nix print-dev-env` which returns the variables - in case you're feeling adventurous, because this is far from a complete solution. See `nix print-dev-env --help`.

@@ -8,14 +8,14 @@ This example shows how to create scripts for your project, by leveraging [missio
 This is a **potential** alternative to:
 
 - Using a `Makefile` to manage your project's scripts
-- Using the popular [Scripts To Rule Them All](https://github.com/github/scripts-to-rule-them-all) approach (having a `scripts/` folder)
-- Using a `bin/` folder
+- Using the popular [Scripts To Rule Them All](https://github.com/github/scripts-to-rule-them-all); a naming convention for a `scripts/` directory
+- Using a `bin/` directory
 
 ## Explanation
 
 In this example we use the [avro-tools](https://avro.apache.org/) to convert our scripts from `.avdl` to `.avsc`.
 
-You don't need to know anything about avro to understand mission-control and use this example (that's nix baby 🚀).
+You don't need to know anything about avro to understand mission-control and use this example (that's Nix baby 🚀).
 
 When setting up [mission-control](https://github.com/Platonic-Systems/mission-control), we add
 one script called `build`. Because of `wrapperName = "run";`, once we open the shell created by nix,

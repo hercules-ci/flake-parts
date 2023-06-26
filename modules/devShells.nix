@@ -19,11 +19,11 @@ mkTransposedPerSystemModule {
       [`nix develop .#<name>`](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-develop.html) will run `devShells.<name>`.
     '';
     example = literalExpression ''
-    {
-      devShells.default = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [ wget bat git cargo ];
+      {
+        default = pkgs.mkShell {
+          nativeBuildInputs = with pkgs; [ wget bat cargo ];
         };
-    }
+      }
     '';
   };
   file = ./devShells.nix;
