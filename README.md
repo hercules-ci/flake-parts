@@ -3,12 +3,18 @@
 
 _Core of a distributed framework for writing Nix Flakes._
 
-`flake-parts` provides the options that represent standard flake attributes 
+`flake-parts` provides the options that represent standard flake attributes
 and establishes a way of working with `system`.
 Opinionated features are provided by an ecosystem of modules that you can import.
 
 `flake-parts` _itself_ has the goal to be a minimal mirror of the Nix flake schema.
-Used by itself, it is very lightweight. 
+Used by itself, it is very lightweight.
+
+---
+
+**Documentation**: [flake.parts](https://flake.parts)
+
+---
 
 # Why Modules?
 
@@ -71,14 +77,22 @@ then slide `mkFlake` between your outputs function head and body,
 
 Now you can add the remaining module attributes like in the [the template](./template/default/flake.nix).
 
-# Example
+# Templates
 
 See [the template](./template/default/flake.nix).
+
+# Examples
+
+See the [examples/](./examples) directory.
+
+# Projects using flake-parts
+
+- [nixd](https://github.com/nix-community/nixd/blob/main/flake.nix) (c++)
+- [hyperswitch](https://github.com/juspay/hyperswitch/blob/main/flake.nix) (rust)
+- [argo-workflows](https://github.com/argoproj/argo-workflows/blob/master/dev/nix/flake.nix) (go)
+- [nlp-service](https://github.com/recap-utr/nlp-service/blob/main/flake.nix) (python)
+- [emanote](https://github.com/srid/emanote/blob/master/flake.nix) (haskell)
 
 # Options Reference
 
 See [flake.parts options](https://flake.parts/options/flake-parts.html)
-
-# Documentation
-
-See [flake.parts](https://flake.parts)
