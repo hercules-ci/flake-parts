@@ -36,7 +36,7 @@ nix develop .#another_env
 
 `nix develop` was designed for Nixpkgs stdenv, which uses bash, so that you can troubleshoot a Nix build with it. If you use a different shell, you'll want to get just the variables instead.
 
-There 2 possible solutions:
+There are 3 possible solutions:
 
 First, using [direnv](https://direnv.net/) to manage your dev environments. See [direnv-guide](https://haskell.flake.page/direnv). This is the recommended approach.
 
