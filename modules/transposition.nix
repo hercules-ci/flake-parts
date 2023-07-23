@@ -7,10 +7,6 @@ let
     mkOption
     types
     ;
-  inherit (flake-parts-lib)
-    mkSubmoduleOptions
-    mkPerSystemOption
-    ;
 
   transpositionModule = {
     options = {
@@ -65,12 +61,9 @@ in
       system: flake:
       mapAttrs
         (attrName: attrConfig: flake.${attrName}.${system})
-        (filterAttrs
-          (attrName: attrConfig: flake?${attrName}.${system})
-          config.transposition
-        );
+        config.transposition;
 
-    perSystem = { ... }: {
+    perSystem = {
       options =
         mapAttrs
           (k: v: lib.mkOption { })

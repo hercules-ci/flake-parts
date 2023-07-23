@@ -1,4 +1,4 @@
-toplevel@{ config, lib, flake-parts-lib, getSystemIgnoreWarning, ... }:
+toplevel@{ lib, flake-parts-lib, getSystemIgnoreWarning, ... }:
 let
   inherit (flake-parts-lib)
     mkPerSystemOption;
@@ -37,7 +37,7 @@ in
         };
       };
       config = {
-        _module.args.final = lib.mkDefault (pkgs.extend (toplevel.config.flake.overlays.default));
+        _module.args.final = lib.mkDefault (pkgs.extend toplevel.config.flake.overlays.default);
       };
     });
   };

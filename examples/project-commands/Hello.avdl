@@ -1,0 +1,6 @@
+protocol Hello {
+    record Hello {
+        string message;
+        int timestamp;
+    }
+}

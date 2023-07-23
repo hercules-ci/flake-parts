@@ -1,4 +1,8 @@
-{ lib }:
+{ lib
+  # Optionally a string with extra version info to be included in the error message
+  # in case is lib is out of date. Empty or starts with space.
+, revInfo ? ""
+}:
 let
   inherit (lib)
     mkOption
@@ -27,27 +31,6 @@ let
     if maybeFlake ? _type
     then maybeFlake._type == "flake"
     else maybeFlake ? inputs && maybeFlake ? outputs && maybeFlake ? sourceInfo;
-
-  # Polyfill functionTo to make sure it has type merging.
-  # Remove 2022-12
-  functionTo =
-    let sample = types.functionTo lib.types.str;
-    in
-    if sample.functor.wrapped._type or null == "option-type"
-    then types.functionTo
-    else
-      elemType: lib.mkOptionType {
-        name = "functionTo";
-        description = "function that evaluates to a(n) ${elemType.description}";
-        check = lib.isFunction;
-        merge = loc: defs:
-          fnArgs: (lib.mergeDefinitions (loc ++ [ "[function body]" ]) elemType (map (fn: { inherit (fn) file; value = fn.value fnArgs; }) defs)).mergedValue;
-        getSubOptions = prefix: elemType.getSubOptions (prefix ++ [ "[function body]" ]);
-        getSubModules = elemType.getSubModules;
-        substSubModules = m: functionTo (elemType.substSubModules m);
-        functor = (lib.defaultFunctor "functionTo") // { type = functionTo; wrapped = elemType; };
-        nestedTypes.elemType = elemType;
-      };
 
   # Polyfill https://github.com/NixOS/nixpkgs/pull/163617
   deferredModuleWith = lib.deferredModuleWith or (
@@ -219,7 +202,7 @@ let
           } // optionalAttrs (toType != null) {
           type = toType;
         });
-        config = (mkAliasAndWrapDefsWithPriority (setAttrByPath to) fromOpt);
+        config = mkAliasAndWrapDefsWithPriority (setAttrByPath to) fromOpt;
       };
 
     # Helper function for importing while preserving module location. To be added
@@ -231,5 +214,19 @@ let
       lib.setDefaultModuleLocation modulePath (import modulePath staticArgs);
   };
 
+  # A best effort, lenient estimate. Please use a recent nixpkgs lib if you
+  # override it at all.
+  minVersion = "22.05";
+
 in
-flake-parts-lib
+
+if builtins.compareVersions lib.version minVersion < 0
+then
+  abort ''
+    The nixpkgs-lib dependency of flake-parts was overridden but is too old.
+    The minimum supported version of nixpkgs-lib is ${minVersion},
+    but the actual version is ${lib.version}${revInfo}.
+  ''
+else
+
+  flake-parts-lib

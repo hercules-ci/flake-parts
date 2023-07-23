@@ -1,10 +1,8 @@
-{ config, self, lib, flake-parts-lib, moduleLocation, ... }:
+{ self, lib, flake-parts-lib, moduleLocation, ... }:
 let
   inherit (lib)
-    filterAttrs
     mapAttrs
     mkOption
-    optionalAttrs
     types
     ;
   inherit (flake-parts-lib)
