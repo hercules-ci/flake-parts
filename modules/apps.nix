@@ -3,6 +3,7 @@ let
   inherit (lib)
     mkOption
     types
+    getExe
     ;
   inherit (flake-parts-lib)
     mkTransposedPerSystemModule
@@ -13,9 +14,6 @@ let
   derivationType = lib.types.package // {
     check = lib.isDerivation;
   };
-
-  getExe = x:
-    "${lib.getBin x}/bin/${x.meta.mainProgram or (throw ''Package ${x.name or ""} does not have meta.mainProgram set, so I don't know how to find the main executable. You can set meta.mainProgram, or pass the full path to executable, e.g. program = "''${pkg}/bin/foo"'')}";
 
   appType = lib.types.submodule {
     options = {
