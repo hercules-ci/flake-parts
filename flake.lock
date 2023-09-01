@@ -3,11 +3,11 @@
     "nixpkgs-lib": {
       "locked": {
         "dir": "lib",
-        "lastModified": 1690881714,
-        "narHash": "sha256-h/nXluEqdiQHs1oSgkOOWF+j8gcJMWhwnZ9PFabN6q0=",
+        "lastModified": 1693471703,
+        "narHash": "sha256-0l03ZBL8P1P6z8MaSDS/MvuU8E75rVxe5eE1N6gxeTo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9e1960bc196baf6881340d53dccb203a951745a2",
+        "rev": "3e52e76b70d5508f3cec70b882a29199f4d1ee85",
         "type": "github"
       },
       "original": {
