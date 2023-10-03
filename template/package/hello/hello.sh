@@ -1,0 +1,3 @@
+#!@shell@
+
+echo Hello world
