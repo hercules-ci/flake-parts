@@ -31,6 +31,13 @@ in
       description = ''
         A helper that defines transposed attributes in the flake outputs.
 
+        When you define `transposition.foo = { };`, definitions are added to the effect of (pseudo-code):
+
+        ```nix
+        flake.foo.''${system} = (perSystem system).foo;
+        perInput = system: inputFlake: inputFlake.foo.''${system};
+        ```
+
         Transposition is the operation that swaps the indices of a data structure.
         Here it refers specifically to the transposition between
 
