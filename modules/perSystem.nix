@@ -1,4 +1,4 @@
-{ config, lib, flake-parts-lib, self, ... }:
+{ config, lib, flake-parts-lib, inputs, self, ... }:
 let
   inherit (lib)
     genAttrs
@@ -92,7 +92,7 @@ in
       type = mkPerSystemType ({ config, system, ... }: {
         _file = ./perSystem.nix;
         config = {
-          _module.args.inputs' = mapAttrs (k: rootConfig.perInput system) self.inputs;
+          _module.args.inputs' = mapAttrs (k: rootConfig.perInput system) inputs;
           _module.args.self' = rootConfig.perInput system self;
 
           # Custom error messages
@@ -103,9 +103,9 @@ in
           _module.args.moduleWithSystem = throwAliasError "moduleWithSystem";
         };
       });
-      apply = modules: system:
+      apply = module: system:
         (lib.evalModules {
-          inherit modules;
+          modules = [ module ];
           prefix = [ "perSystem" system ];
           specialArgs = {
             inherit system;
