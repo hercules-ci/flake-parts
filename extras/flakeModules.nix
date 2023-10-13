@@ -16,6 +16,8 @@ let
       _file = "${toString self.outPath}/flake.nix#flakeModules.${k}";
       key = "${toString self.outPath}/flake.nix#flakeModules.${k}";
       imports = [ v ];
+    } // optionalAttrs ((lib.functionArgs lib.evalModules)?class) {
+      _class = "flake";
     });
     description = ''
       flake-parts modules for use by other flakes.

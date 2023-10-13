@@ -98,13 +98,15 @@ let
       ''
 
         (module:
-        lib.evalModules {
+        lib.evalModules ({
           specialArgs = {
             inherit self flake-parts-lib;
             inputs = args.inputs or /* legacy, warned above */ self.inputs;
           } // specialArgs;
           modules = [ ./all-modules.nix module ];
-        }
+        } // optionalAttrs ((lib.functionArgs lib.evalModules)?class) {
+          class = "flake";
+        })
         );
 
     # Function to extract the default flakeModule from

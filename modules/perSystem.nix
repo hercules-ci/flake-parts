@@ -104,13 +104,15 @@ in
         };
       });
       apply = modules: system:
-        (lib.evalModules {
+        (lib.evalModules ({
           inherit modules;
           prefix = [ "perSystem" system ];
           specialArgs = {
             inherit system;
           };
-        }).config;
+        } // lib.optionalAttrs ((lib.functionArgs lib.evalModules)?class) {
+          class = "perSystem";
+        })).config;
     };
 
     allSystems = mkOption {
