@@ -121,14 +121,17 @@ let
 
     mkFlake = args: module:
       let
-        loc =
+        inputsPos = builtins.unsafeGetAttrPos "inputs" args;
+        moduleLocation =
           args.moduleLocation or (
-            if args?inputs.self.outPath
+            if inputsPos != null
+            then inputsPos.file
+            else if args?inputs.self.outPath
             then args.inputs.self.outPath + "/flake.nix"
             else "<mkFlake argument>"
           );
-        mod = lib.setDefaultModuleLocation loc module;
-        eval = flake-parts-lib.evalFlakeModule args mod;
+        mod = lib.setDefaultModuleLocation moduleLocation module;
+        eval = flake-parts-lib.evalFlakeModule (args // { inherit moduleLocation; }) mod;
       in
       eval.config.flake;
 
