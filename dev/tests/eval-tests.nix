@@ -26,6 +26,22 @@ rec {
       systems = [ ];
     };
 
+  emptyExposeArgs = mkFlake
+    { inputs.self = { outPath = "the self outpath"; }; }
+    ({ config, moduleLocation, errorLocation, ... }: {
+      flake = {
+        inherit moduleLocation errorLocation;
+      };
+    });
+
+  emptyExposeArgsNoSelf = mkFlake
+    { inputs.self = throw "self won't be available in case of some errors"; }
+    ({ config, moduleLocation, errorLocation, ... }: {
+      flake = {
+        inherit moduleLocation errorLocation;
+      };
+    });
+
   example1 = mkFlake
     { inputs.self = { }; }
     {
@@ -161,6 +177,12 @@ rec {
     assert flakeModulesDisable.test123 == "option123";
 
     assert packagesNonStrictInDevShells.packages.a.default == pkg "a" "hello";
+
+    assert emptyExposeArgs.moduleLocation == "the self outpath/flake.nix";
+
+    assert emptyExposeArgs.errorLocation == __curPos.file;
+
+    assert emptyExposeArgsNoSelf.errorLocation == __curPos.file;
 
     ok;
 

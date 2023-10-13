@@ -83,6 +83,22 @@ let
         '')
       , moduleLocation ? "${self.outPath}/flake.nix"
       }:
+      let
+        module = lib.setDefaultModuleLocation errorLocation module;
+        inputsPos = builtins.unsafeGetAttrPos "inputs" args;
+        errorLocation =
+          # Best case: user makes it explicit
+          args.moduleLocation or (
+            # Slightly worse: Nix does not technically commit to unsafeGetAttrPos semantics
+            if inputsPos != null
+            then inputsPos.file
+            # Slightly worse: self may not be valid when an error occurs
+            else if args?inputs.self.outPath
+            then args.inputs.self.outPath + "/flake.nix"
+            # Fallback
+            else "<mkFlake argument>"
+          );
+      in
       throwIf
         (!args?self && !args?inputs) ''
         When invoking flake-parts, you must pass in the flake output arguments.
@@ -121,17 +137,7 @@ let
 
     mkFlake = args: module:
       let
-        inputsPos = builtins.unsafeGetAttrPos "inputs" args;
-        moduleLocation =
-          args.moduleLocation or (
-            if inputsPos != null
-            then inputsPos.file
-            else if args?inputs.self.outPath
-            then args.inputs.self.outPath + "/flake.nix"
-            else "<mkFlake argument>"
-          );
-        mod = lib.setDefaultModuleLocation moduleLocation module;
-        eval = flake-parts-lib.evalFlakeModule (args // { inherit moduleLocation; }) mod;
+        eval = flake-parts-lib.evalFlakeModule args module;
       in
       eval.config.flake;
 
