@@ -28,17 +28,17 @@ rec {
 
   emptyExposeArgs = mkFlake
     { inputs.self = { outPath = "the self outpath"; }; }
-    ({ config, moduleLocation, errorLocation, ... }: {
+    ({ config, moduleLocation, ... }: {
       flake = {
-        inherit moduleLocation errorLocation;
+        inherit moduleLocation;
       };
     });
 
   emptyExposeArgsNoSelf = mkFlake
     { inputs.self = throw "self won't be available in case of some errors"; }
-    ({ config, moduleLocation, errorLocation, ... }: {
+    ({ config, moduleLocation, ... }: {
       flake = {
-        inherit moduleLocation errorLocation;
+        inherit moduleLocation;
       };
     });
 
@@ -179,10 +179,6 @@ rec {
     assert packagesNonStrictInDevShells.packages.a.default == pkg "a" "hello";
 
     assert emptyExposeArgs.moduleLocation == "the self outpath/flake.nix";
-
-    assert emptyExposeArgs.errorLocation == __curPos.file;
-
-    assert emptyExposeArgsNoSelf.errorLocation == __curPos.file;
 
     ok;
 
