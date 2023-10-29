@@ -84,7 +84,6 @@ let
       , moduleLocation ? "${self.outPath}/flake.nix"
       }:
       let
-        module = lib.setDefaultModuleLocation errorLocation module;
         inputsPos = builtins.unsafeGetAttrPos "inputs" args;
         errorLocation =
           # Best case: user makes it explicit
@@ -120,7 +119,7 @@ let
             inherit self flake-parts-lib moduleLocation;
             inputs = args.inputs or /* legacy, warned above */ self.inputs;
           } // specialArgs;
-          modules = [ ./all-modules.nix module ];
+          modules = [ ./all-modules.nix (lib.setDefaultModuleLocation errorLocation module) ];
         }
         );
 
