@@ -1,3 +1,26 @@
+
+# 2023-05-30
+
+ - Fix a strictness issue in `perInput`, affecting `inputs'`, `self'`.
+   This has caused infinite recursions and potentially performance issues since
+   the introduction of these module arguments.
+
+# 2023-05-08
+
+ - Add [`importApply`](https://flake.parts/define-module-in-separate-file.html?highlight=importApply#importApply) for bringing variables from the flake scope into module files.
+
+ - Add `mkDeferredModuleOption` as a generic name for the implementation of `mkPerSystemOption`.
+
+# 2023-03-26
+
+ - Add preliminary support for `disabledModules` for modules exposed via the importable `flakeModules` module.
+   This requires a Nixpkgs of 2023-03-09 or newer.
+
+# 2023-01-05
+
+ - Add importable `easyOverlay` module for defining an overlay "easily" by reusing `perSystem`.
+   This is not for consuming overlays.
+
 # 2022-12-25
 
  - Added a new `flake.flakeModules` option so a flake can expose a module

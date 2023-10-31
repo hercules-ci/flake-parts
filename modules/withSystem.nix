@@ -1,8 +1,6 @@
-{ config, lib, flake-parts-lib, self, getSystem, ... }:
+{ lib, flake-parts-lib, getSystem, ... }:
 let
   inherit (lib)
-    genAttrs
-    mapAttrs
     mkOption
     types
     ;
@@ -12,7 +10,7 @@ let
 in
 {
   options = {
-    perSystem = mkPerSystemOption ({ config, options, system, specialArgs, ... }: {
+    perSystem = mkPerSystemOption ({ config, options, specialArgs, ... }: {
       _file = ./perSystem.nix;
       options = {
         allModuleArgs = mkOption {

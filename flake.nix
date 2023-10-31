@@ -5,8 +5,15 @@
     nixpkgs-lib.url = "github:NixOS/nixpkgs/nixos-unstable?dir=lib";
   };
 
-  outputs = { self, nixpkgs-lib, ... }: {
-    lib = import ./lib.nix { inherit (nixpkgs-lib) lib; };
+  outputs = { nixpkgs-lib, ... }: {
+    lib = import ./lib.nix {
+      inherit (nixpkgs-lib) lib;
+      # Extra info for version check message
+      revInfo =
+        if nixpkgs-lib?rev
+        then " (nixpkgs-lib.rev: ${nixpkgs-lib.rev})"
+        else "";
+    };
     templates = {
       default = {
         path = ./template/default;

@@ -7,10 +7,6 @@ let
     mkOption
     types
     ;
-  inherit (flake-parts-lib)
-    mkSubmoduleOptions
-    mkPerSystemOption
-    ;
 
   transpositionModule = {
     options = {
@@ -34,6 +30,13 @@ in
     transposition = lib.mkOption {
       description = ''
         A helper that defines transposed attributes in the flake outputs.
+
+        When you define `transposition.foo = { };`, definitions are added to the effect of (pseudo-code):
+
+        ```nix
+        flake.foo.''${system} = (perSystem system).foo;
+        perInput = system: inputFlake: inputFlake.foo.''${system};
+        ```
 
         Transposition is the operation that swaps the indices of a data structure.
         Here it refers specifically to the transposition between
@@ -65,12 +68,9 @@ in
       system: flake:
       mapAttrs
         (attrName: attrConfig: flake.${attrName}.${system})
-        (filterAttrs
-          (attrName: attrConfig: flake?${attrName}.${system})
-          config.transposition
-        );
+        config.transposition;
 
-    perSystem = { ... }: {
+    perSystem = {
       options =
         mapAttrs
           (k: v: lib.mkOption { })

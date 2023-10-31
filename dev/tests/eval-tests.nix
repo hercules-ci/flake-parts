@@ -26,6 +26,22 @@ rec {
       systems = [ ];
     };
 
+  emptyExposeArgs = mkFlake
+    { inputs.self = { outPath = "the self outpath"; }; }
+    ({ config, moduleLocation, ... }: {
+      flake = {
+        inherit moduleLocation;
+      };
+    });
+
+  emptyExposeArgsNoSelf = mkFlake
+    { inputs.self = throw "self won't be available in case of some errors"; }
+    ({ config, moduleLocation, ... }: {
+      flake = {
+        inherit moduleLocation;
+      };
+    });
+
   example1 = mkFlake
     { inputs.self = { }; }
     {
@@ -33,6 +49,18 @@ rec {
       perSystem = { system, ... }: {
         packages.hello = pkg system "hello";
       };
+    };
+
+  packagesNonStrictInDevShells = mkFlake
+    { inputs.self = packagesNonStrictInDevShells; /* approximation */ }
+    {
+      systems = [ "a" "b" ];
+      perSystem = { system, self', ... }: {
+        packages.hello = pkg system "hello";
+        packages.default = self'.packages.hello;
+        devShells = throw "can't be strict in perSystem.devShells!";
+      };
+      flake.devShells = throw "can't be strict in devShells!";
     };
 
   easyOverlay = mkFlake
@@ -147,6 +175,10 @@ rec {
     assert flakeModulesImport.test123 == "123test";
 
     assert flakeModulesDisable.test123 == "option123";
+
+    assert packagesNonStrictInDevShells.packages.a.default == pkg "a" "hello";
+
+    assert emptyExposeArgs.moduleLocation == "the self outpath/flake.nix";
 
     ok;
 
