@@ -2,6 +2,8 @@
 rec {
   imports = [
     inputs.flake-parts.flakeModules.flakeModules
+
+    # Reference `flake.flakeModules.hello` via `rec` instead of `config` to avoid infinite recursion
     flake.flakeModules.hello
   ];
 
