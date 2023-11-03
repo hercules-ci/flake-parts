@@ -15,7 +15,6 @@
         imports = [
           ./modules/anotherFlakeModule.nix
           ./modules/dev.nix
-          ./modules/hello.nix
         ];
       };
 }
