@@ -67,7 +67,11 @@ in
     perInput =
       system: flake:
       mapAttrs
-        (attrName: attrConfig: flake.${attrName}.${system})
+        (attrName: attrConfig:
+          flake.${attrName}.${system} or (throw ''
+            Attemt to access non existent attribute ${attrName}.${system} of flake ${flake}.
+          '')
+        )
         config.transposition;
 
     perSystem = {
