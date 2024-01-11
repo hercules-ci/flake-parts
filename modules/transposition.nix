@@ -101,7 +101,10 @@ in
       lib.mapAttrs
         (attrName: attrConfig:
           mapAttrs
-            (system: v: v.${attrName})
+            (system: v: v.${attrName} or (
+              abort ''
+                Could not find option ${attrName} in the perSystem module. It is required to declare such an option whenever transposition.<name> is defined (and in this instance <name> is ${attrName}).
+              ''))
             config.allSystems
         )
         config.transposition;
