@@ -48,4 +48,9 @@
       };
     });
   };
+
+  # Make some non-standard flake outputs available for exploration in the REPL
+  # This isn't part of a proper flake anyway (see dev/flake.nix) so we may as
+  # well leave this on.
+  debug = true;
 }
