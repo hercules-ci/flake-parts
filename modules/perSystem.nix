@@ -119,9 +119,9 @@ in
           _module.args.moduleWithSystem = throwAliasError "moduleWithSystem";
         };
       });
-      apply = modules: system:
+      apply = module: system:
         (lib.evalModules {
-          inherit modules;
+          modules = [ module ];
           prefix = [ "perSystem" system ];
           specialArgs = {
             inherit system;
