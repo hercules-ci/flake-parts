@@ -14,11 +14,18 @@ rec {
   inherit (f-p-lib) mkFlake;
   inherit (f-p.inputs.nixpkgs-lib) lib;
 
-  pkg = system: name: derivation {
-    name = name;
-    builder = "no-builder";
-    system = system;
-  };
+  pkg = system: name:
+    derivation
+      {
+        name = name;
+        builder = "no-builder";
+        system = system;
+      }
+    // {
+      meta = {
+        mainProgram = name;
+      };
+    };
 
   empty = mkFlake
     { inputs.self = { }; }
@@ -30,8 +37,9 @@ rec {
     { inputs.self = { }; }
     {
       systems = [ "a" "b" ];
-      perSystem = { system, ... }: {
+      perSystem = { config, system, ... }: {
         packages.hello = pkg system "hello";
+        apps.hello.program = config.packages.hello;
       };
     };
 
@@ -126,7 +134,20 @@ rec {
     };
 
     assert example1 == {
-      apps = { a = { }; b = { }; };
+      apps = {
+        a = {
+          hello = {
+            program = "${pkg "a" "hello"}/bin/hello";
+            type = "app";
+          };
+        };
+        b = {
+          hello = {
+            program = "${pkg "b" "hello"}/bin/hello";
+            type = "app";
+          };
+        };
+      };
       checks = { a = { }; b = { }; };
       devShells = { a = { }; b = { }; };
       formatter = { };
