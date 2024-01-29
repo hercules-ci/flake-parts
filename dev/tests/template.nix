@@ -15,18 +15,17 @@ hci-effects.mkEffect {
     nix -v flake init -t ${../..}
 
     ann pointing to local sources...
-    sed -i flake.nix -e 's^nixpkgs.url = ".*";^nixpkgs.url = "${path}"; flake-parts.url = "${../..}";^'
-    # head flake.nix
-    grep -F ${path} flake.nix >/dev/null
+
+    override=(--override-input flake-parts ${../..})
 
     ann nix flake lock...
-    nix flake lock
+    nix flake lock "''${override[@]}"
 
     ann nix flake show...
-    nix -v flake show
+    nix -v flake show "''${override[@]}"
 
     ann nix build...
-    nix build .
+    nix build . "''${override[@]}"
 
     ann checking result...
     readlink ./result | grep hello
