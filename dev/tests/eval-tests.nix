@@ -88,6 +88,24 @@ rec {
       };
     };
 
+  modulesFlake = mkFlake
+    {
+      inputs.self = { };
+      moduleLocation = "modulesFlake";
+    }
+    {
+      imports = [ flake-parts.flakeModules.modules ];
+      systems = [ ];
+      flake = {
+        modules.generic.example = { lib, ... }: {
+          options.generic.example = lib.mkOption { default = "works in any module system application"; };
+        };
+        modules.foo.example = { lib, ... }: {
+          options.foo.example = lib.mkOption { default = "works in foo application"; };
+        };
+      };
+    };
+
   flakeModulesDeclare = mkFlake
     { inputs.self = { outPath = ./.; }; }
     ({ config, ... }: {
@@ -200,6 +218,20 @@ rec {
     assert packagesNonStrictInDevShells.packages.a.default == pkg "a" "hello";
 
     assert emptyExposeArgs.moduleLocation == "the self outpath/flake.nix";
+
+    assert (lib.evalModules {
+      class = "barrr";
+      modules = [
+        modulesFlake.modules.generic.example
+      ];
+    }).config.generic.example == "works in any module system application";
+
+    assert (lib.evalModules {
+      class = "foo";
+      modules = [
+        modulesFlake.modules.foo.example
+      ];
+    }).config.foo.example == "works in foo application";
 
     ok;
 
