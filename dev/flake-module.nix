@@ -11,6 +11,10 @@
     enable = true;
     autoMergeMethod = "merge";
     when.dayOfMonth = 1;
+    flakes = {
+      "." = { };
+      "dev" = { };
+    };
     effect.settings = {
       # Only fetch the `lib` subtree.
       # NOTE: Users don't have to do this. They are recommended to use follows
