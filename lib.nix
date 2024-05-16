@@ -205,7 +205,7 @@ let
         options = setAttrByPath from (mkOption
           {
             visible = true;
-            description = lib.mdDoc "Alias of {option}`${showOption to}`.";
+            description = "Alias of {option}`${showOption to}`.";
             apply = x: (toOf config);
           } // optionalAttrs (toType != null) {
           type = toType;
