@@ -126,6 +126,7 @@ in
           specialArgs = {
             inherit system;
           };
+          class = "perSystem";
         }).config;
     };
 
