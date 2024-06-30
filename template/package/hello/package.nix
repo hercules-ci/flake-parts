@@ -1,12 +1,19 @@
 { stdenv, lib, runtimeShell }:
 
+let
+  # Bring fileset functions into scope.
+  # See https://nixos.org/manual/nixpkgs/stable/index.html#sec-functions-library-fileset
+  inherit (lib.fileset) toSource unions;
+in
+
 # Example package in the style that `mkDerivation`-based packages in Nixpkgs are written.
 stdenv.mkDerivation (finalAttrs: {
   name = "hello";
-  src = lib.cleanSourceWith {
-    src = ./.;
-    filter = path: type:
-      type == "regular" -> baseNameOf path == "hello.sh";
+  src = toSource {
+    root = ./.;
+    fileset = unions [
+      ./hello.sh
+    ];
   };
   buildPhase = ''
     # Note that Nixpkgs has builder functions for simple packages

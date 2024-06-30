@@ -33,6 +33,16 @@
           A minimal flake using flake-parts importing nixpkgs with the unfree option.
         '';
       };
+      package = {
+        path = ./template/package;
+        description = ''
+          A flake with a simple package:
+          - Nixpkgs
+          - callPackage
+          - src with fileset
+          - a check with runCommand
+        '';
+      };
     };
     flakeModules = {
       easyOverlay = ./extras/easyOverlay.nix;
