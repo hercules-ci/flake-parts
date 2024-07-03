@@ -135,6 +135,16 @@ rec {
     config = { };
   };
 
+  specialArgFlake = mkFlake
+    {
+      inputs.self = { };
+      specialArgs.soSpecial = true;
+    }
+    ({ soSpecial, ... }: {
+      imports = assert soSpecial; [ ];
+      flake.foo = true;
+    });
+
   runTests = ok:
 
     assert empty == {
@@ -200,6 +210,8 @@ rec {
     assert packagesNonStrictInDevShells.packages.a.default == pkg "a" "hello";
 
     assert emptyExposeArgs.moduleLocation == "the self outpath/flake.nix";
+
+    assert specialArgFlake.foo;
 
     ok;
 
