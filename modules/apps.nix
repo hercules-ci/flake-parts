@@ -20,6 +20,7 @@ let
   };
 
   appType = lib.types.submodule {
+    freeformType = types.lazyAttrsOf types.raw;
     options = {
       type = mkOption {
         type = lib.types.enum [ "app" ];
