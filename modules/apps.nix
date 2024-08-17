@@ -37,6 +37,7 @@ let
       meta = mkOption {
         type = types.lazyAttrsOf lib.types.raw;
         default = { };
+        # TODO refer to Nix manual 2.25
         description = ''
           Metadata information about the app.
           Standardized in Nix at <https://github.com/NixOS/nix/pull/11297>.
