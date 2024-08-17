@@ -39,7 +39,7 @@ let
         default = { };
         description = ''
           Metadata information about the app.
-          Standardaized in Nix at <https://github.com/NixOS/nix/pull/11297>.
+          Standardized in Nix at <https://github.com/NixOS/nix/pull/11297>.
 
           Note: `nix flake check` is only aware of the `description` attribute in `meta`.
         '';
