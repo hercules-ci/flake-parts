@@ -3,7 +3,7 @@
 
   inputs = {
     # Flakes don't give us a good way to depend on .., so we don't.
-    # As a consequence, this flake is a little non-standard, and
+    # As a consequence, this flake only provides dependencies, and
     # we can't use the `nix` CLI as expected.
 
     nixpkgs.url = "github:NixOS/nixpkgs";
@@ -16,5 +16,6 @@
     {
       # The dev tooling is in ./flake-module.nix
       # See comment at `inputs` above.
+      # It is loaded into partitions.dev by the root flake.
     };
 }
