@@ -5,7 +5,7 @@
     nixpkgs-lib.url = "https://github.com/NixOS/nixpkgs/archive/a5d394176e64ab29c852d03346c1fc9b0b7d33eb.tar.gz"; # 9f918d616c5321ad374ae6cb5ea89c9e04bf3e58 /lib from nixos-unstable
   };
 
-  outputs = { nixpkgs-lib, ... }:
+  outputs = inputs@{ nixpkgs-lib, ... }:
     let
       lib = import ./lib.nix {
         inherit (nixpkgs-lib) lib;
@@ -50,8 +50,11 @@
         flakeModules = ./extras/flakeModules.nix;
       };
     in
-    {
-      inherit lib templates flakeModules;
+    lib.mkFlake { inherit inputs; } {
+      systems = [ ];
+      flake = {
+        inherit lib templates flakeModules;
+      };
     };
 
 }
