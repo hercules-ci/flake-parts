@@ -48,6 +48,7 @@
       flakeModules = {
         easyOverlay = ./extras/easyOverlay.nix;
         flakeModules = ./extras/flakeModules.nix;
+        partitions = ./extras/partitions.nix;
       };
     in
     lib.mkFlake { inherit inputs; } {
