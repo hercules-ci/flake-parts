@@ -15,7 +15,12 @@ let
         default = { };
         description = ''
           Location of a flake whose inputs to add to the inputs module argument in the partition.
+          Note that flake `follows` are resolved without any awareness of inputs that are not in the flake.
+          As a consequence, a `follows` entry in the flake inputs can not refer to inputs that are not in that specific flake.
+
+          Implementation note: if the type of `extraInputsFlake` is a path, it is loaded with an expression-based reimplementation of `builtins.getFlake`, as `getFlake` is incapable of loading paths in pure mode as of writing.
         '';
+        example = lib.literalExpression "./dev";
       };
       extraInputs = mkOption {
         type = types.lazyAttrsOf types.raw;
@@ -51,8 +56,16 @@ let
         description = ''
           A re-evaluation of the flake-parts top level modules.
 
-          You may define config definitions, imports, etc here, and it can be read like any other submodule.
+          You may define config definitions, `imports`, etc here, and it can be read like any other submodule.
         '';
+        example = lib.literalExpression ''
+          {
+            imports = [
+              ./dev/flake-module.nix
+            ];
+          }
+        '';
+        visible = "shallow";
       };
     };
     config = {
@@ -95,6 +108,11 @@ in
 
         See the `partitions` options to understand the purpose.
       '';
+      example = {
+        "devShells" = "dev";
+        "checks" = "dev";
+        "herculesCI" = "dev";
+      };
     };
     partitions = mkOption {
       type = types.attrsOf (types.submodule partitionModule);
@@ -115,6 +133,14 @@ in
         not actually define a `packages` attribute. While the actual evaluation
         is cheap, it can only happen after fetching the input, which is not
         as cheap.
+      '';
+      example = lib.literalExpression ''
+        {
+          dev = {
+            extraInputsFlake = ./dev;
+            module = ./dev/flake-module.nix;
+          };
+        }
       '';
     };
   };
