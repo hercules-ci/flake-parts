@@ -34,6 +34,17 @@ let
           A path to an executable or a derivation with `meta.mainProgram`.
         '';
       };
+      meta = mkOption {
+        type = types.lazyAttrsOf lib.types.raw;
+        default = { };
+        # TODO refer to Nix manual 2.25
+        description = ''
+          Metadata information about the app.
+          Standardized in Nix at <https://github.com/NixOS/nix/pull/11297>.
+
+          Note: `nix flake check` is only aware of the `description` attribute in `meta`.
+        '';
+      };
     };
   };
 in
