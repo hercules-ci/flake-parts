@@ -58,7 +58,6 @@
       partitionedAttrs.devShells = "dev";
       partitionedAttrs.herculesCI = "dev";
       partitions.dev.extraInputsFlake = ./dev;
-      partitions.dev.extraInputs.flake-parts = inputs.self;
       partitions.dev.module = {
         imports = [ ./dev/flake-module.nix ];
       };
