@@ -165,12 +165,14 @@ rec {
           hello = {
             program = "${pkg "a" "hello"}/bin/hello";
             type = "app";
+            meta = { };
           };
         };
         b = {
           hello = {
             program = "${pkg "b" "hello"}/bin/hello";
             type = "app";
+            meta = { };
           };
         };
       };
