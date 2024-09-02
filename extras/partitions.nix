@@ -11,7 +11,7 @@ let
   partitionModule = { config, options, name, ... }: {
     options = {
       extraInputsFlake = mkOption {
-        type = types.raw;
+        type = types.either types.path types.str;
         default = { };
         description = ''
           Location of a flake whose inputs to add to the inputs module argument in the partition.
