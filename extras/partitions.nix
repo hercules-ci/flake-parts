@@ -74,6 +74,7 @@ let
           p = options.extraInputsFlake.value;
           flake =
             if builtins.typeOf p == "path"
+              || (builtins.typeOf p == "string" && lib.strings.hasPrefix "${builtins.storeDir}/" p)
             then get-flake p
             else builtins.getFlake p;
         in
