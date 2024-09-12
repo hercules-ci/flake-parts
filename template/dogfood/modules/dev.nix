@@ -13,6 +13,8 @@
       topLevel.config.flake.flakeModules.customHello
     ];
 
+    config.customHello.enableUserStdenv = true;
+
     options.perSystem = flake-parts-lib.mkPerSystemOption ({ pkgs, ... }@perSystem: {
       devShells.default = pkgs.mkShell {
         buildInputs = [ perSystem.config.packages.hello ];
