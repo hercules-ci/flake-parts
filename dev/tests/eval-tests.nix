@@ -1,18 +1,13 @@
 # Run with
 #
-#     nix build -f dev checks.x86_64-linux.eval-tests
+#     nix build .#checks.x86_64-linux.eval-tests
 
+{ flake-parts }:
 rec {
-  f-p = builtins.getFlake (toString ../..);
-  flake-parts = f-p;
-
-  devFlake = builtins.getFlake (toString ../.);
-  nixpkgs = devFlake.inputs.nixpkgs;
-
-  f-p-lib = f-p.lib;
-
+  nixpkgs = flake-parts.inputs.nixpkgs;
+  f-p-lib = flake-parts.lib;
   inherit (f-p-lib) mkFlake;
-  inherit (f-p.inputs.nixpkgs-lib) lib;
+  inherit (flake-parts.inputs.nixpkgs-lib) lib;
 
   pkg = system: name:
     derivation
