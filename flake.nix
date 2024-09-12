@@ -44,6 +44,12 @@
             - a check with runCommand
           '';
         };
+        dogfood = {
+          path = ./template/dogfood;
+          description = ''
+            A minimal flake using flake-parts creating flake modules to build its own outputs.
+          '';
+        };
       };
       flakeModules = {
         easyOverlay = ./extras/easyOverlay.nix;
@@ -64,12 +70,6 @@
       };
       flake = {
         inherit lib templates flakeModules;
-      };
-      dogfood = {
-        path = ./template/dogfood;
-        description = ''
-          A minimal flake using flake-parts creating flake modules to build its own outputs.
-        '';
       };
     };
 

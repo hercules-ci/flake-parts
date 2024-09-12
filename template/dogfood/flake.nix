@@ -9,13 +9,23 @@
     flake-parts.lib.mkFlake
       {
         inherit inputs;
-        moduleLocation = ./flake.nix;
       }
-      {
+      ({ config, lib, ... }: {
         imports = [
-          ./modules/anotherFlakeModule.nix
-          ./modules/hello.nix
+          flake-parts.flakeModules.partitions
           ./modules/dev.nix
         ];
-      };
+
+        systems = [ "x86_64-linux" "aarch64-darwin" ];
+
+        partitionedAttrs.devShells = "dogfood";
+        partitionedAttrs.packages = "dogfood";
+        partitions.dogfood = {
+          module = {
+            imports = [
+              config.flake.flakeModules.dev
+            ];
+          };
+        };
+      });
 }
