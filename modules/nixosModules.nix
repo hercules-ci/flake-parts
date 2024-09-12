@@ -13,7 +13,7 @@ in
   options = {
     flake = mkSubmoduleOptions {
       nixosModules = mkOption {
-        type = types.lazyAttrsOf types.unspecified;
+        type = types.lazyAttrsOf types.deferredModule;
         default = { };
         apply = mapAttrs (k: v: { _file = "${toString moduleLocation}#nixosModules.${k}"; imports = [ v ]; });
         description = ''
