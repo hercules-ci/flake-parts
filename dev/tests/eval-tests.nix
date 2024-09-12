@@ -158,6 +158,17 @@ rec {
       flake.foo = true;
     });
 
+  partitionWithoutExtraInputsFlake = mkFlake
+    {
+      inputs.self = { };
+    }
+    ({ config, ... }: {
+      imports = [ flake-parts.flakeModules.partitions ];
+      systems = [ "x86_64-linux" ];
+      partitions.dev.module = { inputs, ... }: builtins.seq inputs { };
+      partitionedAttrs.devShells = "dev";
+    });
+
   runTests = ok:
 
     assert empty == {
@@ -241,6 +252,8 @@ rec {
     }).config.foo.example == "works in foo application";
 
     assert specialArgFlake.foo;
+
+    assert builtins.isAttrs partitionWithoutExtraInputsFlake.devShells.x86_64-linux;
 
     ok;
 
