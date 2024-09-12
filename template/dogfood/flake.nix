@@ -10,7 +10,7 @@
       {
         inherit inputs;
       }
-      ({ config, lib, ... }: {
+      (topLevel: {
         imports = [
           flake-parts.flakeModules.partitions
           ./modules/dev.nix
@@ -21,11 +21,7 @@
         partitionedAttrs.devShells = "dogfood";
         partitionedAttrs.packages = "dogfood";
         partitions.dogfood = {
-          module = {
-            imports = [
-              config.flake.flakeModules.dev
-            ];
-          };
+          module = topLevel.config.flake.flakeModules.dev;
         };
       });
 }
