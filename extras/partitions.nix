@@ -12,7 +12,6 @@ let
     options = {
       extraInputsFlake = mkOption {
         type = types.raw;
-        default = { };
         description = ''
           Location of a flake whose inputs to add to the inputs module argument in the partition.
           Note that flake `follows` are resolved without any awareness of inputs that are not in the flake.
