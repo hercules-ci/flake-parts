@@ -1,4 +1,4 @@
-{ config, lib, inputs, withSystem, ... }:
+{ config, lib, inputs, self, withSystem, ... }:
 
 {
   imports = [
@@ -64,7 +64,7 @@
     };
 
     checks.eval-tests =
-      let tests = import ./tests/eval-tests.nix;
+      let tests = import ./tests/eval-tests.nix { flake-parts = self; };
       in tests.runTests pkgs.emptyFile // { internals = tests; };
 
   };

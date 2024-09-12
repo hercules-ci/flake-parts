@@ -48,6 +48,7 @@
       flakeModules = {
         easyOverlay = ./extras/easyOverlay.nix;
         flakeModules = ./extras/flakeModules.nix;
+        modules = ./extras/modules.nix;
         partitions = ./extras/partitions.nix;
       };
     in
