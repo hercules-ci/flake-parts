@@ -12,19 +12,19 @@
       options.customHello.enableUserStdenv = lib.mkEnableOption "stdenv from `flakeModules.customHello` user's nixpkgs";
       options.perSystem = flake-parts-lib.mkPerSystemOption ({ pkgs, system, ... }: {
         packages.hello =
-          (inputs.nixpkgs_23_05.legacyPackages.${system}.hello.override {
+          (inputs.nixpkgs_24_05.legacyPackages.${system}.hello.override {
             stdenv =
               if cfg.enableUserStdenv then
                 pkgs.stdenv
               else
-                inputs.nixpkgs_23_05.legacyPackages.${system}.stdenv;
+                inputs.nixpkgs_24_05.legacyPackages.${system}.stdenv;
           }).overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
-              description = "A hello package from the `flakeModules.customHello` author's nixpkgs 23.05, built with stdenv from ${
+              description = "A hello package from the `flakeModules.customHello` author's nixpkgs 24.05, built with stdenv from ${
               if cfg.enableUserStdenv then
                 "the `flakeModules.customHello` user's nixpkgs"
               else
-                "the `flakeModules.customHello` author's nixpkgs 23.05"
+                "the `flakeModules.customHello` author's nixpkgs 24.05"
             }";
             };
           });
