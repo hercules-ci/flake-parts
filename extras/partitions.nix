@@ -11,7 +11,7 @@ let
   partitionModule = { config, options, name, ... }: {
     options = {
       extraInputsFlake = mkOption {
-        type = types.raw;
+        type = types.either types.path types.str;
         default = { };
         description = ''
           Location of a flake whose inputs to add to the inputs module argument in the partition.
@@ -74,6 +74,7 @@ let
           p = options.extraInputsFlake.value;
           flake =
             if builtins.typeOf p == "path"
+              || (builtins.typeOf p == "string" && lib.strings.hasPrefix "${builtins.storeDir}/" p)
             then get-flake p
             else builtins.getFlake p;
         in
