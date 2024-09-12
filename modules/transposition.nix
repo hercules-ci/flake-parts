@@ -7,6 +7,9 @@ let
     mkOption
     types
     ;
+  inherit (lib.strings)
+    escapeNixIdentifier
+    ;
 
   transpositionModule = {
     options = {
@@ -23,6 +26,45 @@ let
       };
     };
   };
+
+  perInputAttributeError = { flake, attrName, system, attrConfig }:
+    # This uses flake.outPath for lack of a better identifier.
+    # Consider adding a perInput variation that has a normally-redundant argument for the input name.
+    # Tested manually with
+    # perSystem = { inputs', ... }: {
+    #   packages.extra = inputs'.nixpkgs.extra;
+    #   packages.default = inputs'.nixpkgs.packages.default;
+    #   packages.veryWrong = (top.config.perInput "x86_64-linux" inputs'.nixpkgs.legacyPackages.hello).packages.default;
+    # };
+    # transposition.extra = {};
+    let
+      attrPath = "${escapeNixIdentifier attrName}.${escapeNixIdentifier system}";
+      flakeIdentifier =
+        if flake._type or null != "flake"
+        then
+          throw "An attempt was made to access attribute ${attrPath} on a value that's supposed to be a flake, but may not be a proper flake."
+        else
+          builtins.addErrorContext "while trying to find out how to describe what is supposedly a flake, whose attribute ${attrPath} was accessed but does not exist" (
+            toString flake.outPath
+          );
+      # This ought to be generalized by extending attrConfig, but this is the only known and common mistake for now.
+      alternateAttrNameHint =
+        if attrName == "packages" && flake?legacyPackages
+        then # Unfortunately we can't just switch them out, because that will put packages *sets* where single packages are expected in user code, resulting in potentially much worse and more confusing errors down the line.
+          "\nIt does define legacyPackages; try that instead?"
+        else "";
+    in
+    if flake?${attrName}
+    then
+      throw ''
+        Attempt to access ${attrPath} of flake ${flakeIdentifier}, but it does not have it.
+        It does have attribute ${escapeNixIdentifier attrName}, so it appears that it does not support system type ${escapeNixIdentifier system}.
+      ''
+    else
+      throw ''
+        Attempt to access ${attrPath} of flake ${flakeIdentifier}, but it does not have attribute ${escapeNixIdentifier attrName}.${alternateAttrNameHint}
+      '';
+
 
 in
 {
@@ -59,7 +101,10 @@ in
       lib.mapAttrs
         (attrName: attrConfig:
           mapAttrs
-            (system: v: v.${attrName})
+            (system: v: v.${attrName} or (
+              abort ''
+                Could not find option ${attrName} in the perSystem module. It is required to declare such an option whenever transposition.<name> is defined (and in this instance <name> is ${attrName}).
+              ''))
             config.allSystems
         )
         config.transposition;
@@ -67,7 +112,11 @@ in
     perInput =
       system: flake:
       mapAttrs
-        (attrName: attrConfig: flake.${attrName}.${system})
+        (attrName: attrConfig:
+          flake.${attrName}.${system} or (
+            throw (perInputAttributeError { inherit system flake attrName attrConfig; })
+          )
+        )
         config.transposition;
 
     perSystem = {

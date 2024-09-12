@@ -120,6 +120,7 @@ let
             inputs = args.inputs or /* legacy, warned above */ self.inputs;
           } // specialArgs;
           modules = [ ./all-modules.nix (lib.setDefaultModuleLocation errorLocation module) ];
+          class = "flake";
         }
         );
 
@@ -205,7 +206,7 @@ let
         options = setAttrByPath from (mkOption
           {
             visible = true;
-            description = lib.mdDoc "Alias of {option}`${showOption to}`.";
+            description = "Alias of {option}`${showOption to}`.";
             apply = x: (toOf config);
           } // optionalAttrs (toType != null) {
           type = toType;

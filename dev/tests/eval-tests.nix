@@ -1,24 +1,26 @@
 # Run with
 #
-#     nix build -f dev checks.x86_64-linux.eval-tests
+#     nix build .#checks.x86_64-linux.eval-tests
 
+{ flake-parts }:
 rec {
-  f-p = builtins.getFlake (toString ../..);
-  flake-parts = f-p;
-
-  devFlake = builtins.getFlake (toString ../.);
-  nixpkgs = devFlake.inputs.nixpkgs;
-
-  f-p-lib = f-p.lib;
-
+  nixpkgs = flake-parts.inputs.nixpkgs;
+  f-p-lib = flake-parts.lib;
   inherit (f-p-lib) mkFlake;
-  inherit (f-p.inputs.nixpkgs-lib) lib;
+  inherit (flake-parts.inputs.nixpkgs-lib) lib;
 
-  pkg = system: name: derivation {
-    name = name;
-    builder = "no-builder";
-    system = system;
-  };
+  pkg = system: name:
+    derivation
+      {
+        name = name;
+        builder = "no-builder";
+        system = system;
+      }
+    // {
+      meta = {
+        mainProgram = name;
+      };
+    };
 
   empty = mkFlake
     { inputs.self = { }; }
@@ -46,8 +48,9 @@ rec {
     { inputs.self = { }; }
     {
       systems = [ "a" "b" ];
-      perSystem = { system, ... }: {
+      perSystem = { config, system, ... }: {
         packages.hello = pkg system "hello";
+        apps.hello.program = config.packages.hello;
       };
     };
 
@@ -76,6 +79,24 @@ rec {
           hello = config.packages.hello;
           hello_old = pkgs.hello;
           hello_new = config.packages.hello_new;
+        };
+      };
+    };
+
+  modulesFlake = mkFlake
+    {
+      inputs.self = { };
+      moduleLocation = "modulesFlake";
+    }
+    {
+      imports = [ flake-parts.flakeModules.modules ];
+      systems = [ ];
+      flake = {
+        modules.generic.example = { lib, ... }: {
+          options.generic.example = lib.mkOption { default = "works in any module system application"; };
+        };
+        modules.foo.example = { lib, ... }: {
+          options.foo.example = lib.mkOption { default = "works in foo application"; };
         };
       };
     };
@@ -127,6 +148,27 @@ rec {
     config = { };
   };
 
+  specialArgFlake = mkFlake
+    {
+      inputs.self = { };
+      specialArgs.soSpecial = true;
+    }
+    ({ soSpecial, ... }: {
+      imports = assert soSpecial; [ ];
+      flake.foo = true;
+    });
+
+  partitionWithoutExtraInputsFlake = mkFlake
+    {
+      inputs.self = { };
+    }
+    ({ config, ... }: {
+      imports = [ flake-parts.flakeModules.partitions ];
+      systems = [ "x86_64-linux" ];
+      partitions.dev.module = { inputs, ... }: builtins.seq inputs { };
+      partitionedAttrs.devShells = "dev";
+    });
+
   runTests = ok:
 
     assert empty == {
@@ -142,7 +184,22 @@ rec {
     };
 
     assert example1 == {
-      apps = { a = { }; b = { }; };
+      apps = {
+        a = {
+          hello = {
+            program = "${pkg "a" "hello"}/bin/hello";
+            type = "app";
+            meta = { };
+          };
+        };
+        b = {
+          hello = {
+            program = "${pkg "b" "hello"}/bin/hello";
+            type = "app";
+            meta = { };
+          };
+        };
+      };
       checks = { a = { }; b = { }; };
       devShells = { a = { }; b = { }; };
       formatter = { };
@@ -179,6 +236,24 @@ rec {
     assert packagesNonStrictInDevShells.packages.a.default == pkg "a" "hello";
 
     assert emptyExposeArgs.moduleLocation == "the self outpath/flake.nix";
+
+    assert (lib.evalModules {
+      class = "barrr";
+      modules = [
+        modulesFlake.modules.generic.example
+      ];
+    }).config.generic.example == "works in any module system application";
+
+    assert (lib.evalModules {
+      class = "foo";
+      modules = [
+        modulesFlake.modules.foo.example
+      ];
+    }).config.foo.example == "works in foo application";
+
+    assert specialArgFlake.foo;
+
+    assert builtins.isAttrs partitionWithoutExtraInputsFlake.devShells.x86_64-linux;
 
     ok;
 

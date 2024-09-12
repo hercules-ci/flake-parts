@@ -6,6 +6,9 @@ let
     mkOption
     types
     ;
+  inherit (lib.strings)
+    escapeNixIdentifier
+    ;
   inherit (flake-parts-lib)
     mkPerSystemType
     ;
@@ -92,8 +95,21 @@ in
       type = mkPerSystemType ({ config, system, ... }: {
         _file = ./perSystem.nix;
         config = {
-          _module.args.inputs' = mapAttrs (k: rootConfig.perInput system) self.inputs;
-          _module.args.self' = rootConfig.perInput system self;
+          _module.args.inputs' =
+            mapAttrs
+              (inputName: input:
+                builtins.addErrorContext "while retrieving system-dependent attributes for input ${escapeNixIdentifier inputName}" (
+                  if input._type or null == "flake"
+                  then rootConfig.perInput system input
+                  else
+                    throw "Trying to retrieve system-dependent attributes for input ${escapeNixIdentifier inputName}, but this input is not a flake. Perhaps flake = false was added to the input declarations by mistake, or you meant to use a different input, or you meant to use plain old inputs, not inputs'."
+                )
+              )
+              self.inputs;
+          _module.args.self' =
+            builtins.addErrorContext "while retrieving system-dependent attributes for a flake's own outputs" (
+              rootConfig.perInput system self
+            );
 
           # Custom error messages
           _module.args.self = throwAliasError' "self";
@@ -110,6 +126,7 @@ in
           specialArgs = {
             inherit system;
           };
+          class = "perSystem";
         }).config;
     };
 

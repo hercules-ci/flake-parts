@@ -16,6 +16,7 @@ let
       _file = "${toString moduleLocation}#flakeModules.${k}";
       key = "${toString moduleLocation}#flakeModules.${k}";
       imports = [ v ];
+      _class = "flake";
     });
     description = ''
       flake-parts modules for use by other flakes.
