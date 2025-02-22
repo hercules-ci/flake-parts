@@ -95,7 +95,7 @@ in
 {
   options = {
     partitionedAttrs = mkOption {
-      type = types.attrsOf types.str;
+      type = types.attrsOf (types.coercedTo types.str lib.singleton (types.nonEmptyListOf types.str));
       default = { };
       description = ''
         A set of flake output attributes that are taken from a partition instead of the default top level flake-parts evaluation.
@@ -147,7 +147,12 @@ in
     _module.args.partitionStack = [ ];
     flake = optionalAttrs (partitionStack == [ ]) (
       mapAttrs
-        (attrName: partition: lib.mkForce (config.partitions.${partition}.module.flake.${attrName}))
+        (
+          attrName: partitions:
+            lib.mkMerge (
+              map (partition: lib.mkForce config.partitions.${partition}.module.flake.${attrName}) partitions
+            )
+        )
         config.partitionedAttrs
     );
   };
