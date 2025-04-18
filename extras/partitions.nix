@@ -83,13 +83,12 @@ let
 
   # Nix does not recognize that a flake like "${./dev}", which is a content
   # addressed store path is a pure input, so we have to fetch and wire it
-  # manually with get-flake.
-  # TODO: update this
-  get-flake = import (builtins.fetchTree {
-    type = "github";
-    owner = "ursi";
-    repo = "get-flake";
-    rev = "a6c57417d1b857b8be53aba4095869a0f438c502";
+  # manually with flake-compat.
+  get-flake = src: (flake-compat { inherit src; system = throw "operating flake-compat in pure mode; system not allowed to be used"; }).outputs;
+  # TODO: update
+  flake-compat = import (builtins.fetchTarball {
+    url = "https://github.com/edolstra/flake-compat/archive/9ed2ac151eada2306ca8c418ebd97807bb08f6ac.tar.gz";
+    sha256 = "sha256:063slk1np1g1dkh21a82x655kpja7p4pc74rb3lqankyrbbpy4hx";
   });
 
 in

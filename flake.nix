@@ -2,7 +2,7 @@
   description = "Flake basics described using the module system";
 
   inputs = {
-    nixpkgs-lib.url = "https://github.com/NixOS/nixpkgs/archive/fb192fec7cc7a4c26d51779e9bab07ce6fa5597a.tar.gz"; # 06cf0e1da4208d3766d898b7fdab6513366d45b9 /lib from nixos-unstable
+    nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
   };
 
   outputs = inputs@{ nixpkgs-lib, ... }:
