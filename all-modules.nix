@@ -8,6 +8,7 @@
     ./modules/formatter.nix
     ./modules/legacyPackages.nix
     ./modules/moduleWithSystem.nix
+    ./modules/darwinConfigurations.nix
     ./modules/nixosConfigurations.nix
     ./modules/nixosModules.nix
     ./modules/nixpkgs.nix
