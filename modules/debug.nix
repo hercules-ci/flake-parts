@@ -22,7 +22,8 @@ in
   options = {
     debug = mkOption {
       type = types.bool;
-      default = false;
+      default = builtins ? currentSystem;
+      defaultText = "true when inside Nix REPL";
       description = ''
         Whether to add the attributes `debug`, `allSystems` and `currentSystem`
         to the flake output. When `true`, this allows inspection of options via
