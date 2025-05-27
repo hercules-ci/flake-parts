@@ -50,6 +50,7 @@
         flakeModules = ./extras/flakeModules.nix;
         modules = ./extras/modules.nix;
         partitions = ./extras/partitions.nix;
+        touchup = ./extras/touchup.nix;
       };
     in
     lib.mkFlake { inherit inputs; } {

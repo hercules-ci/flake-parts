@@ -139,7 +139,7 @@ let
       let
         eval = flake-parts-lib.evalFlakeModule args module;
       in
-      eval.config.flake;
+      eval.config.processedFlake;
 
     # For extending options in an already declared submodule.
     # Workaround for https://github.com/NixOS/nixpkgs/issues/146882

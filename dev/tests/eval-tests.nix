@@ -169,7 +169,75 @@ rec {
       partitionedAttrs.devShells = "dev";
     });
 
+  touchup1 = mkFlake
+    { inputs.self = { }; }
+    {
+      imports = [ flake-parts.flakeModules.touchup ];
+      systems = [ "x86_64-linux" "aarch64-darwin" ];
+      touchup.any = { attrName, ... }: { enable = attrName == "overlays"; };
+      perSystem = { config, ... }: {
+        packages.default = throw "packages.default should not be evaluated";
+        packages.hello = throw "packages.hello should not be evaluated";
+      };
+    };
+
+  touchup1b = mkFlake
+    { inputs.self = { }; }
+    {
+      imports = [ flake-parts.flakeModules.touchup ];
+      systems = [ "x86_64-linux" "aarch64-darwin" ];
+      touchup.any = { attrName, ... }: { enable = lib.mkDefault false; };
+      touchup.attr.overlays = { enable = true; };
+      perSystem = { config, ... }: {
+        packages.default = throw "packages.default should not be evaluated";
+        packages.hello = throw "packages.hello should not be evaluated";
+      };
+    };
+
+  touchup2 = mkFlake
+    { inputs.self = { }; }
+    {
+      imports = [ flake-parts.flakeModules.touchup ];
+      systems = [ "x86_64-linux" "aarch64-darwin" ];
+      touchup.attr.packages.attr.aarch64-darwin.attr.bar.enable = false;
+      perSystem = { config, system, ... }: {
+
+        packages.foo = pkg system "foo";
+        packages.bar = assert system == "x86_64-linux"; pkg system "bar";
+
+      };
+    };
+
+  touchup3 = mkFlake
+    { inputs.self = { }; }
+    {
+      imports = [ flake-parts.flakeModules.touchup ];
+      systems = [ "x86_64-linux" "aarch64-darwin" ];
+      touchup.any = { attrName, ... }: { enable = lib.mkDefault false; };
+      touchup.attr.overlays = { enable = true; finish = x: "hoi"; };
+      touchup.finish = x: x // { foo = "bar"; };
+    };
+
   runTests = ok:
+
+    assert touchup1 == {
+      overlays = { };
+    };
+    assert touchup1b == {
+      overlays = { };
+    };
+
+    assert builtins.attrNames touchup2 == [ "apps" "checks" "devShells" "formatter" "legacyPackages" "nixosConfigurations" "nixosModules" "overlays" "packages" ];
+    assert touchup2.packages ==
+      {
+        aarch64-darwin = { foo = pkg "aarch64-darwin" "foo"; };
+        x86_64-linux = { foo = pkg "x86_64-linux" "foo"; bar = pkg "x86_64-linux" "bar"; };
+      };
+
+    assert touchup3 == {
+      overlays = "hoi";
+      foo = "bar";
+    };
 
     assert empty == {
       apps = { };
@@ -257,5 +325,8 @@ rec {
 
     ok;
 
-  result = runTests "ok";
+  result =
+    builtins.addErrorContext "while running eval-tests" (
+      runTests "ok"
+    );
 }
