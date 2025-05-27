@@ -89,16 +89,17 @@ in
 
                 This whole situation should be temporary. `nix flake check`/`show` can be changed to allow `null` values, which gives flake-parts and other frameworks a way to avoid this situation.
 
-                If you don't want a `formatter` output attribute, you may remove it in your `mkFlake` call.
-                (`disabledModules` must not be used in modules that are intended for reuse)
+                To change the `formatter` output attribute, you can control it precisely with the `touchup` module, for example:
 
-                    { inputs, ... }:
-                    {
-                      disabledModules = [
-                        inputs.flake-parts.modules.formatter
-                      ];
-                      # perSystem = ...; etc
-                    }
+                    imports = [ inputs.flake-parts.flakeModules.touchup ];
+
+                    # Remove it
+                    touchup.attr.formatter.enable = false;
+
+                    # ... or only have it for listed systems
+                    touchup.attr.formatter.any.enable = lib.mkDefault false;
+                    touchup.attr.formatter.attr.x86_64-linux.enable = true;
+                    touchup.attr.formatter.attr.aarch64-darwin.enable = true;
 
               '')
           config.allSystems);
