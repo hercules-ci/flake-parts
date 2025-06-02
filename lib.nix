@@ -221,6 +221,20 @@ let
     importApply =
       modulePath: staticArgs:
       lib.setDefaultModuleLocation modulePath (import modulePath staticArgs);
+
+    /**
+      `importAndPublish name module` returns a module that both imports the `module`, and exposes it as flake attribute `modules.flake.${name}`.
+
+      This also imports the optional [`modules`](https://flake.parts/options/flake-parts-modules.html) module to support that.
+    */
+    importAndPublish = name: module: { lib, ... }: {
+      _class = "flake";
+      imports = [
+        module
+        ./extras/modules.nix
+      ];
+      flake.modules.flake.${name} = module;
+    };
   };
 
   # A best effort, lenient estimate. Please use a recent nixpkgs lib if you
