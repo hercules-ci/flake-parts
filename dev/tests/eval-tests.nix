@@ -169,6 +169,22 @@ rec {
       partitionedAttrs.devShells = "dev";
     });
 
+  dogfoodProvider = mkFlake
+    { inputs.self = { }; }
+    ({ flake-parts-lib, ... }: {
+      imports = [
+        (flake-parts-lib.importAndPublish "dogfood" { flake.marker = "dogfood"; })
+      ];
+    });
+
+  dogfoodConsumer = mkFlake
+    { inputs.self = { }; }
+    ({ flake-parts-lib, ... }: {
+      imports = [
+        dogfoodProvider.modules.flake.dogfood
+      ];
+    });
+
   runTests = ok:
 
     assert empty == {
@@ -254,6 +270,9 @@ rec {
     assert specialArgFlake.foo;
 
     assert builtins.isAttrs partitionWithoutExtraInputsFlake.devShells.x86_64-linux;
+
+    assert dogfoodProvider.marker == "dogfood";
+    assert dogfoodConsumer.marker == "dogfood";
 
     ok;
 
