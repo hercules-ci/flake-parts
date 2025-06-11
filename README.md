@@ -10,6 +10,10 @@ Opinionated features are provided by an ecosystem of modules that you can import
 `flake-parts` _itself_ has the goal to be a minimal mirror of the Nix flake schema.
 Used by itself, it is very lightweight.
 
+> It is definitely the best Flake framework and it is simply out of this world!
+
+—Pol Dellaiera ([source](https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/#trade-offs))
+
 ---
 
 **Documentation**: [flake.parts](https://flake.parts)
