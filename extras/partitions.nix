@@ -8,6 +8,10 @@ let
     types
     ;
 
+  inherit (lib.generators)
+    toPretty
+    ;
+
   partitionModule = { config, options, name, ... }: {
     options = {
       extraInputsFlake = mkOption {
@@ -85,15 +89,36 @@ let
   # addressed store path is a pure input, so we have to fetch and wire it
   # manually with flake-compat.
   get-flake = src: (flake-compat { inherit src; system = throw "operating flake-compat in pure mode; system not allowed to be used"; }).outputs;
+  flake-compat = import config.flakeCompatSrc;
   # TODO: update
-  flake-compat = import (builtins.fetchTarball {
+  flake-compat-src = {
     url = "https://github.com/edolstra/flake-compat/archive/9ed2ac151eada2306ca8c418ebd97807bb08f6ac.tar.gz";
     sha256 = "sha256:063slk1np1g1dkh21a82x655kpja7p4pc74rb3lqankyrbbpy4hx";
-  });
-
+  };
 in
 {
   options = {
+    flakeCompatSrc = mkOption {
+      type = types.path;
+      default = builtins.fetchTarball flake-compat-src;
+      defaultText = lib.literalExpression ''
+        fetchTarball ${toPretty { multiline = true; } flake-compat-src}
+      '';
+      description = ''
+        Nix does not recognize that a flake like `"''${./dev}"`
+        (a content addressed store path) is a pure input, so we have to fetch
+        and wire it manually with [flake-compat].
+
+        If a copy of flake-compat is already available, this option can be
+        used to avoid fetching a second copy.
+
+        This option is only used for partitions that have a path-type
+        [`extraInputsFlake`](#opt-partitions._name_.extraInputsFlake).
+
+        [flake-compat]: https://github.com/edolstra/flake-compat
+      '';
+      internal = true;
+    };
     partitionedAttrs = mkOption {
       type = types.attrsOf types.str;
       default = { };
