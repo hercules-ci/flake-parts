@@ -59,6 +59,14 @@ let
         }
     '';
 
+  /**
+    We primarily use `systems` to help memoize the per system context, but that
+    doesn't extend to arbitrary `system`s.
+    For that, we use the slightly less efficient, but perfectly acceptable
+    `memoizeStr` function.
+   */
+  otherMemoizedSystems = flake-parts-lib.memoizeStr config.perSystem;
+
 in
 {
   options = {
@@ -139,8 +147,7 @@ in
 
   config = {
     allSystems = genAttrs config.systems config.perSystem;
-    # TODO: Sub-optimal error message. Get Nix to support a memoization primop, or get Nix Flakes to support systems properly or get Nix Flakes to add a name to flakes.
-    _module.args.getSystem = system: config.allSystems.${system} or (builtins.trace "using non-memoized system ${system}" config.perSystem system);
+    _module.args.getSystem = system: config.allSystems.${system} or (otherMemoizedSystems system);
 
     # The warning is there for a reason. Only use this in situations where the
     # performance cost has already been incurred, such as in `flakeModules.easyOverlay`,

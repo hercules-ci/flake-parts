@@ -222,6 +222,10 @@ let
       modulePath: staticArgs:
       lib.setDefaultModuleLocation modulePath (import modulePath staticArgs);
 
+    inherit (import ./lib/memoize/memoize.nix {
+      inherit lib;
+    }) memoizeStr;
+
     /**
       `importAndPublish name module` returns a module that both imports the `module`, and exposes it as flake attribute `modules.flake.${name}`.
 

@@ -169,6 +169,28 @@ rec {
       partitionedAttrs.devShells = "dev";
     });
 
+  /**
+    This one is for manual testing. Should look like:
+
+    ```
+    nix-repl> checks.x86_64-linux.eval-tests.internals.printSystem.withSystem "foo" ({ config, ... }: null)
+    trace: Evaluating perSystem for foo
+    null
+
+    nix-repl> checks.x86_64-linux.eval-tests.internals.printSystem.withSystem "foo" ({ config, ... }: null)
+    null
+
+    ```
+  */
+  printSystem = mkFlake
+    { inputs.self = { }; }
+    ({ withSystem, ... }: {
+      systems = [ ];
+      perSystem = { config, system, ... }:
+        builtins.trace "Evaluating perSystem for ${system}" { };
+      flake.withSystem = withSystem;
+    });
+
   dogfoodProvider = mkFlake
     { inputs.self = { }; }
     ({ flake-parts-lib, ... }: {
