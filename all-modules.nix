@@ -1,6 +1,7 @@
 {
   imports = [
     ./modules/apps.nix
+    ./modules/bundlers.nix
     ./modules/checks.nix
     ./modules/debug.nix
     ./modules/devShells.nix
