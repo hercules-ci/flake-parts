@@ -83,6 +83,18 @@ rec {
       };
     };
 
+  bundlersExample = mkFlake
+    { inputs.self = { }; }
+    {
+      imports = [ flake-parts.flakeModules.bundlers ];
+      systems = [ "a" "b" ];
+      perSystem = { system, ... }: {
+        packages.hello = pkg system "hello";
+        bundlers.toTarball = drv: pkg system "tarball-${drv.name}";
+        bundlers.toAppImage = drv: pkg system "appimage-${drv.name}";
+      };
+    };
+
   modulesFlake = mkFlake
     {
       inputs.self = { };
@@ -250,6 +262,9 @@ rec {
         b = { hello = pkg "b" "hello"; };
       };
     };
+
+    assert bundlersExample.bundlers.a.toTarball (pkg "a" "hello") == pkg "a" "tarball-hello";
+    assert bundlersExample.bundlers.b.toAppImage (pkg "b" "hello") == pkg "b" "appimage-hello";
 
     # - exported package becomes part of overlay.
     # - perSystem is invoked for the right system, when system is non-memoized
