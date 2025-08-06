@@ -174,7 +174,11 @@ let
       options = {
         flake = flake-parts-lib.mkSubmoduleOptions {
           ${name} = mkOption {
-            type = types.lazyAttrsOf option.type;
+            type = types.attrsWith {
+              elemType = option.type;
+              lazy = true;
+              placeholder = "system";
+            };
             default = { };
             description = ''
               See {option}`perSystem.${name}` for description and examples.
