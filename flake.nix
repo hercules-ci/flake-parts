@@ -47,7 +47,8 @@
       };
       flakeModules = {
         easyOverlay = ./extras/easyOverlay.nix;
-        flakeModules = ./extras/flakeModules.nix;
+        flakeModules = ./extras/flakeModules/with-alias.nix;
+        flakeModulesSansAlias = ./extras/flakeModules/sans-alias.nix;
         modules = ./extras/modules.nix;
         partitions = ./extras/partitions.nix;
         bundlers = ./extras/bundlers.nix;
