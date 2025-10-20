@@ -105,6 +105,10 @@ in
         The flake attributes are overridden with `lib.mkForce` priority.
 
         See the `partitions` options to understand the purpose.
+
+        Example: `partitionedAttrs.devShells = "dev";`
+
+        Equivalent: `flake.devShells = lib.mkForce config.partitions.dev.module.flake.devShells;`
       '';
       example = {
         "devShells" = "dev";
