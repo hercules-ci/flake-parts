@@ -169,6 +169,17 @@ rec {
       partitionedAttrs.devShells = "dev";
     });
 
+  nixosModulesFlake = mkFlake
+    {
+      inputs.self = { outPath = "/test/path"; };
+    }
+    {
+      systems = [ ];
+      flake.nixosModules.example = { lib, ... }: {
+        options.test.option = lib.mkOption { default = "nixos-test"; };
+      };
+    };
+
   runTests = ok:
 
     assert empty == {
@@ -254,6 +265,17 @@ rec {
     assert specialArgFlake.foo;
 
     assert builtins.isAttrs partitionWithoutExtraInputsFlake.devShells.x86_64-linux;
+
+    assert nixosModulesFlake.nixosModules.example._class == "nixos";
+
+    assert nixosModulesFlake.nixosModules.example._file == "/test/path/flake.nix#nixosModules.example";
+
+    assert (lib.evalModules {
+      class = "nixos";
+      modules = [
+        nixosModulesFlake.nixosModules.example
+      ];
+    }).config.test.option == "nixos-test";
 
     ok;
 
