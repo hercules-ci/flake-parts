@@ -2,7 +2,7 @@
   description = "Flake basics described using the module system";
 
   inputs = {
-    nixpkgs-lib.url = "https://github.com/NixOS/nixpkgs/archive/072a6db25e947df2f31aab9eccd0ab75d5b2da11.tar.gz"; # 3a228057f5b619feb3186e986dbe76278d707b6e /lib from nixos-unstable
+    nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
   };
 
   outputs = inputs@{ nixpkgs-lib, ... }:
@@ -50,6 +50,7 @@
         flakeModules = ./extras/flakeModules.nix;
         modules = ./extras/modules.nix;
         partitions = ./extras/partitions.nix;
+        bundlers = ./extras/bundlers.nix;
       };
     in
     lib.mkFlake { inherit inputs; } {

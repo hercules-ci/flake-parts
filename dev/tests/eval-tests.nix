@@ -83,6 +83,18 @@ rec {
       };
     };
 
+  bundlersExample = mkFlake
+    { inputs.self = { }; }
+    {
+      imports = [ flake-parts.flakeModules.bundlers ];
+      systems = [ "a" "b" ];
+      perSystem = { system, ... }: {
+        packages.hello = pkg system "hello";
+        bundlers.toTarball = drv: pkg system "tarball-${drv.name}";
+        bundlers.toAppImage = drv: pkg system "appimage-${drv.name}";
+      };
+    };
+
   modulesFlake = mkFlake
     {
       inputs.self = { };
@@ -180,6 +192,44 @@ rec {
       };
     };
 
+  /**
+    This one is for manual testing. Should look like:
+
+    ```
+    nix-repl> checks.x86_64-linux.eval-tests.internals.printSystem.withSystem "foo" ({ config, ... }: null)
+    trace: Evaluating perSystem for foo
+    null
+
+    nix-repl> checks.x86_64-linux.eval-tests.internals.printSystem.withSystem "foo" ({ config, ... }: null)
+    null
+
+    ```
+  */
+  printSystem = mkFlake
+    { inputs.self = { }; }
+    ({ withSystem, ... }: {
+      systems = [ ];
+      perSystem = { config, system, ... }:
+        builtins.trace "Evaluating perSystem for ${system}" { };
+      flake.withSystem = withSystem;
+    });
+
+  dogfoodProvider = mkFlake
+    { inputs.self = { }; }
+    ({ flake-parts-lib, ... }: {
+      imports = [
+        (flake-parts-lib.importAndPublish "dogfood" { flake.marker = "dogfood"; })
+      ];
+    });
+
+  dogfoodConsumer = mkFlake
+    { inputs.self = { }; }
+    ({ flake-parts-lib, ... }: {
+      imports = [
+        dogfoodProvider.modules.flake.dogfood
+      ];
+    });
+
   runTests = ok:
 
     assert empty == {
@@ -223,6 +273,9 @@ rec {
         b = { hello = pkg "b" "hello"; };
       };
     };
+
+    assert bundlersExample.bundlers.a.toTarball (pkg "a" "hello") == pkg "a" "tarball-hello";
+    assert bundlersExample.bundlers.b.toAppImage (pkg "b" "hello") == pkg "b" "appimage-hello";
 
     # - exported package becomes part of overlay.
     # - perSystem is invoked for the right system, when system is non-memoized
@@ -276,6 +329,9 @@ rec {
         nixosModulesFlake.nixosModules.example
       ];
     }).config.test.option == "nixos-test";
+
+    assert dogfoodProvider.marker == "dogfood";
+    assert dogfoodConsumer.marker == "dogfood";
 
     ok;
 

@@ -85,11 +85,7 @@ let
   # addressed store path is a pure input, so we have to fetch and wire it
   # manually with flake-compat.
   get-flake = src: (flake-compat { inherit src; system = throw "operating flake-compat in pure mode; system not allowed to be used"; }).outputs;
-  # TODO: update
-  flake-compat = import (builtins.fetchTarball {
-    url = "https://github.com/edolstra/flake-compat/archive/9ed2ac151eada2306ca8c418ebd97807bb08f6ac.tar.gz";
-    sha256 = "sha256:063slk1np1g1dkh21a82x655kpja7p4pc74rb3lqankyrbbpy4hx";
-  });
+  flake-compat = import ../vendor/flake-compat;
 
 in
 {
@@ -105,6 +101,10 @@ in
         The flake attributes are overridden with `lib.mkForce` priority.
 
         See the `partitions` options to understand the purpose.
+
+        Example: `partitionedAttrs.devShells = "dev";`
+
+        Equivalent: `flake.devShells = lib.mkForce config.partitions.dev.module.flake.devShells;`
       '';
       example = {
         "devShells" = "dev";
