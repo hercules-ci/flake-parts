@@ -165,6 +165,11 @@ let
       };
     mkPerSystemOption = mkDeferredModuleOption;
 
+    # Polyfill https://github.com/NixOS/nixpkgs/pull/344216
+    # Nixpkgs master 2024-12-09, Nixpkgs 25.05
+    attrsWith = types.attrsWith or ({ elemType, lazy ? false, placeholder ? "name" }:
+      if lazy then types.attrsOf elemType else types.lazyAttrsOf elemType);
+
     # Helper function for defining a per-system option that
     # gets transposed by the usual flake system logic to a
     # top-level flake attribute.
@@ -174,7 +179,7 @@ let
       options = {
         flake = flake-parts-lib.mkSubmoduleOptions {
           ${name} = mkOption {
-            type = types.attrsWith {
+            type = attrsWith {
               elemType = option.type;
               lazy = true;
               placeholder = "system";
