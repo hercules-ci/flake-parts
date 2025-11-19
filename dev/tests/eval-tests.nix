@@ -83,6 +83,18 @@ rec {
       };
     };
 
+  bundlersExample = mkFlake
+    { inputs.self = { }; }
+    {
+      imports = [ flake-parts.flakeModules.bundlers ];
+      systems = [ "a" "b" ];
+      perSystem = { system, ... }: {
+        packages.hello = pkg system "hello";
+        bundlers.toTarball = drv: pkg system "tarball-${drv.name}";
+        bundlers.toAppImage = drv: pkg system "appimage-${drv.name}";
+      };
+    };
+
   modulesFlake = mkFlake
     {
       inputs.self = { };
@@ -169,6 +181,55 @@ rec {
       partitionedAttrs.devShells = "dev";
     });
 
+  nixosModulesFlake = mkFlake
+    {
+      inputs.self = { outPath = "/test/path"; };
+    }
+    {
+      systems = [ ];
+      flake.nixosModules.example = { lib, ... }: {
+        options.test.option = lib.mkOption { default = "nixos-test"; };
+      };
+    };
+
+  /**
+    This one is for manual testing. Should look like:
+
+    ```
+    nix-repl> checks.x86_64-linux.eval-tests.internals.printSystem.withSystem "foo" ({ config, ... }: null)
+    trace: Evaluating perSystem for foo
+    null
+
+    nix-repl> checks.x86_64-linux.eval-tests.internals.printSystem.withSystem "foo" ({ config, ... }: null)
+    null
+
+    ```
+  */
+  printSystem = mkFlake
+    { inputs.self = { }; }
+    ({ withSystem, ... }: {
+      systems = [ ];
+      perSystem = { config, system, ... }:
+        builtins.trace "Evaluating perSystem for ${system}" { };
+      flake.withSystem = withSystem;
+    });
+
+  dogfoodProvider = mkFlake
+    { inputs.self = { }; }
+    ({ flake-parts-lib, ... }: {
+      imports = [
+        (flake-parts-lib.importAndPublish "dogfood" { flake.marker = "dogfood"; })
+      ];
+    });
+
+  dogfoodConsumer = mkFlake
+    { inputs.self = { }; }
+    ({ flake-parts-lib, ... }: {
+      imports = [
+        dogfoodProvider.modules.flake.dogfood
+      ];
+    });
+
   runTests = ok:
 
     assert empty == {
@@ -213,6 +274,9 @@ rec {
       };
     };
 
+    assert bundlersExample.bundlers.a.toTarball (pkg "a" "hello") == pkg "a" "tarball-hello";
+    assert bundlersExample.bundlers.b.toAppImage (pkg "b" "hello") == pkg "b" "appimage-hello";
+
     # - exported package becomes part of overlay.
     # - perSystem is invoked for the right system, when system is non-memoized
     assert nixpkgsWithEasyOverlay.hello == pkg "x86_64-linux" "hello";
@@ -254,6 +318,20 @@ rec {
     assert specialArgFlake.foo;
 
     assert builtins.isAttrs partitionWithoutExtraInputsFlake.devShells.x86_64-linux;
+
+    assert nixosModulesFlake.nixosModules.example._class == "nixos";
+
+    assert nixosModulesFlake.nixosModules.example._file == "/test/path/flake.nix#nixosModules.example";
+
+    assert (lib.evalModules {
+      class = "nixos";
+      modules = [
+        nixosModulesFlake.nixosModules.example
+      ];
+    }).config.test.option == "nixos-test";
+
+    assert dogfoodProvider.marker == "dogfood";
+    assert dogfoodConsumer.marker == "dogfood";
 
     ok;
 

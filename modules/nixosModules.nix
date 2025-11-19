@@ -16,6 +16,7 @@ in
         type = types.lazyAttrsOf types.deferredModule;
         default = { };
         apply = mapAttrs (k: v: {
+          _class = "nixos";
           _file = "${toString moduleLocation}#nixosModules.${k}";
           # Note: this neglects to represent potential differences due to input
           #       overrides or flake-parts extendModules. However, the cost for this

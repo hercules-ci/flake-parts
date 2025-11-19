@@ -165,6 +165,11 @@ let
       };
     mkPerSystemOption = mkDeferredModuleOption;
 
+    # Polyfill https://github.com/NixOS/nixpkgs/pull/344216
+    # Nixpkgs master 2024-12-09, Nixpkgs 25.05
+    attrsWith = types.attrsWith or ({ elemType, lazy ? false, placeholder ? "name" }:
+      if lazy then types.attrsOf elemType else types.lazyAttrsOf elemType);
+
     # Helper function for defining a per-system option that
     # gets transposed by the usual flake system logic to a
     # top-level flake attribute.
@@ -174,7 +179,11 @@ let
       options = {
         flake = flake-parts-lib.mkSubmoduleOptions {
           ${name} = mkOption {
-            type = types.lazyAttrsOf option.type;
+            type = attrsWith {
+              elemType = option.type;
+              lazy = true;
+              placeholder = "system";
+            };
             default = { };
             description = ''
               See {option}`perSystem.${name}` for description and examples.
@@ -221,6 +230,24 @@ let
     importApply =
       modulePath: staticArgs:
       lib.setDefaultModuleLocation modulePath (import modulePath staticArgs);
+
+    inherit (import ./lib/memoize/memoize.nix {
+      inherit lib;
+    }) memoizeStr;
+
+    /**
+      `importAndPublish name module` returns a module that both imports the `module`, and exposes it as flake attribute `modules.flake.${name}`.
+
+      This also imports the optional [`modules`](https://flake.parts/options/flake-parts-modules.html) module to support that.
+    */
+    importAndPublish = name: module: { lib, ... }: {
+      _class = "flake";
+      imports = [
+        module
+        ./extras/modules.nix
+      ];
+      flake.modules.flake.${name} = module;
+    };
   };
 
   # A best effort, lenient estimate. Please use a recent nixpkgs lib if you
