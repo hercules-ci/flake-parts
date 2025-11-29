@@ -29,6 +29,13 @@ mkTransposedPerSystemModule {
       `nix bundle --bundler .#<name> .#<package>` bundles `<package>` using bundler `<name>`.
 
       Define a `default` bundler to use `nix bundle --bundler .#`.
+
+      Attribute names containing special characters like `.` must be doubly quoted when used in installable arguments:
+      ```bash
+      nix bundle --bundler '.#"example.com"' .#package
+      ```
+
+      Consider using `:` or `/` as separators instead (e.g., `foo:bar`) for better command-line usability.
     '';
   };
   file = ./bundlers.nix;

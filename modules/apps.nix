@@ -54,7 +54,16 @@ mkTransposedPerSystemModule {
     type = types.lazyAttrsOf appType;
     default = { };
     description = ''
-      Programs runnable with nix run `<name>`.
+      An attribute set of programs runnable with [`nix run`](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-run.html).
+
+      `nix run .#<name>` will run `apps.<name>`.
+
+      Attribute names containing special characters like `.` must be doubly quoted when used in installable arguments:
+      ```bash
+      nix run '.#"example.com"'
+      ```
+
+      Consider using `:` or `/` as separators instead (e.g., `foo:bar`) for better command-line usability.
     '';
     example = lib.literalExpression or lib.literalExample ''
       {
