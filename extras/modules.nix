@@ -9,13 +9,19 @@ let
     escapeNixIdentifier
     ;
 
-  addInfo = class: moduleName:
-    if class == "generic"
-    then module: module
+  addInfo =
+    class: moduleName:
+    if class == "generic" then
+      module: module
     else
       module:
-      # TODO: set key?
+      # By returning a function, it will be accepted as a full-on module despite
+      # a submodule having shorthandOnlyDefinesConfig = true, which is the
+      # `types.submodule` default.
+      # https://github.com/hercules-ci/flake-parts/issues/326
+      { ... }:
       {
+        # TODO: set key?
         _class = class;
         _file = "${toString moduleLocation}#modules.${escapeNixIdentifier class}.${escapeNixIdentifier moduleName}";
         imports = [ module ];
