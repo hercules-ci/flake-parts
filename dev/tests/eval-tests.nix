@@ -95,23 +95,42 @@ rec {
       };
     };
 
-  modulesFlake = mkFlake
-    {
-      inputs.self = { };
-      moduleLocation = "modulesFlake";
-    }
-    {
-      imports = [ flake-parts.flakeModules.modules ];
-      systems = [ ];
-      flake = {
-        modules.generic.example = { lib, ... }: {
-          options.generic.example = lib.mkOption { default = "works in any module system application"; };
+  modulesFlake =
+    mkFlake
+      {
+        inputs.self = { };
+        moduleLocation = "modulesFlake";
+      }
+      {
+        imports = [ flake-parts.flakeModules.modules ];
+        options = {
+          # Test option that uses plain types.submodule
+          flake.fooConfiguration = lib.mkOption {
+            type = lib.types.submoduleWith {
+              # Just Like types.submodule;
+              shorthandOnlyDefinesConfig = true;
+              class = "foo";
+              modules = [ ];
+            };
+          };
         };
-        modules.foo.example = { lib, ... }: {
-          options.foo.example = lib.mkOption { default = "works in foo application"; };
+        config = {
+          systems = [ ];
+          flake = {
+            modules.generic.example =
+              { lib, ... }:
+              {
+                options.generic.example = lib.mkOption { default = "works in any module system application"; };
+              };
+            modules.foo.example =
+              { lib, ... }:
+              {
+                options.foo.example = lib.mkOption { default = "works in foo application"; };
+              };
+            fooConfiguration = modulesFlake.modules.foo.example;
+          };
         };
       };
-    };
 
   flakeModulesDeclare = mkFlake
     { inputs.self = { outPath = ./.; }; }
@@ -314,6 +333,9 @@ rec {
         modulesFlake.modules.foo.example
       ];
     }).config.foo.example == "works in foo application";
+
+    # Test that modules can be loaded into plain submodules with shorthandOnlyDefinesConfig = true
+    assert modulesFlake.fooConfiguration.foo.example == "works in foo application";
 
     assert specialArgFlake.foo;
 
