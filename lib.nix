@@ -141,8 +141,26 @@ let
       in
       eval.config.flake;
 
-    # For extending options in an already declared submodule.
-    # Workaround for https://github.com/NixOS/nixpkgs/issues/146882
+    /**
+      Deprecated. Declare options directly, e.g. `options.foo.bar = mkOption { ... }`,
+      provided that `foo` is already declared as a submodule option.
+
+      In flake-parts, `flake` is declared as a submodule option by the core modules,
+      so `options.flake.<name>` declarations work directly.
+
+      This function wraps option declarations in a submodule, allowing them to
+      be merged into an existing submodule option. For example, if `foo` is
+      already declared as a submodule option, using
+      `options.foo = mkSubmoduleOptions { bar = mkOption {...}; }` would add
+      `bar` to the `foo` submodule.
+
+      # History
+
+      This was a workaround for https://github.com/NixOS/nixpkgs/issues/146882,
+      fixed in Nixpkgs 22.05 by https://github.com/NixOS/nixpkgs/pull/156533.
+      With the fix, declaring `options.foo.bar` directly works when `foo` is
+      already a submodule option. Documented as deprecated in flake-parts in January 2026.
+    */
     mkSubmoduleOptions =
       options:
       mkOption {
@@ -177,18 +195,16 @@ let
       _file = file;
 
       options = {
-        flake = flake-parts-lib.mkSubmoduleOptions {
-          ${name} = mkOption {
-            type = attrsWith {
-              elemType = option.type;
-              lazy = true;
-              placeholder = "system";
-            };
-            default = { };
-            description = ''
-              See {option}`perSystem.${name}` for description and examples.
-            '';
+        flake.${name} = mkOption {
+          type = attrsWith {
+            elemType = option.type;
+            lazy = true;
+            placeholder = "system";
           };
+          default = { };
+          description = ''
+            See {option}`perSystem.${name}` for description and examples.
+          '';
         };
 
         perSystem = flake-parts-lib.mkPerSystemOption {
