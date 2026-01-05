@@ -8,20 +8,17 @@ let
     types
     ;
   inherit (flake-parts-lib)
-    mkSubmoduleOptions
     mkPerSystemOption
     ;
 in
 {
   options = {
-    flake = mkSubmoduleOptions {
-      formatter = mkOption {
-        type = types.lazyAttrsOf types.package;
-        default = { };
-        description = ''
-          An attribute set of per system a package used by [`nix fmt`](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
-        '';
-      };
+    flake.formatter = mkOption {
+      type = types.lazyAttrsOf types.package;
+      default = { };
+      description = ''
+        An attribute set of per system a package used by [`nix fmt`](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
+      '';
     };
 
     perSystem = mkPerSystemOption {
