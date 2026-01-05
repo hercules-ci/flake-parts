@@ -33,7 +33,7 @@ let
     else maybeFlake ? inputs && maybeFlake ? outputs && maybeFlake ? sourceInfo;
 
   # Polyfill https://github.com/NixOS/nixpkgs/pull/163617
-  deferredModuleWith = lib.deferredModuleWith or (
+  deferredModuleWith =
     attrs@{ staticModules ? [ ] }: mkOptionType {
       name = "deferredModule";
       description = "module";
@@ -54,8 +54,7 @@ let
           staticModules = lhs.staticModules ++ rhs.staticModules;
         };
       };
-    }
-  );
+    };
 
   errorExample = ''
     For example:
