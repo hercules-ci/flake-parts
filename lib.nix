@@ -281,7 +281,7 @@ let
 
   # A best effort, lenient estimate. Please use a recent nixpkgs lib if you
   # override it at all.
-  minVersion = "22.05";
+  minVersion = "23.05pre-git";
 
 in
 
