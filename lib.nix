@@ -32,7 +32,21 @@ let
     then maybeFlake._type == "flake"
     else maybeFlake ? inputs && maybeFlake ? outputs && maybeFlake ? sourceInfo;
 
-  # Polyfill https://github.com/NixOS/nixpkgs/pull/163617
+  /**
+    Deprecated for any use except type-merging into `perSystem`.
+    Use `lib.types.deferredModuleWith` instead, and add `apply = m: [ m ];` if needed.
+
+    The deferredModule type was pioneered in flake-parts for the `perSystem` option.
+    The Nixpkgs version has an improved merge function that returns a single module,
+    whereas this version returns a list. The flake-parts version was not updated to
+    match this improvement in Nixpkgs.
+
+    # History
+
+    This predates `lib.types.deferredModuleWith`, added in Nixpkgs 22.11
+    (https://github.com/NixOS/nixpkgs/pull/163617).
+    Documented as deprecated in flake-parts in January 2026.
+  */
   deferredModuleWith =
     attrs@{ staticModules ? [ ] }: mkOptionType {
       name = "deferredModule";
