@@ -1,4 +1,24 @@
 
+# 2026-01-05
+
+ - Deprecated `mkSubmoduleOptions`. Declare options directly instead, e.g.
+   `options.flake.foo = mkOption { ... }`. This works since Nixpkgs 22.05.
+
+ - Deprecated `mkDeferredModuleType` and `mkDeferredModuleOption`. Use
+   `mkPerSystemType` and `mkPerSystemOption` respectively for `perSystem`
+   type-merging. For other uses, use Nixpkgs' `types.deferredModuleWith`.
+
+   Note: flake-parts' implementation returns a list on merge, whereas Nixpkgs'
+   returns a single module. Add `apply = m: [ m ];` to your option if you need
+   the list behavior.
+
+# 2024-05-16
+
+ - **Breaking**: Minimum supported Nixpkgs lib version is now 23.05 (was 22.05),
+   due to the use of the `class` argument in `evalModules`.
+
+ - Add `class` to `evalModules` calls for imports "type checking".
+
 # 2023-05-30
 
  - Fix a strictness issue in `perInput`, affecting `inputs'`, `self'`.
