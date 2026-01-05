@@ -70,6 +70,13 @@ let
       };
     };
 
+  # Internal: preserves legacy list-merge behavior for perSystem type-merging.
+  mkLegacyDeferredModuleType =
+    module:
+    deferredModuleWith {
+      staticModules = [ module ];
+    };
+
   errorExample = ''
     For example:
 
@@ -182,18 +189,32 @@ let
         };
       };
 
-    mkDeferredModuleType =
-      module:
-      deferredModuleWith {
-        staticModules = [ module ];
-      };
-    mkPerSystemType = mkDeferredModuleType;
+    /**
+      Deprecated. Use mkPerSystemType/mkPerSystemOption for `perSystem` type-merging, or
+      use Nixpkgs `types.deferredModule` directly, noting the lack of list wrapping;
+      see `deferredModuleWith` docs.
+    */
+    mkDeferredModuleType = mkLegacyDeferredModuleType;
 
+    /**
+      Given a module, construct an option type suitable for type-merging into `perSystem`'s type.
+    */
+    mkPerSystemType = mkLegacyDeferredModuleType;
+
+    /**
+      Deprecated. Use mkPerSystemOption for `perSystem` type-merging, or
+      use `mkOption` and Nixpkgs `types.deferredModule` directly, noting the
+      lack of list wrapping; see `deferredModuleWith` docs.
+    */
     mkDeferredModuleOption =
       module:
       mkOption {
         type = flake-parts-lib.mkPerSystemType module;
       };
+
+    /**
+      Given a module, construct an option declaration suitable for merging into the core `perSystem` module.
+    */
     mkPerSystemOption = mkDeferredModuleOption;
 
     # Polyfill https://github.com/NixOS/nixpkgs/pull/344216
