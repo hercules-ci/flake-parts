@@ -14,7 +14,7 @@ in
       # This eta expansion exists for the sole purpose of making nix flake check happy.
       apply = lib.mapAttrs (_k: f: final: prev: f final prev);
       default = { };
-      example = lib.literalExpression or lib.literalExample ''
+      example = lib.literalExpression ''
         {
           default = final: prev: {};
         }

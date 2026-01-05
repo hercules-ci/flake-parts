@@ -32,8 +32,22 @@ let
     then maybeFlake._type == "flake"
     else maybeFlake ? inputs && maybeFlake ? outputs && maybeFlake ? sourceInfo;
 
-  # Polyfill https://github.com/NixOS/nixpkgs/pull/163617
-  deferredModuleWith = lib.deferredModuleWith or (
+  /**
+    Deprecated for any use except type-merging into `perSystem`.
+    Use `lib.types.deferredModuleWith` instead, and add `apply = m: [ m ];` if needed.
+
+    The deferredModule type was pioneered in flake-parts for the `perSystem` option.
+    The Nixpkgs version has an improved merge function that returns a single module,
+    whereas this version returns a list. The flake-parts version was not updated to
+    match this improvement in Nixpkgs.
+
+    # History
+
+    This predates `lib.types.deferredModuleWith`, added in Nixpkgs 22.11
+    (https://github.com/NixOS/nixpkgs/pull/163617).
+    Documented as deprecated in flake-parts in January 2026.
+  */
+  deferredModuleWith =
     attrs@{ staticModules ? [ ] }: mkOptionType {
       name = "deferredModule";
       description = "module";
@@ -54,8 +68,14 @@ let
           staticModules = lhs.staticModules ++ rhs.staticModules;
         };
       };
-    }
-  );
+    };
+
+  # Internal: preserves legacy list-merge behavior for perSystem type-merging.
+  mkLegacyDeferredModuleType =
+    module:
+    deferredModuleWith {
+      staticModules = [ module ];
+    };
 
   errorExample = ''
     For example:
@@ -169,18 +189,32 @@ let
         };
       };
 
-    mkDeferredModuleType =
-      module:
-      deferredModuleWith {
-        staticModules = [ module ];
-      };
-    mkPerSystemType = mkDeferredModuleType;
+    /**
+      Deprecated. Use mkPerSystemType/mkPerSystemOption for `perSystem` type-merging, or
+      use Nixpkgs `types.deferredModule` directly, noting the lack of list wrapping;
+      see `deferredModuleWith` docs.
+    */
+    mkDeferredModuleType = mkLegacyDeferredModuleType;
 
+    /**
+      Given a module, construct an option type suitable for type-merging into `perSystem`'s type.
+    */
+    mkPerSystemType = mkLegacyDeferredModuleType;
+
+    /**
+      Deprecated. Use mkPerSystemOption for `perSystem` type-merging, or
+      use `mkOption` and Nixpkgs `types.deferredModule` directly, noting the
+      lack of list wrapping; see `deferredModuleWith` docs.
+    */
     mkDeferredModuleOption =
       module:
       mkOption {
         type = flake-parts-lib.mkPerSystemType module;
       };
+
+    /**
+      Given a module, construct an option declaration suitable for merging into the core `perSystem` module.
+    */
     mkPerSystemOption = mkDeferredModuleOption;
 
     # Polyfill https://github.com/NixOS/nixpkgs/pull/344216
@@ -268,7 +302,7 @@ let
 
   # A best effort, lenient estimate. Please use a recent nixpkgs lib if you
   # override it at all.
-  minVersion = "22.05";
+  minVersion = "23.05pre-git";
 
 in
 
