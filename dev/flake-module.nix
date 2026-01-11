@@ -22,11 +22,10 @@
     devShells.default = pkgs.mkShell {
       nativeBuildInputs = [
         pkgs.nixpkgs-fmt
-        pkgs.pre-commit
         pkgs.hci
       ];
       shellHook = ''
-        ${config.pre-commit.installationScript}
+        ${config.pre-commit.shellHook}
       '';
     };
 
