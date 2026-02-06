@@ -22,6 +22,7 @@ let
       { ... }:
       {
         # TODO: set key?
+        key = "${class}.${escapeNixIdentifier moduleName}";
         _class = class;
         _file = "${toString moduleLocation}#modules.${escapeNixIdentifier class}.${escapeNixIdentifier moduleName}";
         imports = [ module ];
