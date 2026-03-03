@@ -16,7 +16,15 @@ mkTransposedPerSystemModule {
     default = { };
     description = ''
       An attribute set of packages to be used as shells.
+
       [`nix develop .#<name>`](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-develop.html) will run `devShells.<name>`.
+
+      Attribute names containing special characters like `.` must be doubly quoted when used in installable arguments:
+      ```bash
+      nix develop '.#"example.com"'
+      ```
+
+      Consider using `:` or `/` as separators instead (e.g., `foo:bar`) for better command-line usability.
     '';
     example = literalExpression ''
       {
