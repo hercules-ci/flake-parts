@@ -138,6 +138,7 @@ let
           specialArgs = {
             inherit self flake-parts-lib moduleLocation;
             inputs = args.inputs or /* legacy, warned above */ self.inputs;
+            modulesPath = toString ./modules;
           } // specialArgs;
           modules = [ ./all-modules.nix (lib.setDefaultModuleLocation errorLocation module) ];
           class = "flake";
