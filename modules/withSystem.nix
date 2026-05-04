@@ -11,7 +11,7 @@ in
 {
   options = {
     perSystem = mkPerSystemOption ({ config, options, specialArgs, ... }: {
-      _file = ./perSystem.nix;
+      _file = ./withSystem.nix;
       options = {
         allModuleArgs = mkOption {
           type = types.lazyAttrsOf (types.raw or types.unspecified);
