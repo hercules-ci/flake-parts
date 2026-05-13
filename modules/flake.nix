@@ -53,7 +53,7 @@ in
         - `processedFlake`: the external output, which may have attributes removed or transformed to satisfy tools like `nix flake check`.
 
         By default, `processedFlake` equals `flake` (no processing).
-        Import a module such as [`flakeModules.touchup`](#opt-touchup) to define it, or set it directly.
+        Import a module such as [`flakeModules.touchup`](flake-parts-touchup.md#opt-touchup) to define it, or set it directly.
       '';
     };
   };
