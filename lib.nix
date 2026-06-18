@@ -247,7 +247,7 @@
     }: let
       inherit name option file;
     in
-      if builtins.elem ["flakeModules" "flakeModule"]
+      if builtins.elem name ["flakeModules" "flakeModule"]
       then {
         _file = file;
 
