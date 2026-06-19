@@ -5,6 +5,7 @@
   # Optionally a string with extra version info to be included in the error message
   # in case is lib is out of date. Empty or starts with space.
   revInfo ? "",
+  ...
 }: let
   inherit
     (lib)
@@ -31,12 +32,6 @@
     path
     submoduleWith
     ;
-
-  # Polyfill isFlake until Nix with https://github.com/NixOS/nix/pull/7207 is common
-  isFlake = maybeFlake:
-    if maybeFlake ? _type
-    then maybeFlake._type == "flake"
-    else maybeFlake ? inputs && maybeFlake ? outputs && maybeFlake ? sourceInfo;
 
   /**
   Deprecated for any use except type-merging into `perSystem`.
@@ -161,6 +156,14 @@
     #
     # Useful to map over an 'imports' list to make it less
     # verbose in the common case.
+
+    # Polyfill isFlake until Nix with https://github.com/NixOS/nix/pull/7207 is common
+    ## This is common now?; moved function from top to first usage I saw, cause I'm not going to be the guy to break flake-parts; but most of this logic can probably be removed now?
+    isFlake = maybeFlake:
+      if maybeFlake ? _type
+      then maybeFlake._type == "flake"
+      else maybeFlake ? inputs && maybeFlake ? outputs && maybeFlake ? sourceInfo;
+
     defaultModule = maybeFlake:
       if isFlake maybeFlake
       then maybeFlake.flakeModules.default or maybeFlake
@@ -244,17 +247,14 @@
       name,
       option,
       file,
-    }: let
+    } @ tpArgs: let
       inherit name option file;
     in
-      if builtins.elem name ["flakeModules" "flakeModule"]
-      then {
-        _file = file;
-
-        options = {
-          flake.${name} = option;
-        };
-      }
+      if (builtins.elem name ["flakeModules" "flakeModule"]) == "true"
+      then let
+        value = {id = name;};
+      in
+        value.id
       else {
         _file = file;
 
@@ -335,7 +335,6 @@
       flake.modules.flake.${name} = module;
     };
   };
-
   # A best effort, lenient estimate. Please use a recent nixpkgs lib if you
   # override it at all.
   minVersion = "23.05pre-git";
