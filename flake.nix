@@ -70,6 +70,7 @@
         modules = ./extras/modules.nix;
         partitions = ./extras/partitions.nix;
         bundlers = ./extras/bundlers.nix;
+        hydraJobs = ./extras/hydraJobs.nix;
         touchup = ./extras/touchup.nix;
       };
       flakeModules = builtinModules // extraModules;
