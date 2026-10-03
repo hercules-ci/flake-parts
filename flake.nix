@@ -45,6 +45,12 @@
             - a check with runCommand
           '';
         };
+        dogfood = {
+          path = ./template/dogfood;
+          description = ''
+            A minimal flake using flake-parts creating flake modules to build its own outputs.
+          '';
+        };
       };
       builtinModules = {
         apps = ./modules/apps.nix;
