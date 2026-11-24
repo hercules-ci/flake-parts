@@ -61,6 +61,7 @@
         overlays = ./modules/overlays.nix;
         packages = ./modules/packages.nix;
         perSystem = ./modules/perSystem.nix;
+        templates = ./modules/templates.nix;
         transposition = ./modules/transposition.nix;
         withSystem = ./modules/withSystem.nix;
       };
