@@ -298,6 +298,7 @@ in
       nixosModules = { };
       overlays = { };
       packages = { };
+      templates = { };
     };
   };
 
@@ -332,6 +333,7 @@ in
         nixosModules = { };
         overlays = { };
         packages = { };
+        templates = { };
       };
     };
   };
@@ -363,6 +365,7 @@ in
         nixosConfigurations = { };
         nixosModules = { };
         overlays = { };
+        templates = { };
         packages = {
           a = { hello = pkg "a" "hello"; };
           b = { hello = pkg "b" "hello"; };
